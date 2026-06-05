@@ -1162,8 +1162,6 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
 function CompletedOrderCard({ order }: { order: Order }) {
   const [returnMode, setReturnMode] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const daysLeft = order.returnDaysLeft ?? 30;
-  const expiringSoon = daysLeft <= 7;
 
   const toggle = (id: string) =>
     setSelected((prev) => {
