@@ -727,7 +727,15 @@ function PaymentBar({ order }: { order: Order }) {
 
 /* ---------- Order card ---------- */
 
-function ItemTile({ item }: { item: OrderItem }) {
+function ItemTile({
+  item,
+  removable = false,
+  accentPrice = false,
+}: {
+  item: OrderItem;
+  removable?: boolean;
+  accentPrice?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   return (
     <div className="w-[140px] flex-none">
@@ -748,9 +756,20 @@ function ItemTile({ item }: { item: OrderItem }) {
             ×{item.qty}
           </span>
         )}
+        {removable && (
+          <button
+            type="button"
+            aria-label="Удалить товар из заказа"
+            className="absolute right-1.5 bottom-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        )}
       </div>
       <div className="mt-2 flex items-center justify-between gap-1">
-        <div className="text-sm font-semibold text-success">
+        <div
+          className={`text-sm font-semibold ${accentPrice ? "text-destructive" : "text-success"}`}
+        >
           <PriceWithTooltip price={item.price} commission={item.commission} />
         </div>
         <button
@@ -779,25 +798,61 @@ function ItemTile({ item }: { item: OrderItem }) {
   );
 }
 
-function GroupBlock({ group, hidePipeline = false }: { group: ItemGroup; hidePipeline?: boolean }) {
+function OutOfStockNotice({ group }: { group: ItemGroup }) {
+  const sum = group.items.reduce((s, it) => s + (it.price + it.commission) * it.qty, 0);
+  return (
+    <div className="mb-3 rounded-lg bg-destructive/10 px-4 py-3 text-sm text-foreground">
+      <div className="font-medium">Нам очень жаль, что товар закончился.</div>
+      <div className="mt-1 text-muted-foreground">
+        Мы вернём{" "}
+        <span className="font-semibold text-destructive">{formatPrice(sum)}</span> на ваш{" "}
+        <a className="text-primary underline-offset-2 hover:underline" href="#">
+          Лицевой счёт
+        </a>
+        .
+      </div>
+      <div className="mt-2 text-xs text-muted-foreground">
+        Деньги с Лицевого счёта можно использовать либо для быстрой оплаты другого товара на нашем сайте, или вернуть себе на карту.
+      </div>
+    </div>
+  );
+}
+
+function GroupBlock({
+  group,
+  hidePipeline = false,
+  hideStatusLabel = false,
+  accentPrice = false,
+}: {
+  group: ItemGroup;
+  hidePipeline?: boolean;
+  hideStatusLabel?: boolean;
+  accentPrice?: boolean;
+}) {
+  const removable = group.status === "ordered_unpaid" || group.status === "paid";
+  const showHeader = !hidePipeline || !hideStatusLabel;
   return (
     <div className="px-5 py-4">
-      <div className="mb-3 flex flex-wrap items-center gap-3">
-        {!hidePipeline && <StatusPipeline status={group.status} />}
-        <StatusLabel status={group.status} />
-        <span className="ml-auto text-xs text-muted-foreground">
-          {group.items.length}{" "}
-          {group.items.length === 1 ? "товар" : group.items.length < 5 ? "товара" : "товаров"}
-        </span>
-      </div>
+      {showHeader && (
+        <div className="mb-3 flex flex-wrap items-center gap-3">
+          {!hidePipeline && <StatusPipeline status={group.status} />}
+          {!hideStatusLabel && <StatusLabel status={group.status} />}
+          <span className="ml-auto text-xs text-muted-foreground">
+            {group.items.length}{" "}
+            {group.items.length === 1 ? "товар" : group.items.length < 5 ? "товара" : "товаров"}
+          </span>
+        </div>
+      )}
+      {group.status === "out_of_stock" && <OutOfStockNotice group={group} />}
       <div className="flex flex-wrap items-start gap-4">
         {group.items.map((item) => (
-          <ItemTile key={item.id} item={item} />
+          <ItemTile key={item.id} item={item} removable={removable} accentPrice={accentPrice} />
         ))}
       </div>
     </div>
   );
 }
+
 
 const PICKUP_OPTIONS = [
   "Вольская, Макси ПВЗ на Удальцова",
