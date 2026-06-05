@@ -86,11 +86,13 @@ type Order = {
 };
 
 const STEPS: { key: OrderStatus; label: string; icon: typeof Package }[] = [
-  { key: "collecting", label: "Собирается", icon: Package },
-  { key: "warehouse", label: "На складе", icon: Warehouse },
-  { key: "in_transit", label: "В пути", icon: Truck },
-  { key: "ready", label: "В пункте выдачи", icon: Flag },
-  { key: "done", label: "Получен", icon: CheckCircle2 },
+  { key: "ordered_unpaid", label: "Оформлен", icon: ClipboardList },
+  { key: "paid", label: "Оплачен", icon: CheckCircle2 },
+  { key: "collecting", label: "В сборке", icon: Package },
+  { key: "from_supplier", label: "В пути от поставщика", icon: Truck },
+  { key: "delivering", label: "Доставляется в пункт выдачи", icon: Truck },
+  { key: "ready", label: "Готов к выдаче", icon: Flag },
+  { key: "received", label: "Получен", icon: CheckCircle2 },
 ];
 
 const img = (id: string) =>
