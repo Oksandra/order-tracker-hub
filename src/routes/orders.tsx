@@ -534,7 +534,7 @@ function PaymentBar({ order }: { order: Order }) {
           </span>
         )}
       </div>
-      <button className="ml-auto inline-flex items-center gap-2 rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background hover:opacity-90">
+      <button className="ml-auto inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
         <CreditCard className="h-4 w-4" />
         Доплатить {formatPrice(order.payAmount ?? 0)}
       </button>
