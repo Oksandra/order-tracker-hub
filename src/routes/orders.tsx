@@ -409,7 +409,7 @@ function StatusPipeline({ status }: { status: OrderStatus }) {
     );
   }
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-0">
       {STEPS.map((step, idx) => {
         const Icon = step.icon;
         const isDone = idx < currentIndex;
@@ -432,7 +432,7 @@ function StatusPipeline({ status }: { status: OrderStatus }) {
             {idx < STEPS.length - 1 && (
               <div
                 className={[
-                  "h-0.5 w-5",
+                  "h-0.5 w-1.5",
                   idx < currentIndex ? "bg-success/50" : "bg-track",
                 ].join(" ")}
               />
@@ -519,20 +519,39 @@ function useCountdown(initial?: number) {
   return sec;
 }
 
+function orderTotal(order: Order) {
+  let sum = 0;
+  for (const g of order.groups) {
+    for (const it of g.items) {
+      sum += (it.price + it.commission) * it.qty;
+    }
+  }
+  return sum;
+}
+
 function PaymentBar({ order }: { order: Order }) {
   const sec = useCountdown(order.awaitingSeconds);
+  const total = orderTotal(order);
 
   if (order.payment === "awaiting") {
     return (
-      <div className="flex flex-wrap items-center gap-3 border-b border-border/70 bg-warning/5 px-5 py-3.5">
+      <div className="flex flex-wrap items-center gap-3 border-b-2 border-destructive bg-destructive/10 px-5 py-3.5">
         <div className="flex items-center gap-2 text-destructive">
+          <Clock className="h-4 w-4" />
           <span className="font-semibold">Ожидаем оплаты {formatTimer(sec)}</span>
-          <span>›</span>
         </div>
-        <button className="ml-auto inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
-          <CreditCard className="h-4 w-4" />
-          Оплатить {formatPrice(order.payAmount ?? 0)}
-        </button>
+        <div className="ml-auto flex items-center gap-3">
+          <span className="text-sm text-muted-foreground">
+            Итого по заказу:{" "}
+            <span className="text-base font-bold text-destructive">
+              {formatPrice(order.payAmount ?? total)}
+            </span>
+          </span>
+          <button className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
+            <CreditCard className="h-4 w-4" />
+            Оплатить {formatPrice(order.payAmount ?? 0)}
+          </button>
+        </div>
       </div>
     );
   }
@@ -543,6 +562,10 @@ function PaymentBar({ order }: { order: Order }) {
         <div className="flex items-center gap-2 text-success">
           <CheckCircle2 className="h-4 w-4" />
           <span className="text-sm font-medium">Заказ оплачен</span>
+        </div>
+        <div className="ml-auto text-sm text-muted-foreground">
+          Итого по заказу:{" "}
+          <span className="text-base font-semibold text-foreground">{formatPrice(total)}</span>
         </div>
       </div>
     );
@@ -565,10 +588,16 @@ function PaymentBar({ order }: { order: Order }) {
           </span>
         )}
       </div>
-      <button className="ml-auto inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
-        <CreditCard className="h-4 w-4" />
-        Доплатить {formatPrice(order.payAmount ?? 0)}
-      </button>
+      <div className="ml-auto flex items-center gap-3">
+        <span className="text-sm text-muted-foreground">
+          Итого по заказу:{" "}
+          <span className="text-base font-semibold text-foreground">{formatPrice(total)}</span>
+        </span>
+        <button className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
+          <CreditCard className="h-4 w-4" />
+          Доплатить {formatPrice(order.payAmount ?? 0)}
+        </button>
+      </div>
     </div>
   );
 }
@@ -622,11 +651,11 @@ function ItemTile({ item }: { item: OrderItem }) {
   );
 }
 
-function GroupBlock({ group }: { group: ItemGroup }) {
+function GroupBlock({ group, hidePipeline = false }: { group: ItemGroup; hidePipeline?: boolean }) {
   return (
     <div className="px-5 py-4">
       <div className="mb-3 flex flex-wrap items-center gap-3">
-        <StatusPipeline status={group.status} />
+        {!hidePipeline && <StatusPipeline status={group.status} />}
         <StatusLabel status={group.status} />
         <span className="ml-auto text-xs text-muted-foreground">
           {group.items.length}{" "}
@@ -642,12 +671,48 @@ function GroupBlock({ group }: { group: ItemGroup }) {
   );
 }
 
+const PICKUP_OPTIONS = [
+  "Вольская, Макси ПВЗ на Удальцова",
+  "Стройкерамика, Макси ПВЗ",
+  "Московское ш., 220 — Пункт выдачи",
+  "Ново-Садовая, 160 — Пункт выдачи",
+];
+
+function PickupSelector({ value }: { value: string }) {
+  const [pickup, setPickup] = useState(value);
+  const options = PICKUP_OPTIONS.includes(pickup) ? PICKUP_OPTIONS : [pickup, ...PICKUP_OPTIONS];
+  return (
+    <div className="relative inline-flex items-center gap-1 rounded-md border border-dashed border-primary/40 bg-primary/5 px-2 py-0.5 text-primary hover:bg-primary/10">
+      <MapPin className="h-3.5 w-3.5" />
+      <span className="max-w-[260px] truncate">{pickup}</span>
+      <ChevronDown className="h-3.5 w-3.5 opacity-70" />
+      <select
+        value={pickup}
+        onChange={(e) => setPickup(e.target.value)}
+        aria-label="Выбрать пункт выдачи"
+        className="absolute inset-0 cursor-pointer opacity-0"
+      >
+        {options.map((p) => (
+          <option key={p} value={p}>
+            {p}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
 function OrderCard({ order, priority = false }: { order: Order; priority?: boolean }) {
+  const hidePipelines = order.payment === "awaiting";
+  const pickupEditable = order.groups.some(
+    (g) => g.status === "paid" || g.status === "collecting",
+  );
+
   return (
     <article
       className={[
         "overflow-hidden rounded-xl border bg-card shadow-sm",
-        priority ? "border-destructive/40 ring-1 ring-destructive/20" : "border-border",
+        priority ? "border-destructive/60 ring-2 ring-destructive/30" : "border-border",
       ].join(" ")}
     >
       {/* Awaiting payment lives on top */}
@@ -666,10 +731,14 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
             <Truck className="h-3.5 w-3.5 text-primary" />
             <span className="text-foreground font-medium">{order.date}</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <MapPin className="h-3.5 w-3.5" />
-            <span className="max-w-[280px] truncate">{order.pickup}</span>
-          </div>
+          {pickupEditable ? (
+            <PickupSelector value={order.pickup} />
+          ) : (
+            <div className="flex items-center gap-1.5">
+              <MapPin className="h-3.5 w-3.5" />
+              <span className="max-w-[280px] truncate">{order.pickup}</span>
+            </div>
+          )}
           <div className="ml-auto flex items-center gap-1.5">
             <span># {order.number}</span>
             <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
@@ -682,7 +751,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
       {/* Groups: each status group has its own pipeline + items */}
       <div className="divide-y divide-border/70">
         {order.groups.map((g, i) => (
-          <GroupBlock key={i} group={g} />
+          <GroupBlock key={i} group={g} hidePipeline={hidePipelines} />
         ))}
       </div>
 
