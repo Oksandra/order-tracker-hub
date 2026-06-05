@@ -519,20 +519,39 @@ function useCountdown(initial?: number) {
   return sec;
 }
 
+function orderTotal(order: Order) {
+  let sum = 0;
+  for (const g of order.groups) {
+    for (const it of g.items) {
+      sum += (it.price + it.commission) * it.qty;
+    }
+  }
+  return sum;
+}
+
 function PaymentBar({ order }: { order: Order }) {
   const sec = useCountdown(order.awaitingSeconds);
+  const total = orderTotal(order);
 
   if (order.payment === "awaiting") {
     return (
-      <div className="flex flex-wrap items-center gap-3 border-b border-border/70 bg-warning/5 px-5 py-3.5">
+      <div className="flex flex-wrap items-center gap-3 border-b-2 border-destructive bg-destructive/10 px-5 py-3.5">
         <div className="flex items-center gap-2 text-destructive">
+          <Clock className="h-4 w-4" />
           <span className="font-semibold">Ожидаем оплаты {formatTimer(sec)}</span>
-          <span>›</span>
         </div>
-        <button className="ml-auto inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
-          <CreditCard className="h-4 w-4" />
-          Оплатить {formatPrice(order.payAmount ?? 0)}
-        </button>
+        <div className="ml-auto flex items-center gap-3">
+          <span className="text-sm text-muted-foreground">
+            Итого по заказу:{" "}
+            <span className="text-base font-bold text-destructive">
+              {formatPrice(order.payAmount ?? total)}
+            </span>
+          </span>
+          <button className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
+            <CreditCard className="h-4 w-4" />
+            Оплатить {formatPrice(order.payAmount ?? 0)}
+          </button>
+        </div>
       </div>
     );
   }
@@ -543,6 +562,10 @@ function PaymentBar({ order }: { order: Order }) {
         <div className="flex items-center gap-2 text-success">
           <CheckCircle2 className="h-4 w-4" />
           <span className="text-sm font-medium">Заказ оплачен</span>
+        </div>
+        <div className="ml-auto text-sm text-muted-foreground">
+          Итого по заказу:{" "}
+          <span className="text-base font-semibold text-foreground">{formatPrice(total)}</span>
         </div>
       </div>
     );
@@ -565,10 +588,16 @@ function PaymentBar({ order }: { order: Order }) {
           </span>
         )}
       </div>
-      <button className="ml-auto inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
-        <CreditCard className="h-4 w-4" />
-        Доплатить {formatPrice(order.payAmount ?? 0)}
-      </button>
+      <div className="ml-auto flex items-center gap-3">
+        <span className="text-sm text-muted-foreground">
+          Итого по заказу:{" "}
+          <span className="text-base font-semibold text-foreground">{formatPrice(total)}</span>
+        </span>
+        <button className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
+          <CreditCard className="h-4 w-4" />
+          Доплатить {formatPrice(order.payAmount ?? 0)}
+        </button>
+      </div>
     </div>
   );
 }
