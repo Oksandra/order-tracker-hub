@@ -57,6 +57,7 @@
   --input: oklch(0.92 0.01 240);
   --ring: oklch(0.66 0.16 235);
   --success: oklch(0.68 0.18 145);
+  --success-foreground: oklch(1 0 0);
   --info: oklch(0.66 0.16 235);
   --warning: oklch(0.78 0.16 75);
   --track: oklch(0.93 0.015 240);
