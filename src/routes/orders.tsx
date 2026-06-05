@@ -230,7 +230,10 @@ const ORDERS: Order[] = [
     number: "337456916",
     brand: "Happywear — гипермаркет одежды",
     date: "9 июля 2025",
-    pickup: "Стройкерамика, Макси ПВЗ",
+    pickup: "Самара, Московское шоссе, 220",
+    cdek: true,
+    deliveryFee: 299,
+    trackNumber: "1438902117",
     payment: "paid",
     groups: [
       {
