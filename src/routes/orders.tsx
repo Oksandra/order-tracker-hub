@@ -928,11 +928,17 @@ function GroupBlock({
   hidePipeline = false,
   hideStatusLabel = false,
   accentPrice = false,
+  selectable = false,
+  selectedIds,
+  onToggleItem,
 }: {
   group: ItemGroup;
   hidePipeline?: boolean;
   hideStatusLabel?: boolean;
   accentPrice?: boolean;
+  selectable?: boolean;
+  selectedIds?: Set<string>;
+  onToggleItem?: (id: string) => void;
 }) {
   const removable = group.status === "ordered_unpaid" || group.status === "paid";
   const showHeader = !hidePipeline || !hideStatusLabel;
@@ -951,7 +957,15 @@ function GroupBlock({
       {group.status === "out_of_stock" && <OutOfStockNotice group={group} />}
       <div className="flex flex-wrap items-start gap-4">
         {group.items.map((item) => (
-          <ItemTile key={item.id} item={item} removable={removable} accentPrice={accentPrice} />
+          <ItemTile
+            key={item.id}
+            item={item}
+            removable={removable && !selectable}
+            accentPrice={accentPrice}
+            selectable={selectable}
+            selected={selectedIds?.has(item.id)}
+            onToggle={() => onToggleItem?.(item.id)}
+          />
         ))}
       </div>
     </div>
