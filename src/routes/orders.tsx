@@ -609,7 +609,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
             <MoreHorizontal className="h-4 w-4" />
           </button>
         </div>
-        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
+        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
           <div className="flex items-center gap-1.5">
             <Truck className="h-3.5 w-3.5 text-primary" />
             <span className="text-foreground font-medium">{order.date}</span>
