@@ -1077,20 +1077,8 @@ function OrdersPage() {
             </div>
           </div>
 
-          {/* Legend */}
-          <div className="mb-5 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-lg border border-border bg-card px-4 py-3 text-xs text-muted-foreground">
-            {STEPS.map((s) => {
-              const Icon = s.icon;
-              return (
-                <div key={s.key} className="flex items-center gap-1.5">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                    <Icon className="h-3 w-3" />
-                  </span>
-                  {s.label}
-                </div>
-              );
-            })}
-          </div>
+
+
 
           {/* List */}
           <div className="space-y-4">
