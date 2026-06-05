@@ -807,15 +807,26 @@ function ItemTile({
   item,
   removable = false,
   accentPrice = false,
+  selectable = false,
+  selected = false,
+  onToggle,
 }: {
   item: OrderItem;
   removable?: boolean;
   accentPrice?: boolean;
+  selectable?: boolean;
+  selected?: boolean;
+  onToggle?: () => void;
 }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="w-[140px] flex-none">
-      <div className="relative overflow-hidden rounded-lg border border-border bg-card">
+      <div
+        className={[
+          "relative overflow-hidden rounded-lg border bg-card transition",
+          selectable && selected ? "border-primary ring-2 ring-primary/40" : "border-border",
+        ].join(" ")}
+      >
         <img
           src={item.image}
           alt={item.title}
@@ -839,6 +850,24 @@ function ItemTile({
             className="absolute right-1 bottom-1 flex h-5 w-5 items-center justify-center rounded-full text-destructive/70 transition hover:text-destructive hover:bg-background/80"
           >
             <X className="h-3.5 w-3.5" strokeWidth={2.5} />
+          </button>
+        )}
+        {selectable && (
+          <button
+            type="button"
+            onClick={onToggle}
+            aria-label={selected ? "Отменить выбор" : "Выбрать товар"}
+            aria-pressed={selected}
+            className="absolute inset-0 flex items-end justify-end p-1.5"
+          >
+            <span
+              className={[
+                "flex h-6 w-6 items-center justify-center rounded-md border-2 bg-background/95 shadow-sm transition",
+                selected ? "border-primary bg-primary text-primary-foreground" : "border-border text-transparent",
+              ].join(" ")}
+            >
+              <CheckCircle2 className="h-4 w-4" strokeWidth={3} />
+            </span>
           </button>
         )}
       </div>
