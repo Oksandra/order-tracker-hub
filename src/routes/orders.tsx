@@ -799,7 +799,14 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
             <Truck className="h-3.5 w-3.5 text-primary" />
             <span className="text-foreground font-medium">{order.date}</span>
           </div>
-          {pickupEditable ? (
+          {order.cdek ? (
+            <div className="flex items-center gap-1.5">
+              <span className="inline-flex items-center rounded-sm bg-destructive px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-destructive-foreground">
+                CDEK
+              </span>
+              <span className="text-foreground font-medium">{order.pickup}</span>
+            </div>
+          ) : pickupEditable ? (
             <PickupSelector value={order.pickup} />
           ) : (
             <div className="flex items-center gap-1.5">
@@ -814,6 +821,29 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
             </button>
           </div>
         </div>
+        {order.cdek && order.trackNumber && (
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            <span>Трек-номер СДЭК:</span>
+            <span className="rounded-md bg-muted px-2 py-0.5 font-mono text-[12px] font-semibold text-foreground">
+              {order.trackNumber}
+            </span>
+            <button
+              className="rounded p-1 hover:bg-muted"
+              aria-label="Скопировать трек-номер"
+              onClick={() => navigator.clipboard?.writeText(order.trackNumber!)}
+            >
+              <Copy className="h-3.5 w-3.5" />
+            </button>
+            <a
+              href={`https://www.cdek.ru/ru/tracking?order_id=${order.trackNumber}`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-primary hover:underline"
+            >
+              Отследить
+            </a>
+          </div>
+        )}
       </header>
 
       {/* Groups: each status group has its own pipeline + items */}
