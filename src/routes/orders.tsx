@@ -97,7 +97,6 @@ type Order = {
   awaitingSeconds?: number; // for awaiting
   groups: ItemGroup[];
   completedAt?: string; // дата выдачи (для завершённых)
-  returnDaysLeft?: number; // дней до окончания срока возврата
 };
 
 const STEPS: { key: OrderStatus; label: string; icon: typeof Package }[] = [
@@ -365,7 +364,6 @@ const COMPLETED_ORDERS: Order[] = [
     brand: "Sweet Bakery — печенье и сладости",
     date: "10 мая 2025",
     completedAt: "18 мая 2025",
-    returnDaysLeft: 22,
     pickup: "Вольская, Макси ПВЗ на Удальцова",
     payment: "paid",
     groups: [
@@ -406,7 +404,6 @@ const COMPLETED_ORDERS: Order[] = [
     brand: "ECCO — комфорт в каждом движении!",
     date: "2 апреля 2025",
     completedAt: "12 апреля 2025",
-    returnDaysLeft: 5,
     pickup: "Димитровград, ул. Гагарина, 3А",
     cdek: true,
     deliveryFee: 349,
@@ -1165,8 +1162,6 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
 function CompletedOrderCard({ order }: { order: Order }) {
   const [returnMode, setReturnMode] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const daysLeft = order.returnDaysLeft ?? 30;
-  const expiringSoon = daysLeft <= 7;
 
   const toggle = (id: string) =>
     setSelected((prev) => {
@@ -1226,18 +1221,6 @@ function CompletedOrderCard({ order }: { order: Order }) {
       </div>
 
       <div className="flex flex-wrap items-center gap-3 border-t border-border/70 bg-muted/30 px-5 py-3">
-        <span
-          className={[
-            "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
-            expiringSoon
-              ? "bg-destructive/10 text-destructive"
-              : "bg-info/10 text-info",
-          ].join(" ")}
-        >
-          <Clock className="h-3.5 w-3.5" />
-          Возврат доступен ещё {daysLeft}{" "}
-          {daysLeft === 1 ? "день" : daysLeft < 5 ? "дня" : "дней"}
-        </span>
         <div className="ml-auto text-sm text-muted-foreground">
           Итого по заказу:{" "}
           <TotalWithTooltip order={order} className="text-base font-semibold text-foreground" />
