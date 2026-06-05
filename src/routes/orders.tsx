@@ -96,6 +96,8 @@ type Order = {
   paidAmount?: number; // already paid for surcharge
   awaitingSeconds?: number; // for awaiting
   groups: ItemGroup[];
+  completedAt?: string; // дата выдачи (для завершённых)
+  returnDaysLeft?: number; // дней до окончания срока возврата
 };
 
 const STEPS: { key: OrderStatus; label: string; icon: typeof Package }[] = [
