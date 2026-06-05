@@ -760,9 +760,9 @@ function ItemTile({
           <button
             type="button"
             aria-label="Удалить товар из заказа"
-            className="absolute right-1.5 bottom-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90"
+            className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full text-destructive/70 transition hover:text-destructive hover:bg-background/70"
           >
-            <X className="h-3.5 w-3.5" />
+            <X className="h-3.5 w-3.5" strokeWidth={2.5} />
           </button>
         )}
       </div>
