@@ -624,8 +624,13 @@ function ItemTile({ item }: { item: OrderItem }) {
           className="h-[140px] w-full object-cover"
           loading="lazy"
         />
+        {item.size && (
+          <span className="absolute left-1.5 top-1.5 rounded-full bg-background/90 px-2 py-0.5 text-[11px] font-semibold text-foreground shadow-sm backdrop-blur">
+            {item.size}
+          </span>
+        )}
         {item.qty > 1 && (
-          <span className="absolute right-1.5 top-1.5 rounded-full bg-foreground/80 px-2 py-0.5 text-[11px] font-semibold text-background">
+          <span className="absolute right-1.5 top-1.5 rounded-full bg-foreground/85 px-2 py-0.5 text-[11px] font-semibold text-background">
             ×{item.qty}
           </span>
         )}
