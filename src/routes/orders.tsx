@@ -43,7 +43,17 @@ export const Route = createFileRoute("/orders")({
   component: OrdersPage,
 });
 
-type OrderStatus = "collecting" | "warehouse" | "in_transit" | "ready" | "done";
+type OrderStatus =
+  | "ordered_unpaid"
+  | "paid"
+  | "collecting"
+  | "out_of_stock"
+  | "from_supplier"
+  | "delivering"
+  | "ready"
+  | "received"
+  | "awaiting_payment"
+  | "delayed";
 type PaymentState = "awaiting" | "paid" | "surcharge";
 
 type OrderItem = {
