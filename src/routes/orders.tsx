@@ -535,7 +535,63 @@ function orderTotal(order: Order) {
       sum += (it.price + it.commission) * it.qty;
     }
   }
-  return sum;
+  return sum + (order.deliveryFee ?? 0);
+}
+
+function orderSubtotals(order: Order) {
+  let price = 0;
+  let commission = 0;
+  for (const g of order.groups) {
+    for (const it of g.items) {
+      price += it.price * it.qty;
+      commission += it.commission * it.qty;
+    }
+  }
+  return { price, commission, delivery: order.deliveryFee ?? 0 };
+}
+
+function TotalWithTooltip({
+  order,
+  className = "",
+}: {
+  order: Order;
+  className?: string;
+}) {
+  const { price, commission, delivery } = orderSubtotals(order);
+  const total = price + commission + delivery;
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span
+          className={`cursor-help underline decoration-dotted decoration-muted-foreground/40 underline-offset-4 ${className}`}
+        >
+          {formatPrice(total)}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="bg-foreground text-background">
+        <div className="space-y-0.5 text-xs min-w-[180px]">
+          <div className="flex justify-between gap-4">
+            <span className="opacity-80">Цена товаров:</span>
+            <span>{formatPrice(price)}</span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="opacity-80">Комиссия:</span>
+            <span>{formatPrice(commission)}</span>
+          </div>
+          {delivery > 0 && (
+            <div className="flex justify-between gap-4">
+              <span className="opacity-80">Доставка СДЭК:</span>
+              <span>{formatPrice(delivery)}</span>
+            </div>
+          )}
+          <div className="mt-1 border-t border-background/20 pt-1 flex justify-between gap-4 font-semibold">
+            <span>Итого:</span>
+            <span>{formatPrice(total)}</span>
+          </div>
+        </div>
+      </TooltipContent>
+    </Tooltip>
+  );
 }
 
 function PaymentBar({ order }: { order: Order }) {
