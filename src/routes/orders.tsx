@@ -514,7 +514,7 @@ function StatusPipeline({ status }: { status: OrderStatus }) {
 }
 
 const STATUS_META: Record<OrderStatus, { label: string; color: string }> = {
-  ordered_unpaid: { label: "Оформлен — не оплачено", color: "text-muted-foreground" },
+  ordered_unpaid: { label: "Оформлен", color: "text-muted-foreground" },
   paid: { label: "Оплачен", color: "text-success" },
   collecting: { label: "В сборке", color: "text-primary" },
   out_of_stock: { label: "Товар закончился", color: "text-destructive" },
