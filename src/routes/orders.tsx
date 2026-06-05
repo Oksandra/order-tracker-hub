@@ -399,16 +399,16 @@ function StatusPipeline({ status }: { status: OrderStatus }) {
 }
 
 function StatusLabel({ status }: { status: OrderStatus }) {
-  const step = STEPS.find((s) => s.key === status)!;
+  const step = STEPS.find((s) => s.key === status);
   const color =
-    status === "done"
+    status === "received"
       ? "text-success"
       : status === "ready"
       ? "text-warning"
       : "text-primary";
   return (
-    <span className="text-sm">
-      товар <span className={`font-medium ${color}`}>{step.label.toLowerCase()}</span>
+    <span className="text-sm font-medium">
+      {step ? step.label : status}
     </span>
   );
 }
