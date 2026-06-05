@@ -654,7 +654,7 @@ function PaymentBar({ order }: { order: Order }) {
       <div className="ml-auto flex items-center gap-3">
         <span className="text-sm text-muted-foreground">
           Итого по заказу:{" "}
-          <span className="text-base font-semibold text-foreground">{formatPrice(total)}</span>
+          <TotalWithTooltip order={order} className="text-base font-semibold text-foreground" />
         </span>
         <button className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
           <CreditCard className="h-4 w-4" />
