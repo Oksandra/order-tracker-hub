@@ -362,6 +362,23 @@ function SiteHeader() {
 
 function StatusPipeline({ status }: { status: OrderStatus }) {
   const currentIndex = STEPS.findIndex((s) => s.key === status);
+  if (currentIndex === -1) {
+    const Icon =
+      status === "out_of_stock"
+        ? AlertCircle
+        : status === "delayed"
+        ? AlertTriangle
+        : status === "awaiting_payment"
+        ? Clock
+        : Package;
+    return (
+      <div className="flex items-center gap-2">
+        <div className="flex h-7 w-7 items-center justify-center rounded-full border border-destructive bg-destructive/10 text-destructive">
+          <Icon className="h-3.5 w-3.5" />
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="flex items-center gap-1">
       {STEPS.map((step, idx) => {
