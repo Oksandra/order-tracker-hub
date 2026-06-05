@@ -96,6 +96,8 @@ type Order = {
   paidAmount?: number; // already paid for surcharge
   awaitingSeconds?: number; // for awaiting
   groups: ItemGroup[];
+  completedAt?: string; // дата выдачи (для завершённых)
+  returnDaysLeft?: number; // дней до окончания срока возврата
 };
 
 const STEPS: { key: OrderStatus; label: string; icon: typeof Package }[] = [
@@ -349,6 +351,80 @@ const ORDERS: Order[] = [
             price: 7600,
             commission: 1129,
             image: img("photo-1490481651871-ab68de25d43d"),
+          },
+        ],
+      },
+    ],
+  },
+];
+
+const COMPLETED_ORDERS: Order[] = [
+  {
+    id: "c1",
+    number: "337456800",
+    brand: "Sweet Bakery — печенье и сладости",
+    date: "10 мая 2025",
+    completedAt: "18 мая 2025",
+    returnDaysLeft: 22,
+    pickup: "Вольская, Макси ПВЗ на Удальцова",
+    payment: "paid",
+    groups: [
+      {
+        status: "received",
+        items: [
+          {
+            id: "k51",
+            title: "Печенье Неиспытый вкус с начинкой Пина Колада фас фл/п 0,250кг",
+            qty: 1,
+            price: 143,
+            commission: 30,
+            image: img("photo-1558961363-fa8fdf82db35"),
+          },
+          {
+            id: "tm43",
+            title: "Печенье Мальта с кокосом ТВ 0,890кг",
+            qty: 1,
+            price: 311,
+            commission: 65,
+            image: img("photo-1499636136210-6f4ee915583e"),
+          },
+          {
+            id: "tm5",
+            title: "Печенье овсяное Царская коллекция тем/дек ТВ 0,720кг",
+            qty: 1,
+            price: 212,
+            commission: 44,
+            image: img("photo-1568051243851-f9b136146e97"),
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "c2",
+    number: "337456755",
+    brand: "ECCO — комфорт в каждом движении!",
+    date: "2 апреля 2025",
+    completedAt: "12 апреля 2025",
+    returnDaysLeft: 5,
+    pickup: "Димитровград, ул. Гагарина, 3А",
+    cdek: true,
+    deliveryFee: 349,
+    trackNumber: "1421739100",
+    payment: "paid",
+    groups: [
+      {
+        status: "received",
+        items: [
+          {
+            id: "ec1",
+            title: "Кроссовки кожаные классические",
+            size: "42",
+            color: "белый",
+            qty: 1,
+            price: 6990,
+            commission: 1040,
+            image: img("photo-1542291026-7eec264c27ff"),
           },
         ],
       },
@@ -731,15 +807,26 @@ function ItemTile({
   item,
   removable = false,
   accentPrice = false,
+  selectable = false,
+  selected = false,
+  onToggle,
 }: {
   item: OrderItem;
   removable?: boolean;
   accentPrice?: boolean;
+  selectable?: boolean;
+  selected?: boolean;
+  onToggle?: () => void;
 }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="w-[140px] flex-none">
-      <div className="relative overflow-hidden rounded-lg border border-border bg-card">
+      <div
+        className={[
+          "relative overflow-hidden rounded-lg border bg-card transition",
+          selectable && selected ? "border-primary ring-2 ring-primary/40" : "border-border",
+        ].join(" ")}
+      >
         <img
           src={item.image}
           alt={item.title}
@@ -763,6 +850,24 @@ function ItemTile({
             className="absolute right-1 bottom-1 flex h-5 w-5 items-center justify-center rounded-full text-destructive/70 transition hover:text-destructive hover:bg-background/80"
           >
             <X className="h-3.5 w-3.5" strokeWidth={2.5} />
+          </button>
+        )}
+        {selectable && (
+          <button
+            type="button"
+            onClick={onToggle}
+            aria-label={selected ? "Отменить выбор" : "Выбрать товар"}
+            aria-pressed={selected}
+            className="absolute inset-0 flex items-end justify-end p-1.5"
+          >
+            <span
+              className={[
+                "flex h-6 w-6 items-center justify-center rounded-md border-2 bg-background/95 shadow-sm transition",
+                selected ? "border-primary bg-primary text-primary-foreground" : "border-border text-transparent",
+              ].join(" ")}
+            >
+              <CheckCircle2 className="h-4 w-4" strokeWidth={3} />
+            </span>
           </button>
         )}
       </div>
@@ -823,11 +928,17 @@ function GroupBlock({
   hidePipeline = false,
   hideStatusLabel = false,
   accentPrice = false,
+  selectable = false,
+  selectedIds,
+  onToggleItem,
 }: {
   group: ItemGroup;
   hidePipeline?: boolean;
   hideStatusLabel?: boolean;
   accentPrice?: boolean;
+  selectable?: boolean;
+  selectedIds?: Set<string>;
+  onToggleItem?: (id: string) => void;
 }) {
   const removable = group.status === "ordered_unpaid" || group.status === "paid";
   const showHeader = !hidePipeline || !hideStatusLabel;
@@ -846,7 +957,15 @@ function GroupBlock({
       {group.status === "out_of_stock" && <OutOfStockNotice group={group} />}
       <div className="flex flex-wrap items-start gap-4">
         {group.items.map((item) => (
-          <ItemTile key={item.id} item={item} removable={removable} accentPrice={accentPrice} />
+          <ItemTile
+            key={item.id}
+            item={item}
+            removable={removable && !selectable}
+            accentPrice={accentPrice}
+            selectable={selectable}
+            selected={selectedIds?.has(item.id)}
+            onToggle={() => onToggleItem?.(item.id)}
+          />
         ))}
       </div>
     </div>
@@ -985,13 +1104,13 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
             </div>
           </div>
           {order.cdek && order.trackNumber && (
-            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-              <span>Трек-номер СДЭК:</span>
-              <span className="rounded-md bg-muted px-2 py-0.5 font-mono text-[12px] font-semibold text-foreground">
+            <div className="mt-2.5 flex flex-wrap items-center gap-2 text-sm">
+              <span className="text-muted-foreground">Трек-номер СДЭК:</span>
+              <span className="rounded-md bg-info/15 px-2.5 py-1 font-mono text-base font-bold tracking-wide text-info">
                 {order.trackNumber}
               </span>
               <button
-                className="rounded p-1 hover:bg-muted"
+                className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
                 aria-label="Скопировать трек-номер"
                 onClick={() => navigator.clipboard?.writeText(order.trackNumber!)}
               >
@@ -1001,7 +1120,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
                 href={`https://www.cdek.ru/ru/tracking?order_id=${order.trackNumber}`}
                 target="_blank"
                 rel="noreferrer"
-                className="text-success hover:underline"
+                className="text-sm font-medium text-success hover:underline"
               >
                 Отследить
               </a>
@@ -1043,13 +1162,148 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
 }
 
 
+function CompletedOrderCard({ order }: { order: Order }) {
+  const [returnMode, setReturnMode] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const daysLeft = order.returnDaysLeft ?? 30;
+  const expiringSoon = daysLeft <= 7;
+
+  const toggle = (id: string) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+
+  const cancel = () => {
+    setReturnMode(false);
+    setSelected(new Set());
+  };
+
+  return (
+    <article className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+      <header className="border-b border-border/70 px-5 py-3.5">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
+          <HeaderActions />
+        </div>
+        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1.5">
+            <CheckCircle2 className="h-3.5 w-3.5 text-success" />
+            <span className="text-foreground font-medium">Выдан {order.completedAt}</span>
+          </div>
+          {order.cdek ? (
+            <div className="flex items-center gap-1.5">
+              <span className="inline-flex items-center rounded-sm bg-success px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-success-foreground">
+                CDEK
+              </span>
+              <span className="text-foreground font-medium">{order.pickup}</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5">
+              <MapPin className="h-3.5 w-3.5" />
+              <span className="max-w-[280px] truncate">{order.pickup}</span>
+            </div>
+          )}
+          <div className="ml-auto flex items-center gap-1.5">
+            <span># {order.number}</span>
+          </div>
+        </div>
+      </header>
+
+      <div className="divide-y divide-border/70">
+        {order.groups.map((g, i) => (
+          <GroupBlock
+            key={i}
+            group={g}
+            hidePipeline
+            hideStatusLabel
+            selectable={returnMode}
+            selectedIds={selected}
+            onToggleItem={toggle}
+          />
+        ))}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3 border-t border-border/70 bg-muted/30 px-5 py-3">
+        <span
+          className={[
+            "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
+            expiringSoon
+              ? "bg-destructive/10 text-destructive"
+              : "bg-info/10 text-info",
+          ].join(" ")}
+        >
+          <Clock className="h-3.5 w-3.5" />
+          Возврат доступен ещё {daysLeft}{" "}
+          {daysLeft === 1 ? "день" : daysLeft < 5 ? "дня" : "дней"}
+        </span>
+        <div className="ml-auto text-sm text-muted-foreground">
+          Итого по заказу:{" "}
+          <TotalWithTooltip order={order} className="text-base font-semibold text-foreground" />
+        </div>
+      </div>
+
+      {returnMode ? (
+        <div className="flex flex-wrap items-center gap-3 border-t border-border/70 bg-primary/5 px-5 py-3">
+          <span className="text-sm text-foreground">
+            Выберите товары, которые хотите вернуть{" "}
+            {selected.size > 0 && (
+              <span className="font-semibold text-primary">({selected.size})</span>
+            )}
+          </span>
+          <div className="ml-auto flex items-center gap-2">
+            <button
+              type="button"
+              onClick={cancel}
+              className="rounded-full border border-border bg-background px-4 py-1.5 text-sm font-medium text-muted-foreground hover:bg-muted"
+            >
+              Отмена
+            </button>
+            <button
+              type="button"
+              disabled={selected.size === 0}
+              className="rounded-full bg-primary px-5 py-1.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Продолжить
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-wrap items-center gap-4 border-t border-border/70 px-5 py-2.5">
+          <a
+            href="#"
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+          >
+            <Download className="h-3 w-3" />
+            Скачать договор
+          </a>
+          <button
+            type="button"
+            onClick={() => setReturnMode(true)}
+            className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary hover:bg-primary/10"
+          >
+            Оформить заявку на возврат
+          </button>
+        </div>
+      )}
+    </article>
+  );
+}
+
+
 /* ---------- Page ---------- */
 
 function OrdersPage() {
+  const [tab, setTab] = useState<"active" | "completed">("active");
+
   const sorted = [...ORDERS].sort((a, b) => {
     const order = { awaiting: 0, surcharge: 1, paid: 2 } as const;
     return order[a.payment] - order[b.payment];
   });
+
+  const isActive = tab === "active";
+  const list = isActive ? sorted : COMPLETED_ORDERS;
 
   return (
     <TooltipProvider delayDuration={150}>
@@ -1064,33 +1318,70 @@ function OrdersPage() {
             <span className="text-foreground">Мои заказы</span>
           </nav>
 
-          <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
             <div>
               <h1 className="text-2xl font-semibold tracking-tight text-foreground">
                 Мои заказы
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                Активные заказы — отслеживайте статус и путь каждой позиции
+                {isActive
+                  ? "Активные заказы — отслеживайте статус и путь каждой позиции"
+                  : "Завершённые заказы — в течение 30 дней с момента выдачи можно оформить возврат"}
               </p>
             </div>
             <div className="text-sm text-muted-foreground">
-              Всего активных:{" "}
-              <span className="font-semibold text-foreground">{sorted.length}</span>
+              {isActive ? "Всего активных: " : "Всего завершённых: "}
+              <span className="font-semibold text-foreground">{list.length}</span>
             </div>
           </div>
 
-
-
+          {/* Tabs */}
+          <div className="mb-6 flex items-center gap-1 border-b border-border">
+            <button
+              type="button"
+              onClick={() => setTab("active")}
+              className={[
+                "relative -mb-px border-b-2 px-4 py-2.5 text-sm font-medium transition-colors",
+                isActive
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground",
+              ].join(" ")}
+            >
+              Активные заказы
+              <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                {sorted.length}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setTab("completed")}
+              className={[
+                "relative -mb-px border-b-2 px-4 py-2.5 text-sm font-medium transition-colors",
+                !isActive
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground",
+              ].join(" ")}
+            >
+              Завершённые заказы
+              <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                {COMPLETED_ORDERS.length}
+              </span>
+            </button>
+          </div>
 
           {/* List */}
           <div className="space-y-4">
-            {sorted.map((order) => (
-              <OrderCard
-                key={order.id}
-                order={order}
-                priority={order.payment === "awaiting"}
-              />
-            ))}
+            {isActive
+              ? sorted.map((order) => (
+                  <OrderCard
+                    key={order.id}
+                    order={order}
+                    priority={order.payment === "awaiting"}
+                  />
+                ))
+              : COMPLETED_ORDERS.map((order) => (
+                  <CompletedOrderCard key={order.id} order={order} />
+                ))}
           </div>
         </main>
       </div>
