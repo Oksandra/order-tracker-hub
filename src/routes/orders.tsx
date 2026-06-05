@@ -546,64 +546,69 @@ function PaymentBar({ order }: { order: Order }) {
 
 /* ---------- Order card ---------- */
 
-function ItemRow({ item }: { item: OrderItem }) {
+function ItemTile({ item }: { item: OrderItem }) {
   const [open, setOpen] = useState(false);
   return (
-    <li className="px-5 py-3.5">
-      <div className="flex items-center gap-4">
+    <div className="w-[140px] flex-none">
+      <div className="relative overflow-hidden rounded-lg border border-border bg-card">
         <img
           src={item.image}
           alt={item.title}
-          className="h-16 w-16 flex-none rounded-md object-cover"
+          className="h-[140px] w-full object-cover"
           loading="lazy"
         />
-        <div className="ml-auto flex items-center gap-2">
-          <div className="text-base font-semibold text-success">
-            <PriceWithTooltip price={item.price} commission={item.commission} />
-          </div>
-          <button
-            type="button"
-            onClick={() => setOpen((v) => !v)}
-            className="flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
-            aria-label={open ? "Скрыть подробности" : "Подробнее о товаре"}
-            aria-expanded={open}
-          >
-            <ChevronDown
-              className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`}
-            />
-          </button>
+        {item.qty > 1 && (
+          <span className="absolute right-1.5 top-1.5 rounded-full bg-foreground/80 px-2 py-0.5 text-[11px] font-semibold text-background">
+            ×{item.qty}
+          </span>
+        )}
+      </div>
+      <div className="mt-2 flex items-center justify-between gap-1">
+        <div className="text-sm font-semibold text-success">
+          <PriceWithTooltip price={item.price} commission={item.commission} />
         </div>
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          className="flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+          aria-label={open ? "Скрыть подробности" : "Подробнее о товаре"}
+          aria-expanded={open}
+        >
+          <ChevronDown
+            className={`h-4 w-4 transition-transform ${open ? "rotate-180" : "-rotate-90"}`}
+          />
+        </button>
       </div>
       {open && (
-        <div className="mt-3 ml-20 rounded-md bg-muted/40 px-3 py-2.5 text-sm">
-          <div className="font-medium text-foreground">{item.title}</div>
-          <div className="mt-1 space-x-3 text-xs text-muted-foreground">
-            {item.size && <span>размер: {item.size}</span>}
-            {item.color && <span>цвет: {item.color}</span>}
-            <span>кол-во: {item.qty}</span>
+        <div className="mt-2 rounded-md bg-muted/50 px-2.5 py-2 text-xs">
+          <div className="text-sm font-medium leading-snug text-foreground">{item.title}</div>
+          <div className="mt-1 space-y-0.5 text-muted-foreground">
+            {item.size && <div>размер: {item.size}</div>}
+            {item.color && <div>цвет: {item.color}</div>}
+            <div>кол-во: {item.qty}</div>
           </div>
         </div>
       )}
-    </li>
+    </div>
   );
 }
 
 function GroupBlock({ group }: { group: ItemGroup }) {
   return (
-    <div>
-      <div className="flex flex-wrap items-center gap-3 bg-muted/30 px-5 py-2.5">
+    <div className="px-5 py-4">
+      <div className="mb-3 flex flex-wrap items-center gap-3">
         <StatusPipeline status={group.status} />
         <StatusLabel status={group.status} />
         <span className="ml-auto text-xs text-muted-foreground">
           {group.items.length}{" "}
-          {group.items.length === 1 ? "товар" : "товара"}
+          {group.items.length === 1 ? "товар" : group.items.length < 5 ? "товара" : "товаров"}
         </span>
       </div>
-      <ul className="divide-y divide-border/70">
+      <div className="flex flex-wrap items-start gap-4">
         {group.items.map((item) => (
-          <ItemRow key={item.id} item={item} />
+          <ItemTile key={item.id} item={item} />
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
