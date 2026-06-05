@@ -22,6 +22,10 @@ import {
   AlertCircle,
   AlertTriangle,
   Clock,
+  Share2,
+  MessageSquare,
+  X,
+  Download,
 } from "lucide-react";
 import {
   Tooltip,
@@ -29,6 +33,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
 
 export const Route = createFileRoute("/orders")({
   head: () => ({
