@@ -788,7 +788,7 @@ function PaymentBar({ order }: { order: Order }) {
           Итого по заказу:{" "}
           <TotalWithTooltip order={order} className="text-base font-semibold text-foreground" />
         </span>
-        <button className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-5 py-1.5 sm:py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
+        <button className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-6 py-1 sm:py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
           <CreditCard className="h-4 w-4" />
           Доплатить {formatPrice(order.payAmount ?? 0)}
         </button>
