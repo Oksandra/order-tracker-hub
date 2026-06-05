@@ -985,13 +985,13 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
             </div>
           </div>
           {order.cdek && order.trackNumber && (
-            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-              <span>Трек-номер СДЭК:</span>
-              <span className="rounded-md bg-muted px-2 py-0.5 font-mono text-[12px] font-semibold text-foreground">
+            <div className="mt-2.5 flex flex-wrap items-center gap-2 text-sm">
+              <span className="text-muted-foreground">Трек-номер СДЭК:</span>
+              <span className="rounded-md bg-info/15 px-2.5 py-1 font-mono text-base font-bold tracking-wide text-info">
                 {order.trackNumber}
               </span>
               <button
-                className="rounded p-1 hover:bg-muted"
+                className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
                 aria-label="Скопировать трек-номер"
                 onClick={() => navigator.clipboard?.writeText(order.trackNumber!)}
               >
@@ -1001,7 +1001,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
                 href={`https://www.cdek.ru/ru/tracking?order_id=${order.trackNumber}`}
                 target="_blank"
                 rel="noreferrer"
-                className="text-success hover:underline"
+                className="text-sm font-medium text-success hover:underline"
               >
                 Отследить
               </a>
