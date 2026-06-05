@@ -234,7 +234,7 @@ const ORDERS: Order[] = [
     id: "4",
     number: "337456917",
     brand: "Eliseeva Olesya. Новинки",
-    date: "5 июн",
+    date: "5 июня 2025",
     pickup: "Вольская, Макси ПВЗ на Удальцова",
     payment: "surcharge",
     payAmount: 340,
