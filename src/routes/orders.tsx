@@ -1026,16 +1026,18 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
       {/* Payment footer for paid / surcharge */}
       {!isAwaiting && <PaymentBar order={order} />}
 
-      {/* Download contract — every order */}
-      <div className="border-t border-border/70 px-5 py-2.5">
-        <a
-          href="#"
-          className="inline-flex items-center gap-1.5 text-sm text-primary underline-offset-4 hover:underline"
-        >
-          <Download className="h-3.5 w-3.5" />
-          Скачать договор
-        </a>
-      </div>
+      {/* Download contract — every order except awaiting */}
+      {!isAwaiting && (
+        <div className="border-t border-border/70 px-5 py-2">
+          <a
+            href="#"
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+          >
+            <Download className="h-3 w-3" />
+            Скачать договор
+          </a>
+        </div>
+      )}
     </article>
   );
 }
