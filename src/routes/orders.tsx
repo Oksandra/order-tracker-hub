@@ -596,7 +596,7 @@ function TotalWithTooltip({
 
 function PaymentBar({ order }: { order: Order }) {
   const sec = useCountdown(order.awaitingSeconds);
-  const total = orderTotal(order);
+
 
   if (order.payment === "awaiting") {
     return (
