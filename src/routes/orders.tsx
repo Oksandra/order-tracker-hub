@@ -409,7 +409,7 @@ function StatusPipeline({ status }: { status: OrderStatus }) {
     );
   }
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-0">
       {STEPS.map((step, idx) => {
         const Icon = step.icon;
         const isDone = idx < currentIndex;
@@ -432,7 +432,7 @@ function StatusPipeline({ status }: { status: OrderStatus }) {
             {idx < STEPS.length - 1 && (
               <div
                 className={[
-                  "h-0.5 w-5",
+                  "h-0.5 w-1.5",
                   idx < currentIndex ? "bg-success/50" : "bg-track",
                 ].join(" ")}
               />
