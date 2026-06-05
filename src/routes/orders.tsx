@@ -18,6 +18,10 @@ import {
   Menu,
   CreditCard,
   Wallet,
+  ClipboardList,
+  AlertCircle,
+  AlertTriangle,
+  Clock,
 } from "lucide-react";
 import {
   Tooltip,
@@ -39,7 +43,17 @@ export const Route = createFileRoute("/orders")({
   component: OrdersPage,
 });
 
-type OrderStatus = "collecting" | "warehouse" | "in_transit" | "ready" | "done";
+type OrderStatus =
+  | "ordered_unpaid"
+  | "paid"
+  | "collecting"
+  | "out_of_stock"
+  | "from_supplier"
+  | "delivering"
+  | "ready"
+  | "received"
+  | "awaiting_payment"
+  | "delayed";
 type PaymentState = "awaiting" | "paid" | "surcharge";
 
 type OrderItem = {
@@ -72,11 +86,13 @@ type Order = {
 };
 
 const STEPS: { key: OrderStatus; label: string; icon: typeof Package }[] = [
-  { key: "collecting", label: "Собирается", icon: Package },
-  { key: "warehouse", label: "На складе", icon: Warehouse },
-  { key: "in_transit", label: "В пути", icon: Truck },
-  { key: "ready", label: "В пункте выдачи", icon: Flag },
-  { key: "done", label: "Получен", icon: CheckCircle2 },
+  { key: "ordered_unpaid", label: "Оформлен", icon: ClipboardList },
+  { key: "paid", label: "Оплачен", icon: CheckCircle2 },
+  { key: "collecting", label: "В сборке", icon: Package },
+  { key: "from_supplier", label: "В пути от поставщика", icon: Truck },
+  { key: "delivering", label: "Доставляется в пункт выдачи", icon: Truck },
+  { key: "ready", label: "Готов к выдаче", icon: Flag },
+  { key: "received", label: "Получен", icon: CheckCircle2 },
 ];
 
 const img = (id: string) =>
@@ -87,7 +103,7 @@ const ORDERS: Order[] = [
     id: "pay",
     number: "0253984237-0001",
     brand: "Cap Store — головные уборы",
-    date: "Сегодня",
+    date: "5 июня 2025",
     pickup: "Вольская, Макси ПВЗ на Удальцова",
     payment: "awaiting",
     payAmount: 291,
@@ -113,12 +129,12 @@ const ORDERS: Order[] = [
     id: "1",
     number: "337456914",
     brand: "ECCO — комфорт в каждом движении!",
-    date: "12 мар",
+    date: "12 марта 2025",
     pickup: "Вольская, Макси ПВЗ на Удальцова",
     payment: "paid",
     groups: [
       {
-        status: "in_transit",
+        status: "from_supplier",
         items: [
           {
             id: "m17",
@@ -151,14 +167,14 @@ const ORDERS: Order[] = [
     id: "2",
     number: "337456915",
     brand: "Tom Klaim. Женская одежда",
-    date: "26 июн",
+    date: "26 июня 2025",
     pickup: "Вольская, Макси ПВЗ на Удальцова",
     payment: "surcharge",
     payAmount: 820,
     paidAmount: 9998,
     groups: [
       {
-        status: "warehouse",
+        status: "out_of_stock",
         items: [
           {
             id: "j4887",
@@ -178,7 +194,7 @@ const ORDERS: Order[] = [
     id: "3",
     number: "337456916",
     brand: "Happywear — гипермаркет одежды",
-    date: "9 июл",
+    date: "9 июля 2025",
     pickup: "Стройкерамика, Макси ПВЗ",
     payment: "paid",
     groups: [
@@ -198,7 +214,7 @@ const ORDERS: Order[] = [
         ],
       },
       {
-        status: "in_transit",
+        status: "delivering",
         items: [
           {
             id: "hf2",
@@ -218,7 +234,7 @@ const ORDERS: Order[] = [
     id: "4",
     number: "337456917",
     brand: "Eliseeva Olesya. Новинки",
-    date: "5 июн",
+    date: "5 июня 2025",
     pickup: "Вольская, Макси ПВЗ на Удальцова",
     payment: "surcharge",
     payAmount: 340,
@@ -346,6 +362,23 @@ function SiteHeader() {
 
 function StatusPipeline({ status }: { status: OrderStatus }) {
   const currentIndex = STEPS.findIndex((s) => s.key === status);
+  if (currentIndex === -1) {
+    const Icon =
+      status === "out_of_stock"
+        ? AlertCircle
+        : status === "delayed"
+        ? AlertTriangle
+        : status === "awaiting_payment"
+        ? Clock
+        : Package;
+    return (
+      <div className="flex items-center gap-2">
+        <div className="flex h-7 w-7 items-center justify-center rounded-full border border-destructive bg-destructive/10 text-destructive">
+          <Icon className="h-3.5 w-3.5" />
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="flex items-center gap-1">
       {STEPS.map((step, idx) => {
@@ -382,17 +415,24 @@ function StatusPipeline({ status }: { status: OrderStatus }) {
   );
 }
 
+const STATUS_META: Record<OrderStatus, { label: string; color: string }> = {
+  ordered_unpaid: { label: "Оформлен — не оплачено", color: "text-muted-foreground" },
+  paid: { label: "Оплачен", color: "text-success" },
+  collecting: { label: "В сборке", color: "text-primary" },
+  out_of_stock: { label: "Товар закончился", color: "text-destructive" },
+  from_supplier: { label: "В пути от поставщика", color: "text-info" },
+  delivering: { label: "Доставляется в пункт выдачи", color: "text-info" },
+  ready: { label: "Готов к выдаче", color: "text-warning" },
+  received: { label: "Получен", color: "text-success" },
+  awaiting_payment: { label: "Ожидает оплаты", color: "text-destructive" },
+  delayed: { label: "Задерживается", color: "text-destructive" },
+};
+
 function StatusLabel({ status }: { status: OrderStatus }) {
-  const step = STEPS.find((s) => s.key === status)!;
-  const color =
-    status === "done"
-      ? "text-success"
-      : status === "ready"
-      ? "text-warning"
-      : "text-primary";
+  const meta = STATUS_META[status];
   return (
-    <span className="text-sm">
-      товар <span className={`font-medium ${color}`}>{step.label.toLowerCase()}</span>
+    <span className={`text-sm font-medium ${meta.color}`}>
+      {meta.label}
     </span>
   );
 }
@@ -569,7 +609,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
             <MoreHorizontal className="h-4 w-4" />
           </button>
         </div>
-        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
+        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
           <div className="flex items-center gap-1.5">
             <Truck className="h-3.5 w-3.5 text-primary" />
             <span className="text-foreground font-medium">{order.date}</span>
