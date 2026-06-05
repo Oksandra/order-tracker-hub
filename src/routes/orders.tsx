@@ -78,6 +78,9 @@ type Order = {
   brand: string;
   date: string;
   pickup: string;
+  cdek?: boolean; // pickup point is СДЭК
+  deliveryFee?: number; // СДЭК delivery cost included in total
+  trackNumber?: string; // СДЭК track number
   payment: PaymentState;
   payAmount?: number; // for awaiting / surcharge
   paidAmount?: number; // already paid for surcharge
@@ -130,7 +133,10 @@ const ORDERS: Order[] = [
     number: "337456914",
     brand: "ECCO — комфорт в каждом движении!",
     date: "12 марта 2025",
-    pickup: "Вольская, Макси ПВЗ на Удальцова",
+    pickup: "Димитровград, ул. Гагарина, 3А",
+    cdek: true,
+    deliveryFee: 349,
+    trackNumber: "1421739581",
     payment: "paid",
     groups: [
       {
@@ -224,7 +230,10 @@ const ORDERS: Order[] = [
     number: "337456916",
     brand: "Happywear — гипермаркет одежды",
     date: "9 июля 2025",
-    pickup: "Стройкерамика, Макси ПВЗ",
+    pickup: "Самара, Московское шоссе, 220",
+    cdek: true,
+    deliveryFee: 299,
+    trackNumber: "1438902117",
     payment: "paid",
     groups: [
       {
@@ -526,12 +535,68 @@ function orderTotal(order: Order) {
       sum += (it.price + it.commission) * it.qty;
     }
   }
-  return sum;
+  return sum + (order.deliveryFee ?? 0);
+}
+
+function orderSubtotals(order: Order) {
+  let price = 0;
+  let commission = 0;
+  for (const g of order.groups) {
+    for (const it of g.items) {
+      price += it.price * it.qty;
+      commission += it.commission * it.qty;
+    }
+  }
+  return { price, commission, delivery: order.deliveryFee ?? 0 };
+}
+
+function TotalWithTooltip({
+  order,
+  className = "",
+}: {
+  order: Order;
+  className?: string;
+}) {
+  const { price, commission, delivery } = orderSubtotals(order);
+  const total = price + commission + delivery;
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span
+          className={`cursor-help underline decoration-dotted decoration-muted-foreground/40 underline-offset-4 ${className}`}
+        >
+          {formatPrice(total)}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="bg-foreground text-background">
+        <div className="space-y-0.5 text-xs min-w-[180px]">
+          <div className="flex justify-between gap-4">
+            <span className="opacity-80">Цена товаров:</span>
+            <span>{formatPrice(price)}</span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="opacity-80">Комиссия:</span>
+            <span>{formatPrice(commission)}</span>
+          </div>
+          {delivery > 0 && (
+            <div className="flex justify-between gap-4">
+              <span className="opacity-80">Доставка СДЭК:</span>
+              <span>{formatPrice(delivery)}</span>
+            </div>
+          )}
+          <div className="mt-1 border-t border-background/20 pt-1 flex justify-between gap-4 font-semibold">
+            <span>Итого:</span>
+            <span>{formatPrice(total)}</span>
+          </div>
+        </div>
+      </TooltipContent>
+    </Tooltip>
+  );
 }
 
 function PaymentBar({ order }: { order: Order }) {
   const sec = useCountdown(order.awaitingSeconds);
-  const total = orderTotal(order);
+
 
   if (order.payment === "awaiting") {
     return (
@@ -543,9 +608,7 @@ function PaymentBar({ order }: { order: Order }) {
         <div className="ml-auto flex items-center gap-3">
           <span className="text-sm text-muted-foreground">
             Итого по заказу:{" "}
-            <span className="text-base font-bold text-destructive">
-              {formatPrice(order.payAmount ?? total)}
-            </span>
+            <TotalWithTooltip order={order} className="text-base font-bold text-destructive" />
           </span>
           <button className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
             <CreditCard className="h-4 w-4" />
@@ -565,7 +628,7 @@ function PaymentBar({ order }: { order: Order }) {
         </div>
         <div className="ml-auto text-sm text-muted-foreground">
           Итого по заказу:{" "}
-          <span className="text-base font-semibold text-foreground">{formatPrice(total)}</span>
+          <TotalWithTooltip order={order} className="text-base font-semibold text-foreground" />
         </div>
       </div>
     );
@@ -591,7 +654,7 @@ function PaymentBar({ order }: { order: Order }) {
       <div className="ml-auto flex items-center gap-3">
         <span className="text-sm text-muted-foreground">
           Итого по заказу:{" "}
-          <span className="text-base font-semibold text-foreground">{formatPrice(total)}</span>
+          <TotalWithTooltip order={order} className="text-base font-semibold text-foreground" />
         </span>
         <button className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
           <CreditCard className="h-4 w-4" />
@@ -615,8 +678,13 @@ function ItemTile({ item }: { item: OrderItem }) {
           className="h-[140px] w-full object-cover"
           loading="lazy"
         />
+        {item.size && (
+          <span className="absolute left-1.5 top-1.5 rounded-full bg-background/90 px-2 py-0.5 text-[11px] font-semibold text-foreground shadow-sm backdrop-blur">
+            {item.size}
+          </span>
+        )}
         {item.qty > 1 && (
-          <span className="absolute right-1.5 top-1.5 rounded-full bg-foreground/80 px-2 py-0.5 text-[11px] font-semibold text-background">
+          <span className="absolute right-1.5 top-1.5 rounded-full bg-foreground/85 px-2 py-0.5 text-[11px] font-semibold text-background">
             ×{item.qty}
           </span>
         )}
@@ -731,7 +799,14 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
             <Truck className="h-3.5 w-3.5 text-primary" />
             <span className="text-foreground font-medium">{order.date}</span>
           </div>
-          {pickupEditable ? (
+          {order.cdek ? (
+            <div className="flex items-center gap-1.5">
+              <span className="inline-flex items-center rounded-sm bg-destructive px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-destructive-foreground">
+                CDEK
+              </span>
+              <span className="text-foreground font-medium">{order.pickup}</span>
+            </div>
+          ) : pickupEditable ? (
             <PickupSelector value={order.pickup} />
           ) : (
             <div className="flex items-center gap-1.5">
@@ -746,6 +821,29 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
             </button>
           </div>
         </div>
+        {order.cdek && order.trackNumber && (
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            <span>Трек-номер СДЭК:</span>
+            <span className="rounded-md bg-muted px-2 py-0.5 font-mono text-[12px] font-semibold text-foreground">
+              {order.trackNumber}
+            </span>
+            <button
+              className="rounded p-1 hover:bg-muted"
+              aria-label="Скопировать трек-номер"
+              onClick={() => navigator.clipboard?.writeText(order.trackNumber!)}
+            >
+              <Copy className="h-3.5 w-3.5" />
+            </button>
+            <a
+              href={`https://www.cdek.ru/ru/tracking?order_id=${order.trackNumber}`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-primary hover:underline"
+            >
+              Отследить
+            </a>
+          </div>
+        )}
       </header>
 
       {/* Groups: each status group has its own pipeline + items */}
