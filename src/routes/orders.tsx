@@ -86,6 +86,8 @@ type Order = {
 };
 
 const STEPS: { key: OrderStatus; label: string; icon: typeof Package }[] = [
+  { key: "ordered_unpaid", label: "Оформлен", icon: ClipboardList },
+  { key: "paid", label: "Оплачен", icon: CheckCircle2 },
   { key: "collecting", label: "В сборке", icon: Package },
   { key: "from_supplier", label: "В пути от поставщика", icon: Warehouse },
   { key: "delivering", label: "Доставляется в пункт выдачи", icon: Truck },
