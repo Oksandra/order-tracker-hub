@@ -103,7 +103,7 @@ const ORDERS: Order[] = [
     id: "pay",
     number: "0253984237-0001",
     brand: "Cap Store — головные уборы",
-    date: "Сегодня",
+    date: "5 июня 2025",
     pickup: "Вольская, Макси ПВЗ на Удальцова",
     payment: "awaiting",
     payAmount: 291,
