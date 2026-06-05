@@ -398,17 +398,24 @@ function StatusPipeline({ status }: { status: OrderStatus }) {
   );
 }
 
+const STATUS_META: Record<OrderStatus, { label: string; color: string }> = {
+  ordered_unpaid: { label: "Оформлен — не оплачено", color: "text-muted-foreground" },
+  paid: { label: "Оплачен", color: "text-success" },
+  collecting: { label: "В сборке", color: "text-primary" },
+  out_of_stock: { label: "Товар закончился", color: "text-destructive" },
+  from_supplier: { label: "В пути от поставщика", color: "text-info" },
+  delivering: { label: "Доставляется в пункт выдачи", color: "text-info" },
+  ready: { label: "Готов к выдаче", color: "text-warning" },
+  received: { label: "Получен", color: "text-success" },
+  awaiting_payment: { label: "Ожидает оплаты", color: "text-destructive" },
+  delayed: { label: "Задерживается", color: "text-destructive" },
+};
+
 function StatusLabel({ status }: { status: OrderStatus }) {
-  const step = STEPS.find((s) => s.key === status);
-  const color =
-    status === "received"
-      ? "text-success"
-      : status === "ready"
-      ? "text-warning"
-      : "text-primary";
+  const meta = STATUS_META[status];
   return (
-    <span className="text-sm font-medium">
-      {step ? step.label : status}
+    <span className={`text-sm font-medium ${meta.color}`}>
+      {meta.label}
     </span>
   );
 }
