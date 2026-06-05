@@ -236,6 +236,56 @@ const ORDERS: Order[] = [
     ],
   },
   {
+    id: "5",
+    number: "337456920",
+    brand: "Bash — спорт и стрит",
+    date: "18 июня 2025",
+    pickup: "Самара, ул. Ново-Садовая, 160",
+    payment: "paid",
+    groups: [
+      {
+        status: "ordered_unpaid",
+        items: [
+          {
+            id: "bs1",
+            title: "Худи оверсайз с принтом",
+            size: "M",
+            color: "графит",
+            qty: 1,
+            price: 2890,
+            commission: 420,
+            image: img("photo-1556821840-3a63f95609a7"),
+          },
+          {
+            id: "bs2",
+            title: "Шорты спортивные хлопок",
+            size: "L",
+            qty: 1,
+            price: 1490,
+            commission: 220,
+            image: img("photo-1542327897-d73f4005b533"),
+          },
+        ],
+      },
+      {
+        status: "paid",
+        items: [
+          {
+            id: "bs3",
+            title: "Кроссовки беговые лёгкие",
+            size: "42",
+            color: "белый",
+            qty: 1,
+            price: 4990,
+            commission: 720,
+            image: img("photo-1542291026-7eec264c27ff"),
+          },
+        ],
+      },
+    ],
+  },
+
+  {
     id: "3",
     number: "337456916",
     brand: "Happywear — гипермаркет одежды",
