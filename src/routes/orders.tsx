@@ -628,7 +628,7 @@ function PaymentBar({ order }: { order: Order }) {
         </div>
         <div className="ml-auto text-sm text-muted-foreground">
           Итого по заказу:{" "}
-          <span className="text-base font-semibold text-foreground">{formatPrice(total)}</span>
+          <TotalWithTooltip order={order} className="text-base font-semibold text-foreground" />
         </div>
       </div>
     );
