@@ -364,7 +364,6 @@ const COMPLETED_ORDERS: Order[] = [
     brand: "Sweet Bakery — печенье и сладости",
     date: "10 мая 2025",
     completedAt: "18 мая 2025",
-    returnDaysLeft: 22,
     pickup: "Вольская, Макси ПВЗ на Удальцова",
     payment: "paid",
     groups: [
@@ -405,7 +404,6 @@ const COMPLETED_ORDERS: Order[] = [
     brand: "ECCO — комфорт в каждом движении!",
     date: "2 апреля 2025",
     completedAt: "12 апреля 2025",
-    returnDaysLeft: 5,
     pickup: "Димитровград, ул. Гагарина, 3А",
     cdek: true,
     deliveryFee: 349,
