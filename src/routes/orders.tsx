@@ -1162,13 +1162,148 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
 }
 
 
+function CompletedOrderCard({ order }: { order: Order }) {
+  const [returnMode, setReturnMode] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const daysLeft = order.returnDaysLeft ?? 30;
+  const expiringSoon = daysLeft <= 7;
+
+  const toggle = (id: string) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+
+  const cancel = () => {
+    setReturnMode(false);
+    setSelected(new Set());
+  };
+
+  return (
+    <article className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+      <header className="border-b border-border/70 px-5 py-3.5">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
+          <HeaderActions />
+        </div>
+        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1.5">
+            <CheckCircle2 className="h-3.5 w-3.5 text-success" />
+            <span className="text-foreground font-medium">Выдан {order.completedAt}</span>
+          </div>
+          {order.cdek ? (
+            <div className="flex items-center gap-1.5">
+              <span className="inline-flex items-center rounded-sm bg-success px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-success-foreground">
+                CDEK
+              </span>
+              <span className="text-foreground font-medium">{order.pickup}</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5">
+              <MapPin className="h-3.5 w-3.5" />
+              <span className="max-w-[280px] truncate">{order.pickup}</span>
+            </div>
+          )}
+          <div className="ml-auto flex items-center gap-1.5">
+            <span># {order.number}</span>
+          </div>
+        </div>
+      </header>
+
+      <div className="divide-y divide-border/70">
+        {order.groups.map((g, i) => (
+          <GroupBlock
+            key={i}
+            group={g}
+            hidePipeline
+            hideStatusLabel
+            selectable={returnMode}
+            selectedIds={selected}
+            onToggleItem={toggle}
+          />
+        ))}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3 border-t border-border/70 bg-muted/30 px-5 py-3">
+        <span
+          className={[
+            "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
+            expiringSoon
+              ? "bg-destructive/10 text-destructive"
+              : "bg-info/10 text-info",
+          ].join(" ")}
+        >
+          <Clock className="h-3.5 w-3.5" />
+          Возврат доступен ещё {daysLeft}{" "}
+          {daysLeft === 1 ? "день" : daysLeft < 5 ? "дня" : "дней"}
+        </span>
+        <div className="ml-auto text-sm text-muted-foreground">
+          Итого по заказу:{" "}
+          <TotalWithTooltip order={order} className="text-base font-semibold text-foreground" />
+        </div>
+      </div>
+
+      {returnMode ? (
+        <div className="flex flex-wrap items-center gap-3 border-t border-border/70 bg-primary/5 px-5 py-3">
+          <span className="text-sm text-foreground">
+            Выберите товары, которые хотите вернуть{" "}
+            {selected.size > 0 && (
+              <span className="font-semibold text-primary">({selected.size})</span>
+            )}
+          </span>
+          <div className="ml-auto flex items-center gap-2">
+            <button
+              type="button"
+              onClick={cancel}
+              className="rounded-full border border-border bg-background px-4 py-1.5 text-sm font-medium text-muted-foreground hover:bg-muted"
+            >
+              Отмена
+            </button>
+            <button
+              type="button"
+              disabled={selected.size === 0}
+              className="rounded-full bg-primary px-5 py-1.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Продолжить
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-wrap items-center gap-4 border-t border-border/70 px-5 py-2.5">
+          <a
+            href="#"
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+          >
+            <Download className="h-3 w-3" />
+            Скачать договор
+          </a>
+          <button
+            type="button"
+            onClick={() => setReturnMode(true)}
+            className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary hover:bg-primary/10"
+          >
+            Оформить заявку на возврат
+          </button>
+        </div>
+      )}
+    </article>
+  );
+}
+
+
 /* ---------- Page ---------- */
 
 function OrdersPage() {
+  const [tab, setTab] = useState<"active" | "completed">("active");
+
   const sorted = [...ORDERS].sort((a, b) => {
     const order = { awaiting: 0, surcharge: 1, paid: 2 } as const;
     return order[a.payment] - order[b.payment];
   });
+
+  const isActive = tab === "active";
+  const list = isActive ? sorted : COMPLETED_ORDERS;
 
   return (
     <TooltipProvider delayDuration={150}>
@@ -1183,33 +1318,70 @@ function OrdersPage() {
             <span className="text-foreground">Мои заказы</span>
           </nav>
 
-          <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
             <div>
               <h1 className="text-2xl font-semibold tracking-tight text-foreground">
                 Мои заказы
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                Активные заказы — отслеживайте статус и путь каждой позиции
+                {isActive
+                  ? "Активные заказы — отслеживайте статус и путь каждой позиции"
+                  : "Завершённые заказы — в течение 30 дней с момента выдачи можно оформить возврат"}
               </p>
             </div>
             <div className="text-sm text-muted-foreground">
-              Всего активных:{" "}
-              <span className="font-semibold text-foreground">{sorted.length}</span>
+              {isActive ? "Всего активных: " : "Всего завершённых: "}
+              <span className="font-semibold text-foreground">{list.length}</span>
             </div>
           </div>
 
-
-
+          {/* Tabs */}
+          <div className="mb-6 flex items-center gap-1 border-b border-border">
+            <button
+              type="button"
+              onClick={() => setTab("active")}
+              className={[
+                "relative -mb-px border-b-2 px-4 py-2.5 text-sm font-medium transition-colors",
+                isActive
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground",
+              ].join(" ")}
+            >
+              Активные заказы
+              <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                {sorted.length}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setTab("completed")}
+              className={[
+                "relative -mb-px border-b-2 px-4 py-2.5 text-sm font-medium transition-colors",
+                !isActive
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground",
+              ].join(" ")}
+            >
+              Завершённые заказы
+              <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                {COMPLETED_ORDERS.length}
+              </span>
+            </button>
+          </div>
 
           {/* List */}
           <div className="space-y-4">
-            {sorted.map((order) => (
-              <OrderCard
-                key={order.id}
-                order={order}
-                priority={order.payment === "awaiting"}
-              />
-            ))}
+            {isActive
+              ? sorted.map((order) => (
+                  <OrderCard
+                    key={order.id}
+                    order={order}
+                    priority={order.payment === "awaiting"}
+                  />
+                ))
+              : COMPLETED_ORDERS.map((order) => (
+                  <CompletedOrderCard key={order.id} order={order} />
+                ))}
           </div>
         </main>
       </div>
