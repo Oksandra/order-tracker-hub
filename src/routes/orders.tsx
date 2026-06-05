@@ -1221,18 +1221,6 @@ function CompletedOrderCard({ order }: { order: Order }) {
       </div>
 
       <div className="flex flex-wrap items-center gap-3 border-t border-border/70 bg-muted/30 px-5 py-3">
-        <span
-          className={[
-            "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
-            expiringSoon
-              ? "bg-destructive/10 text-destructive"
-              : "bg-info/10 text-info",
-          ].join(" ")}
-        >
-          <Clock className="h-3.5 w-3.5" />
-          Возврат доступен ещё {daysLeft}{" "}
-          {daysLeft === 1 ? "день" : daysLeft < 5 ? "дня" : "дней"}
-        </span>
         <div className="ml-auto text-sm text-muted-foreground">
           Итого по заказу:{" "}
           <TotalWithTooltip order={order} className="text-base font-semibold text-foreground" />
