@@ -885,8 +885,57 @@ function PickupSelector({ value }: { value: string }) {
   );
 }
 
+function HeaderActions() {
+  const Icons = (
+    <>
+      <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="В избранное">
+        <Heart className="h-4 w-4" />
+      </button>
+      <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Поделиться">
+        <Share2 className="h-4 w-4" />
+      </button>
+      <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Вопрос поставщику">
+        <MessageSquare className="h-4 w-4" />
+      </button>
+    </>
+  );
+  return (
+    <div className="flex items-center">
+      {/* Desktop: inline icons */}
+      <div className="hidden sm:flex items-center gap-0.5">{Icons}</div>
+      {/* Mobile: three-dots opens popover */}
+      <div className="sm:hidden">
+        <Popover>
+          <PopoverTrigger asChild>
+            <button
+              className="rounded-md p-1.5 text-muted-foreground hover:bg-muted"
+              aria-label="Действия"
+            >
+              <MoreHorizontal className="h-4 w-4" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent align="end" className="w-56 p-2">
+            <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
+              <Heart className="h-4 w-4 text-muted-foreground" />
+              Добавить закупку в избранное
+            </button>
+            <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
+              <Share2 className="h-4 w-4 text-muted-foreground" />
+              Поделиться
+            </button>
+            <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
+              <MessageSquare className="h-4 w-4 text-muted-foreground" />
+              Вопрос поставщику
+            </button>
+          </PopoverContent>
+        </Popover>
+      </div>
+    </div>
+  );
+}
+
 function OrderCard({ order, priority = false }: { order: Order; priority?: boolean }) {
-  const hidePipelines = order.payment === "awaiting";
+  const isAwaiting = order.payment === "awaiting";
   const pickupEditable = order.groups.some(
     (g) => g.status === "paid" || g.status === "collecting",
   );
@@ -899,80 +948,98 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
       ].join(" ")}
     >
       {/* Awaiting payment lives on top */}
-      {order.payment === "awaiting" && <PaymentBar order={order} />}
+      {isAwaiting && <PaymentBar order={order} />}
 
-      {/* Header — like screenshots 1 & 2: title/brand first, then meta row */}
-      <header className="border-b border-border/70 px-5 py-3.5">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
-          <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted" aria-label="Действия">
-            <MoreHorizontal className="h-4 w-4" />
-          </button>
-        </div>
-        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1.5">
-            <Truck className="h-3.5 w-3.5 text-primary" />
-            <span className="text-foreground font-medium">{order.date}</span>
+      {/* Header (hidden entirely for awaiting block) */}
+      {!isAwaiting && (
+        <header className="border-b border-border/70 px-5 py-3.5">
+          <div className="flex items-start justify-between gap-3">
+            <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
+            <HeaderActions />
           </div>
-          {order.cdek ? (
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
             <div className="flex items-center gap-1.5">
-              <span className="inline-flex items-center rounded-sm bg-destructive px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-destructive-foreground">
-                CDEK
-              </span>
-              <span className="text-foreground font-medium">{order.pickup}</span>
+              <Truck className="h-3.5 w-3.5 text-primary" />
+              <span className="text-foreground font-medium">{order.date}</span>
             </div>
-          ) : pickupEditable ? (
-            <PickupSelector value={order.pickup} />
-          ) : (
-            <div className="flex items-center gap-1.5">
-              <MapPin className="h-3.5 w-3.5" />
-              <span className="max-w-[280px] truncate">{order.pickup}</span>
+            {order.cdek ? (
+              <div className="flex items-center gap-1.5">
+                <span className="inline-flex items-center rounded-sm bg-success px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-success-foreground">
+                  CDEK
+                </span>
+                <span className="text-foreground font-medium">{order.pickup}</span>
+              </div>
+            ) : pickupEditable ? (
+              <PickupSelector value={order.pickup} />
+            ) : (
+              <div className="flex items-center gap-1.5">
+                <MapPin className="h-3.5 w-3.5" />
+                <span className="max-w-[280px] truncate">{order.pickup}</span>
+              </div>
+            )}
+            <div className="ml-auto flex items-center gap-1.5">
+              <span># {order.number}</span>
+              <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
+                <Copy className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
+          {order.cdek && order.trackNumber && (
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+              <span>Трек-номер СДЭК:</span>
+              <span className="rounded-md bg-muted px-2 py-0.5 font-mono text-[12px] font-semibold text-foreground">
+                {order.trackNumber}
+              </span>
+              <button
+                className="rounded p-1 hover:bg-muted"
+                aria-label="Скопировать трек-номер"
+                onClick={() => navigator.clipboard?.writeText(order.trackNumber!)}
+              >
+                <Copy className="h-3.5 w-3.5" />
+              </button>
+              <a
+                href={`https://www.cdek.ru/ru/tracking?order_id=${order.trackNumber}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-success hover:underline"
+              >
+                Отследить
+              </a>
             </div>
           )}
-          <div className="ml-auto flex items-center gap-1.5">
-            <span># {order.number}</span>
-            <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
-              <Copy className="h-3.5 w-3.5" />
-            </button>
-          </div>
-        </div>
-        {order.cdek && order.trackNumber && (
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            <span>Трек-номер СДЭК:</span>
-            <span className="rounded-md bg-muted px-2 py-0.5 font-mono text-[12px] font-semibold text-foreground">
-              {order.trackNumber}
-            </span>
-            <button
-              className="rounded p-1 hover:bg-muted"
-              aria-label="Скопировать трек-номер"
-              onClick={() => navigator.clipboard?.writeText(order.trackNumber!)}
-            >
-              <Copy className="h-3.5 w-3.5" />
-            </button>
-            <a
-              href={`https://www.cdek.ru/ru/tracking?order_id=${order.trackNumber}`}
-              target="_blank"
-              rel="noreferrer"
-              className="text-primary hover:underline"
-            >
-              Отследить
-            </a>
-          </div>
-        )}
-      </header>
+        </header>
+      )}
 
       {/* Groups: each status group has its own pipeline + items */}
       <div className="divide-y divide-border/70">
         {order.groups.map((g, i) => (
-          <GroupBlock key={i} group={g} hidePipeline={hidePipelines} />
+          <GroupBlock
+            key={i}
+            group={g}
+            hidePipeline={isAwaiting}
+            hideStatusLabel={isAwaiting}
+            accentPrice={isAwaiting}
+          />
         ))}
       </div>
 
       {/* Payment footer for paid / surcharge */}
-      {order.payment !== "awaiting" && <PaymentBar order={order} />}
+      {!isAwaiting && <PaymentBar order={order} />}
+
+      {/* Download contract — every order */}
+      <div className="border-t border-border/70 px-5 py-2.5">
+        <a
+          href="#"
+          className="inline-flex items-center gap-1.5 text-sm text-primary underline-offset-4 hover:underline"
+        >
+          <Download className="h-3.5 w-3.5" />
+          Скачать договор
+        </a>
+      </div>
     </article>
   );
 }
+
 
 /* ---------- Page ---------- */
 
