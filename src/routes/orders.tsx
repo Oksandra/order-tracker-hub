@@ -358,6 +358,80 @@ const ORDERS: Order[] = [
   },
 ];
 
+const COMPLETED_ORDERS: Order[] = [
+  {
+    id: "c1",
+    number: "337456800",
+    brand: "Sweet Bakery — печенье и сладости",
+    date: "10 мая 2025",
+    completedAt: "18 мая 2025",
+    returnDaysLeft: 22,
+    pickup: "Вольская, Макси ПВЗ на Удальцова",
+    payment: "paid",
+    groups: [
+      {
+        status: "received",
+        items: [
+          {
+            id: "k51",
+            title: "Печенье Неиспытый вкус с начинкой Пина Колада фас фл/п 0,250кг",
+            qty: 1,
+            price: 143,
+            commission: 30,
+            image: img("photo-1558961363-fa8fdf82db35"),
+          },
+          {
+            id: "tm43",
+            title: "Печенье Мальта с кокосом ТВ 0,890кг",
+            qty: 1,
+            price: 311,
+            commission: 65,
+            image: img("photo-1499636136210-6f4ee915583e"),
+          },
+          {
+            id: "tm5",
+            title: "Печенье овсяное Царская коллекция тем/дек ТВ 0,720кг",
+            qty: 1,
+            price: 212,
+            commission: 44,
+            image: img("photo-1568051243851-f9b136146e97"),
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "c2",
+    number: "337456755",
+    brand: "ECCO — комфорт в каждом движении!",
+    date: "2 апреля 2025",
+    completedAt: "12 апреля 2025",
+    returnDaysLeft: 5,
+    pickup: "Димитровград, ул. Гагарина, 3А",
+    cdek: true,
+    deliveryFee: 349,
+    trackNumber: "1421739100",
+    payment: "paid",
+    groups: [
+      {
+        status: "received",
+        items: [
+          {
+            id: "ec1",
+            title: "Кроссовки кожаные классические",
+            size: "42",
+            color: "белый",
+            qty: 1,
+            price: 6990,
+            commission: 1040,
+            image: img("photo-1542291026-7eec264c27ff"),
+          },
+        ],
+      },
+    ],
+  },
+];
+
 function formatPrice(n: number) {
   return new Intl.NumberFormat("ru-RU").format(n) + " ₽";
 }
