@@ -657,20 +657,19 @@ function TotalWithTooltip({
 function PaymentBar({ order }: { order: Order }) {
   const sec = useCountdown(order.awaitingSeconds);
 
-
   if (order.payment === "awaiting") {
     return (
-      <div className="flex flex-wrap items-center gap-3 border-b-2 border-destructive bg-destructive/10 px-5 py-3.5">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b-2 border-destructive bg-destructive/10 px-5 py-3.5">
         <div className="flex items-center gap-2 text-destructive">
           <Clock className="h-4 w-4" />
           <span className="font-semibold">Ожидаем оплаты {formatTimer(sec)}</span>
         </div>
-        <div className="ml-auto flex items-center gap-3">
+        <div className="ml-auto flex flex-1 sm:flex-none flex-wrap items-center justify-end gap-x-3 gap-y-2">
           <span className="text-sm text-muted-foreground">
             Итого по заказу:{" "}
             <TotalWithTooltip order={order} className="text-base font-bold text-destructive" />
           </span>
-          <button className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
+          <button className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-5 py-1.5 sm:py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
             <CreditCard className="h-4 w-4" />
             Оплатить {formatPrice(order.payAmount ?? 0)}
           </button>
@@ -696,7 +695,7 @@ function PaymentBar({ order }: { order: Order }) {
 
   // surcharge
   return (
-    <div className="flex flex-wrap items-center gap-3 border-t border-border/70 bg-warning/10 px-5 py-3">
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border/70 bg-warning/10 px-5 py-3">
       <div className="flex items-center gap-2 text-warning">
         <Wallet className="h-4 w-4" />
         <span className="text-sm font-medium text-foreground">
@@ -711,12 +710,12 @@ function PaymentBar({ order }: { order: Order }) {
           </span>
         )}
       </div>
-      <div className="ml-auto flex items-center gap-3">
+      <div className="ml-auto flex flex-1 sm:flex-none flex-wrap items-center justify-end gap-x-3 gap-y-2">
         <span className="text-sm text-muted-foreground">
           Итого по заказу:{" "}
           <TotalWithTooltip order={order} className="text-base font-semibold text-foreground" />
         </span>
-        <button className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
+        <button className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-5 py-1.5 sm:py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
           <CreditCard className="h-4 w-4" />
           Доплатить {formatPrice(order.payAmount ?? 0)}
         </button>
@@ -724,6 +723,7 @@ function PaymentBar({ order }: { order: Order }) {
     </div>
   );
 }
+
 
 /* ---------- Order card ---------- */
 
