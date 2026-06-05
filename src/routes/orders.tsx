@@ -514,7 +514,7 @@ function StatusPipeline({ status }: { status: OrderStatus }) {
 }
 
 const STATUS_META: Record<OrderStatus, { label: string; color: string }> = {
-  ordered_unpaid: { label: "Оформлен — не оплачено", color: "text-muted-foreground" },
+  ordered_unpaid: { label: "Оформлен", color: "text-muted-foreground" },
   paid: { label: "Оплачен", color: "text-success" },
   collecting: { label: "В сборке", color: "text-primary" },
   out_of_stock: { label: "Товар закончился", color: "text-destructive" },
@@ -760,9 +760,9 @@ function ItemTile({
           <button
             type="button"
             aria-label="Удалить товар из заказа"
-            className="absolute right-1.5 bottom-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90"
+            className="absolute right-1 bottom-1 flex h-5 w-5 items-center justify-center rounded-full text-destructive/70 transition hover:text-destructive hover:bg-background/80"
           >
-            <X className="h-3.5 w-3.5" />
+            <X className="h-3.5 w-3.5" strokeWidth={2.5} />
           </button>
         )}
       </div>
@@ -1026,16 +1026,18 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
       {/* Payment footer for paid / surcharge */}
       {!isAwaiting && <PaymentBar order={order} />}
 
-      {/* Download contract — every order */}
-      <div className="border-t border-border/70 px-5 py-2.5">
-        <a
-          href="#"
-          className="inline-flex items-center gap-1.5 text-sm text-primary underline-offset-4 hover:underline"
-        >
-          <Download className="h-3.5 w-3.5" />
-          Скачать договор
-        </a>
-      </div>
+      {/* Download contract — every order except awaiting */}
+      {!isAwaiting && (
+        <div className="border-t border-border/70 px-5 py-2">
+          <a
+            href="#"
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+          >
+            <Download className="h-3 w-3" />
+            Скачать договор
+          </a>
+        </div>
+      )}
     </article>
   );
 }
