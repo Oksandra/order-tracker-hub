@@ -18,6 +18,10 @@ import {
   Menu,
   CreditCard,
   Wallet,
+  ClipboardList,
+  AlertCircle,
+  AlertTriangle,
+  Clock,
 } from "lucide-react";
 import {
   Tooltip,
