@@ -545,25 +545,43 @@ function PaymentBar({ order }: { order: Order }) {
 /* ---------- Order card ---------- */
 
 function ItemRow({ item }: { item: OrderItem }) {
+  const [open, setOpen] = useState(false);
   return (
-    <li className="flex items-center gap-4 px-5 py-3.5">
-      <img
-        src={item.image}
-        alt={item.title}
-        className="h-16 w-16 flex-none rounded-md object-cover"
-        loading="lazy"
-      />
-      <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-medium text-foreground">{item.title}</div>
-        <div className="mt-0.5 space-x-2 text-xs text-muted-foreground">
-          {item.size && <span>размер: {item.size}</span>}
-          {item.color && <span>цвет: {item.color}</span>}
-          {item.qty > 1 && <span>кол-во: {item.qty}</span>}
+    <li className="px-5 py-3.5">
+      <div className="flex items-center gap-4">
+        <img
+          src={item.image}
+          alt={item.title}
+          className="h-16 w-16 flex-none rounded-md object-cover"
+          loading="lazy"
+        />
+        <div className="ml-auto flex items-center gap-2">
+          <div className="text-base font-semibold text-success">
+            <PriceWithTooltip price={item.price} commission={item.commission} />
+          </div>
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            className="flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+            aria-label={open ? "Скрыть подробности" : "Подробнее о товаре"}
+            aria-expanded={open}
+          >
+            <ChevronDown
+              className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`}
+            />
+          </button>
         </div>
       </div>
-      <div className="text-right text-base font-semibold text-success">
-        <PriceWithTooltip price={item.price} commission={item.commission} />
-      </div>
+      {open && (
+        <div className="mt-3 ml-20 rounded-md bg-muted/40 px-3 py-2.5 text-sm">
+          <div className="font-medium text-foreground">{item.title}</div>
+          <div className="mt-1 space-x-3 text-xs text-muted-foreground">
+            {item.size && <span>размер: {item.size}</span>}
+            {item.color && <span>цвет: {item.color}</span>}
+            <span>кол-во: {item.qty}</span>
+          </div>
+        </div>
+      )}
     </li>
   );
 }
