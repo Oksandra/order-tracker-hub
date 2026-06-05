@@ -133,7 +133,10 @@ const ORDERS: Order[] = [
     number: "337456914",
     brand: "ECCO — комфорт в каждом движении!",
     date: "12 марта 2025",
-    pickup: "Вольская, Макси ПВЗ на Удальцова",
+    pickup: "Димитровград, ул. Гагарина, 3А",
+    cdek: true,
+    deliveryFee: 349,
+    trackNumber: "1421739581",
     payment: "paid",
     groups: [
       {
