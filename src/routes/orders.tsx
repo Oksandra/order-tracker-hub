@@ -18,7 +18,6 @@ import {
   Menu,
   CreditCard,
   Wallet,
-  ClipboardList,
   AlertCircle,
   AlertTriangle,
   Clock,
