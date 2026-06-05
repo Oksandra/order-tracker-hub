@@ -129,12 +129,12 @@ const ORDERS: Order[] = [
     id: "1",
     number: "337456914",
     brand: "ECCO — комфорт в каждом движении!",
-    date: "12 мар",
+    date: "12 марта 2025",
     pickup: "Вольская, Макси ПВЗ на Удальцова",
     payment: "paid",
     groups: [
       {
-        status: "in_transit",
+        status: "from_supplier",
         items: [
           {
             id: "m17",
@@ -167,14 +167,14 @@ const ORDERS: Order[] = [
     id: "2",
     number: "337456915",
     brand: "Tom Klaim. Женская одежда",
-    date: "26 июн",
+    date: "26 июня 2025",
     pickup: "Вольская, Макси ПВЗ на Удальцова",
     payment: "surcharge",
     payAmount: 820,
     paidAmount: 9998,
     groups: [
       {
-        status: "warehouse",
+        status: "out_of_stock",
         items: [
           {
             id: "j4887",
@@ -194,7 +194,7 @@ const ORDERS: Order[] = [
     id: "3",
     number: "337456916",
     brand: "Happywear — гипермаркет одежды",
-    date: "9 июл",
+    date: "9 июля 2025",
     pickup: "Стройкерамика, Макси ПВЗ",
     payment: "paid",
     groups: [
@@ -214,7 +214,7 @@ const ORDERS: Order[] = [
         ],
       },
       {
-        status: "in_transit",
+        status: "delivering",
         items: [
           {
             id: "hf2",
