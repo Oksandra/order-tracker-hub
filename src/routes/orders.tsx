@@ -1132,6 +1132,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
               </a>
             </div>
           )}
+          </div>
         </header>
       )}
 
