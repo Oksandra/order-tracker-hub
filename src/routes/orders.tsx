@@ -864,11 +864,10 @@ function ItemTile({
         )}
       </div>
       <div
-        className="mt-2 hidden sm:block text-xs font-medium leading-snug text-foreground overflow-hidden"
-        style={{ display: undefined, WebkitLineClamp: 2, WebkitBoxOrient: "vertical" } as React.CSSProperties}
+        className="mt-2 hidden sm:line-clamp-2 text-xs font-medium leading-snug text-foreground"
         title={item.title}
       >
-        <span className="sm:line-clamp-2 hidden sm:inline">{item.title}</span>
+        {item.title}
       </div>
       <div className="mt-2 flex items-center justify-between gap-1">
         <div
