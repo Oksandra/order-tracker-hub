@@ -602,7 +602,7 @@ const STATUS_META: Record<OrderStatus, { label: string; color: string }> = {
 function StatusLabel({ status }: { status: OrderStatus }) {
   const meta = STATUS_META[status];
   return (
-    <span className={`text-sm font-medium ${meta.color}`}>
+    <span className={`text-base font-medium ${meta.color}`}>
       {meta.label}
     </span>
   );
