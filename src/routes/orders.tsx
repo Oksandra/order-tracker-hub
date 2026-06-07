@@ -355,6 +355,81 @@ const ORDERS: Order[] = [
       },
     ],
   },
+  {
+    id: "6",
+    number: "337456925",
+    brand: "Sunny Market — товары для дома",
+    date: "22 июня 2025",
+    pickup: "Самара, Московское шоссе, 220",
+    payment: "paid",
+    groups: [
+      {
+        status: "collecting",
+        items: [
+          {
+            id: "sm1",
+            title: "Полотенце махровое 70×140",
+            color: "молочный",
+            qty: 2,
+            price: 590,
+            commission: 90,
+            image: img("photo-1583845112203-29329902332e"),
+          },
+          {
+            id: "sm2",
+            title: "Свеча ароматическая ваниль",
+            qty: 1,
+            price: 320,
+            commission: 50,
+            image: img("photo-1602874801007-bd36c376cd65"),
+          },
+          {
+            id: "sm3",
+            title: "Кружка керамическая 350 мл",
+            color: "беж",
+            qty: 4,
+            price: 280,
+            commission: 45,
+            image: img("photo-1514228742587-6b1558fcca3d"),
+          },
+          {
+            id: "sm4",
+            title: "Плед флисовый 150×200",
+            color: "графит",
+            qty: 1,
+            price: 1290,
+            commission: 195,
+            image: img("photo-1540574163026-643ea20ade25"),
+          },
+          {
+            id: "sm5",
+            title: "Подушка декоративная вязаная",
+            qty: 2,
+            price: 690,
+            commission: 105,
+            image: img("photo-1592078615290-033ee584e267"),
+          },
+          {
+            id: "sm6",
+            title: "Корзина для хранения плетёная",
+            size: "M",
+            qty: 1,
+            price: 850,
+            commission: 130,
+            image: img("photo-1503602642458-232111445657"),
+          },
+          {
+            id: "sm7",
+            title: "Подсвечник стеклянный",
+            qty: 3,
+            price: 240,
+            commission: 40,
+            image: img("photo-1602872030219-ad2b9a54315c"),
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 const COMPLETED_ORDERS: Order[] = [
@@ -742,7 +817,7 @@ function PaymentBar({ order }: { order: Order }) {
             Итого по заказу:{" "}
             <TotalWithTooltip order={order} className="text-base font-bold text-destructive" />
           </span>
-          <button className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-6 py-1 sm:py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
+          <button className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
             <CreditCard className="h-4 w-4" />
             Оплатить {formatPrice(order.payAmount ?? 0)}
           </button>
@@ -769,7 +844,7 @@ function PaymentBar({ order }: { order: Order }) {
   // surcharge
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border/70 bg-warning/10 px-5 py-2">
-      <div className="flex items-center gap-2 text-warning">
+      <div className="hidden sm:flex items-center gap-2 text-warning">
         <Wallet className="h-4 w-4" />
         <span className="text-sm font-medium text-foreground">
           Нужна доплата:{" "}
@@ -783,7 +858,7 @@ function PaymentBar({ order }: { order: Order }) {
           Итого по заказу:{" "}
           <TotalWithTooltip order={order} className="text-base font-bold text-foreground" />
         </span>
-        <button className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-6 py-1 sm:py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
+        <button className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
           <CreditCard className="h-4 w-4" />
           Доплатить {formatPrice(order.payAmount ?? 0)}
         </button>
@@ -864,14 +939,14 @@ function ItemTile({
         )}
       </div>
       <div
-        className="mt-2 hidden sm:line-clamp-2 text-xs font-medium leading-snug text-foreground"
+        className="mt-2 hidden sm:line-clamp-2 text-sm font-medium leading-snug text-foreground"
         title={item.title}
       >
         {item.title}
       </div>
       <div className="mt-2 flex items-center justify-between gap-1">
         <div
-          className={`text-sm font-semibold ${accentPrice ? "text-destructive" : "text-success"}`}
+          className={`text-[15px] sm:text-base font-semibold ${accentPrice ? "text-destructive" : "text-success"}`}
         >
           <PriceWithTooltip price={item.price} commission={item.commission} />
         </div>
@@ -889,7 +964,7 @@ function ItemTile({
       </div>
       {open && (
         <div className="mt-2 rounded-md bg-muted/50 px-2.5 py-2 text-xs">
-          <div className="text-sm font-medium leading-snug text-foreground sm:hidden">{item.title}</div>
+          <div className="text-xs font-medium leading-snug text-foreground sm:hidden">{item.title}</div>
           <div className="mt-1 space-y-0.5 text-muted-foreground">
             {item.size && <div>размер: {item.size}</div>}
             {item.color && <div>цвет: {item.color}</div>}
@@ -940,6 +1015,11 @@ function GroupBlock({
 }) {
   const removable = group.status === "ordered_unpaid" || group.status === "paid";
   const showHeader = !hidePipeline || !hideStatusLabel;
+  const COLLAPSE_THRESHOLD = 5;
+  const [expanded, setExpanded] = useState(false);
+  const canCollapse = group.items.length >= COLLAPSE_THRESHOLD && !selectable;
+  const visibleItems = canCollapse && !expanded ? group.items.slice(0, 4) : group.items;
+  const hiddenCount = group.items.length - visibleItems.length;
   return (
     <div className="px-5 py-4">
       {showHeader && (
@@ -954,7 +1034,7 @@ function GroupBlock({
       )}
       {group.status === "out_of_stock" && <OutOfStockNotice group={group} />}
       <div className="flex flex-wrap items-start gap-4">
-        {group.items.map((item) => (
+        {visibleItems.map((item) => (
           <ItemTile
             key={item.id}
             item={item}
@@ -965,6 +1045,46 @@ function GroupBlock({
             onToggle={() => onToggleItem?.(item.id)}
           />
         ))}
+        {canCollapse && !expanded && hiddenCount > 0 && (
+          <button
+            type="button"
+            onClick={() => setExpanded(true)}
+            className="group w-[140px] flex-none"
+            aria-label={`Показать ещё ${hiddenCount} ${hiddenCount === 1 ? "товар" : hiddenCount < 5 ? "товара" : "товаров"}`}
+          >
+            <div className="relative h-[140px] w-full overflow-hidden rounded-lg border border-dashed border-primary/40 bg-primary/5 transition group-hover:bg-primary/10">
+              <div className="absolute inset-0 grid grid-cols-2 gap-0.5 p-0.5 opacity-50">
+                {group.items.slice(4, 8).map((it) => (
+                  <img
+                    key={it.id}
+                    src={it.image}
+                    alt=""
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                ))}
+              </div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-primary/40 text-primary-foreground">
+                <span className="text-2xl font-bold">+{hiddenCount}</span>
+                <span className="mt-0.5 text-xs font-medium">
+                  {hiddenCount === 1 ? "товар" : hiddenCount < 5 ? "товара" : "товаров"}
+                </span>
+              </div>
+            </div>
+            <div className="mt-2 text-xs font-medium text-primary">
+              Показать все
+            </div>
+          </button>
+        )}
+        {canCollapse && expanded && (
+          <button
+            type="button"
+            onClick={() => setExpanded(false)}
+            className="w-[140px] flex-none self-center text-xs font-medium text-primary hover:underline"
+          >
+            Свернуть
+          </button>
+        )}
       </div>
     </div>
   );
@@ -1069,7 +1189,15 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
 
       {/* Header (hidden entirely for awaiting block) */}
       {!isAwaiting && (
-        <header className="border-b border-border/70 px-5 py-3.5">
+        <header className="border-b border-border/70">
+          {/* Mobile-only top bar with order number */}
+          <div className="flex sm:hidden items-center justify-between gap-2 border-b border-border/60 bg-muted/40 px-5 py-1.5 text-xs text-muted-foreground">
+            <span className="font-medium text-foreground">№ {order.number}</span>
+            <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
+              <Copy className="h-3.5 w-3.5" />
+            </button>
+          </div>
+          <div className="px-5 py-3.5">
           <div className="flex items-start justify-between gap-3">
             <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
             <HeaderActions />
@@ -1094,7 +1222,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
                 <span className="max-w-[280px] truncate">{order.pickup}</span>
               </div>
             )}
-            <div className="ml-auto flex items-center gap-1.5">
+            <div className="ml-auto hidden sm:flex items-center gap-1.5">
               <span># {order.number}</span>
               <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
                 <Copy className="h-3.5 w-3.5" />
@@ -1124,6 +1252,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
               </a>
             </div>
           )}
+          </div>
         </header>
       )}
 
@@ -1186,7 +1315,7 @@ function CompletedOrderCard({ order }: { order: Order }) {
         <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
           <div className="flex items-center gap-1.5">
             <CheckCircle2 className="h-3.5 w-3.5 text-success" />
-            <span className="text-foreground font-medium">Выдан {order.completedAt}</span>
+            <span className="text-foreground font-medium">Получено {order.completedAt}</span>
           </div>
           {order.cdek ? (
             <div className="flex items-center gap-1.5">
