@@ -1233,7 +1233,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
       {!isAwaiting && (
         <header className="border-b border-border/70">
           {/* Mobile-only top bar with order number */}
-          <div className="flex sm:hidden items-center justify-between gap-2 border-b border-border/60 bg-muted/40 px-5 py-1.5 text-xs text-muted-foreground">
+          <div className="flex sm:hidden items-center justify-between gap-2 border-b border-border/60 bg-muted/40 px-5 py-1.5 text-sm text-muted-foreground">
             <span className="font-medium text-foreground">№ {order.number}</span>
             <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
               <Copy className="h-3.5 w-3.5" />
