@@ -237,6 +237,45 @@ const ORDERS: Order[] = [
     ],
   },
   {
+    id: "oos",
+    number: "337456950",
+    brand: "TechGear — электроника и аксессуары",
+    date: "1 июля 2025",
+    pickup: "Самара, Московское шоссе, 220",
+    payment: "paid",
+    groups: [
+      {
+        status: "out_of_stock",
+        items: [
+          {
+            id: "tg1",
+            title: "Беспроводные наушники с активным шумоподавлением",
+            qty: 1,
+            price: 4990,
+            commission: 750,
+            image: img("photo-1505740420928-5e560c06d30e"),
+          },
+          {
+            id: "tg2",
+            title: "Защитный чехол премиум для смартфона",
+            qty: 2,
+            price: 890,
+            commission: 130,
+            image: img("photo-1586105251261-72a756497a11"),
+          },
+          {
+            id: "tg3",
+            title: "Портативное зарядное устройство 20000 мАч",
+            qty: 1,
+            price: 2490,
+            commission: 370,
+            image: img("photo-1609592424332-5bd4996db89c"),
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: "5",
     number: "337456920",
     brand: "Bash — спорт и стрит",
