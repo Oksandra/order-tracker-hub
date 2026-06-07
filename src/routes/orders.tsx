@@ -889,7 +889,7 @@ function ItemTile({
       </div>
       {open && (
         <div className="mt-2 rounded-md bg-muted/50 px-2.5 py-2 text-xs">
-          <div className="text-sm font-medium leading-snug text-foreground">{item.title}</div>
+          <div className="text-sm font-medium leading-snug text-foreground sm:hidden">{item.title}</div>
           <div className="mt-1 space-y-0.5 text-muted-foreground">
             {item.size && <div>размер: {item.size}</div>}
             {item.color && <div>цвет: {item.color}</div>}
