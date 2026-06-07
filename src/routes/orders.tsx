@@ -1015,6 +1015,11 @@ function GroupBlock({
 }) {
   const removable = group.status === "ordered_unpaid" || group.status === "paid";
   const showHeader = !hidePipeline || !hideStatusLabel;
+  const COLLAPSE_THRESHOLD = 5;
+  const [expanded, setExpanded] = useState(false);
+  const canCollapse = group.items.length >= COLLAPSE_THRESHOLD && !selectable;
+  const visibleItems = canCollapse && !expanded ? group.items.slice(0, 4) : group.items;
+  const hiddenCount = group.items.length - visibleItems.length;
   return (
     <div className="px-5 py-4">
       {showHeader && (
@@ -1029,7 +1034,7 @@ function GroupBlock({
       )}
       {group.status === "out_of_stock" && <OutOfStockNotice group={group} />}
       <div className="flex flex-wrap items-start gap-4">
-        {group.items.map((item) => (
+        {visibleItems.map((item) => (
           <ItemTile
             key={item.id}
             item={item}
@@ -1040,6 +1045,46 @@ function GroupBlock({
             onToggle={() => onToggleItem?.(item.id)}
           />
         ))}
+        {canCollapse && !expanded && hiddenCount > 0 && (
+          <button
+            type="button"
+            onClick={() => setExpanded(true)}
+            className="group w-[140px] flex-none"
+            aria-label={`Показать ещё ${hiddenCount} ${hiddenCount === 1 ? "товар" : hiddenCount < 5 ? "товара" : "товаров"}`}
+          >
+            <div className="relative h-[140px] w-full overflow-hidden rounded-lg border border-dashed border-primary/40 bg-primary/5 transition group-hover:bg-primary/10">
+              <div className="absolute inset-0 grid grid-cols-2 gap-0.5 p-0.5 opacity-50">
+                {group.items.slice(4, 8).map((it) => (
+                  <img
+                    key={it.id}
+                    src={it.image}
+                    alt=""
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                ))}
+              </div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-primary/40 text-primary-foreground">
+                <span className="text-2xl font-bold">+{hiddenCount}</span>
+                <span className="mt-0.5 text-xs font-medium">
+                  {hiddenCount === 1 ? "товар" : hiddenCount < 5 ? "товара" : "товаров"}
+                </span>
+              </div>
+            </div>
+            <div className="mt-2 text-xs font-medium text-primary">
+              Показать все
+            </div>
+          </button>
+        )}
+        {canCollapse && expanded && (
+          <button
+            type="button"
+            onClick={() => setExpanded(false)}
+            className="w-[140px] flex-none self-center text-xs font-medium text-primary hover:underline"
+          >
+            Свернуть
+          </button>
+        )}
       </div>
     </div>
   );
