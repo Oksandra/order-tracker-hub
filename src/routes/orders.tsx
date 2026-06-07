@@ -812,7 +812,7 @@ function PaymentBar({ order }: { order: Order }) {
           <Clock className="h-4 w-4" />
           <span className="font-semibold">Ожидаем оплаты {formatTimer(sec)}</span>
         </div>
-        <div className="ml-auto flex flex-1 sm:flex-none flex-wrap items-center justify-end gap-x-3 gap-y-2">
+        <div className="ml-auto flex flex-1 sm:flex-none flex-wrap items-center justify-center sm:justify-end gap-x-3 gap-y-2">
           <span className="text-sm text-muted-foreground">
             Итого по заказу:{" "}
             <TotalWithTooltip order={order} className="text-base font-bold text-destructive" />
