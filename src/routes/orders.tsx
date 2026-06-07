@@ -602,7 +602,7 @@ const STATUS_META: Record<OrderStatus, { label: string; color: string }> = {
 function StatusLabel({ status }: { status: OrderStatus }) {
   const meta = STATUS_META[status];
   return (
-    <span className={`text-sm font-medium ${meta.color}`}>
+    <span className={`text-base font-medium ${meta.color}`}>
       {meta.label}
     </span>
   );
@@ -863,6 +863,12 @@ function ItemTile({
           </button>
         )}
       </div>
+      <div
+        className="mt-2 hidden sm:line-clamp-2 text-xs font-medium leading-snug text-foreground"
+        title={item.title}
+      >
+        {item.title}
+      </div>
       <div className="mt-2 flex items-center justify-between gap-1">
         <div
           className={`text-sm font-semibold ${accentPrice ? "text-destructive" : "text-success"}`}
@@ -883,7 +889,7 @@ function ItemTile({
       </div>
       {open && (
         <div className="mt-2 rounded-md bg-muted/50 px-2.5 py-2 text-xs">
-          <div className="text-sm font-medium leading-snug text-foreground">{item.title}</div>
+          <div className="text-sm font-medium leading-snug text-foreground sm:hidden">{item.title}</div>
           <div className="mt-1 space-y-0.5 text-muted-foreground">
             {item.size && <div>размер: {item.size}</div>}
             {item.color && <div>цвет: {item.color}</div>}
@@ -1070,8 +1076,8 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
           </div>
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
             <div className="flex items-center gap-1.5">
-              <Truck className="h-3.5 w-3.5 text-primary" />
-              <span className="text-foreground font-medium">{order.date}</span>
+              <Truck className="h-5 w-5 text-primary" />
+              <span className="text-foreground text-base font-semibold">{order.date}</span>
             </div>
             {order.cdek ? (
               <div className="flex items-center gap-1.5">
