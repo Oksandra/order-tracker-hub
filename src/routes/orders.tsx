@@ -1173,6 +1173,7 @@ function HeaderActions() {
 
 function OrderCard({ order, priority = false }: { order: Order; priority?: boolean }) {
   const isAwaiting = order.payment === "awaiting";
+  const isSurcharge = order.payment === "surcharge";
   const pickupEditable = order.groups.some(
     (g) => g.status === "paid" || g.status === "collecting",
   );
@@ -1181,7 +1182,9 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
     <article
       className={[
         "overflow-hidden rounded-xl border bg-card shadow-sm",
-        priority ? "border-destructive/60 ring-2 ring-destructive/30" : "border-border",
+        isAwaiting ? "border-destructive/60 ring-2 ring-destructive/30"
+          : isSurcharge ? "border-warning/60 ring-2 ring-warning/30 sm:border-border sm:ring-0"
+          : "border-border",
       ].join(" ")}
     >
       {/* Awaiting payment lives on top */}
