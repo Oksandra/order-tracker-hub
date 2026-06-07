@@ -864,14 +864,14 @@ function ItemTile({
         )}
       </div>
       <div
-        className="mt-2 hidden sm:line-clamp-2 text-xs font-medium leading-snug text-foreground"
+        className="mt-2 hidden sm:line-clamp-2 text-sm font-medium leading-snug text-foreground"
         title={item.title}
       >
         {item.title}
       </div>
       <div className="mt-2 flex items-center justify-between gap-1">
         <div
-          className={`text-sm font-semibold ${accentPrice ? "text-destructive" : "text-success"}`}
+          className={`text-[15px] sm:text-base font-semibold ${accentPrice ? "text-destructive" : "text-success"}`}
         >
           <PriceWithTooltip price={item.price} commission={item.commission} />
         </div>
