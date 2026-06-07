@@ -1349,6 +1349,13 @@ function CompletedOrderCard({ order }: { order: Order }) {
 
   return (
     <article className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+      {/* Mobile-only top bar with order number */}
+      <div className="flex sm:hidden items-center justify-between gap-2 border-b border-border/60 bg-muted/40 px-5 py-1.5 text-sm text-muted-foreground">
+        <span className="font-medium text-foreground">№ {order.number}</span>
+        <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
+          <Copy className="h-3.5 w-3.5" />
+        </button>
+      </div>
       <header className="border-b border-border/70 px-5 py-3.5">
         <div className="flex items-start justify-between gap-3">
           <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
@@ -1372,7 +1379,7 @@ function CompletedOrderCard({ order }: { order: Order }) {
               <span className="max-w-[280px] truncate">{order.pickup}</span>
             </div>
           )}
-          <div className="ml-auto flex items-center gap-1.5">
+          <div className="ml-auto hidden sm:flex items-center gap-1.5 text-base">
             <span># {order.number}</span>
           </div>
         </div>
