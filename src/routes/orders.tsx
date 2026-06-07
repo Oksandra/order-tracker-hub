@@ -863,6 +863,13 @@ function ItemTile({
           </button>
         )}
       </div>
+      <div
+        className="mt-2 hidden sm:block text-xs font-medium leading-snug text-foreground overflow-hidden"
+        style={{ display: undefined, WebkitLineClamp: 2, WebkitBoxOrient: "vertical" } as React.CSSProperties}
+        title={item.title}
+      >
+        <span className="sm:line-clamp-2 hidden sm:inline">{item.title}</span>
+      </div>
       <div className="mt-2 flex items-center justify-between gap-1">
         <div
           className={`text-sm font-semibold ${accentPrice ? "text-destructive" : "text-success"}`}
