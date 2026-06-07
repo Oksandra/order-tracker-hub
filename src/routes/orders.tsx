@@ -106,7 +106,7 @@ const STEPS: { key: OrderStatus; label: string; icon: typeof Package }[] = [
   { key: "from_supplier", label: "В пути от поставщика", icon: Warehouse },
   { key: "delivering", label: "Доставляется в пункт выдачи", icon: Truck },
   { key: "ready", label: "Готов к выдаче", icon: Flag },
-  { key: "received", label: "Получен", icon: CheckCircle2 },
+  { key: "received", label: "Получено", icon: CheckCircle2 },
 ];
 
 const img = (id: string) =>
@@ -812,7 +812,7 @@ function PaymentBar({ order }: { order: Order }) {
           <Clock className="h-4 w-4" />
           <span className="font-semibold">Ожидаем оплаты {formatTimer(sec)}</span>
         </div>
-        <div className="ml-auto flex flex-1 sm:flex-none flex-wrap items-center justify-end gap-x-3 gap-y-2">
+        <div className="ml-auto flex flex-1 sm:flex-none flex-wrap items-center justify-center sm:justify-end gap-x-3 gap-y-2">
           <span className="text-sm text-muted-foreground">
             Итого по заказу:{" "}
             <TotalWithTooltip order={order} className="text-base font-bold text-destructive" />
@@ -853,7 +853,7 @@ function PaymentBar({ order }: { order: Order }) {
           </span>
         </span>
       </div>
-      <div className="ml-auto flex flex-1 sm:flex-none flex-wrap items-center justify-end gap-x-3 gap-y-2">
+      <div className="ml-auto flex flex-1 sm:flex-none flex-wrap items-center justify-center sm:justify-end gap-x-3 gap-y-2">
         <span className="text-sm text-muted-foreground">
           Итого по заказу:{" "}
           <TotalWithTooltip order={order} className="text-base font-bold text-foreground" />
@@ -1173,6 +1173,7 @@ function HeaderActions() {
 
 function OrderCard({ order, priority = false }: { order: Order; priority?: boolean }) {
   const isAwaiting = order.payment === "awaiting";
+  const isSurcharge = order.payment === "surcharge";
   const pickupEditable = order.groups.some(
     (g) => g.status === "paid" || g.status === "collecting",
   );
@@ -1181,7 +1182,9 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
     <article
       className={[
         "overflow-hidden rounded-xl border bg-card shadow-sm",
-        priority ? "border-destructive/60 ring-2 ring-destructive/30" : "border-border",
+        isAwaiting ? "border-destructive/60 ring-2 ring-destructive/30"
+          : isSurcharge ? "border-warning/60 ring-2 ring-warning/30 sm:border-border sm:ring-0"
+          : "border-border",
       ].join(" ")}
     >
       {/* Awaiting payment lives on top */}
@@ -1315,7 +1318,7 @@ function CompletedOrderCard({ order }: { order: Order }) {
         <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
           <div className="flex items-center gap-1.5">
             <CheckCircle2 className="h-3.5 w-3.5 text-success" />
-            <span className="text-foreground font-medium">Получено {order.completedAt}</span>
+            <span className="text-success font-medium">Получено {order.completedAt}</span>
           </div>
           {order.cdek ? (
             <div className="flex items-center gap-1.5">
