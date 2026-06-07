@@ -1264,7 +1264,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
                 <span className="max-w-[280px] truncate">{order.pickup}</span>
               </div>
             )}
-            <div className="ml-auto hidden sm:flex items-center gap-1.5">
+            <div className="ml-auto hidden sm:flex items-center gap-1.5 text-base">
               <span># {order.number}</span>
               <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
                 <Copy className="h-3.5 w-3.5" />
