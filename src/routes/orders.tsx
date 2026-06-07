@@ -106,7 +106,7 @@ const STEPS: { key: OrderStatus; label: string; icon: typeof Package }[] = [
   { key: "from_supplier", label: "В пути от поставщика", icon: Warehouse },
   { key: "delivering", label: "Доставляется в пункт выдачи", icon: Truck },
   { key: "ready", label: "Готов к выдаче", icon: Flag },
-  { key: "received", label: "Получен", icon: CheckCircle2 },
+  { key: "received", label: "Получено", icon: CheckCircle2 },
 ];
 
 const img = (id: string) =>
