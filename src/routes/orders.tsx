@@ -1318,7 +1318,7 @@ function CompletedOrderCard({ order }: { order: Order }) {
         <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
           <div className="flex items-center gap-1.5">
             <CheckCircle2 className="h-3.5 w-3.5 text-success" />
-            <span className="text-foreground font-medium">Получено {order.completedAt}</span>
+            <span className="text-success font-medium">Получено {order.completedAt}</span>
           </div>
           {order.cdek ? (
             <div className="flex items-center gap-1.5">
