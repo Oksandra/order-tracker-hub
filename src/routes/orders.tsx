@@ -1223,6 +1223,7 @@ function HeaderActions() {
 function OrderCard({ order, priority = false }: { order: Order; priority?: boolean }) {
   const isAwaiting = order.payment === "awaiting";
   const isSurcharge = order.payment === "surcharge";
+  const isFullyOutOfStock = order.groups.every((g) => g.status === "out_of_stock");
   const pickupEditable = order.groups.some(
     (g) => g.status === "paid" || g.status === "collecting",
   );
@@ -1231,7 +1232,8 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
     <article
       className={[
         "overflow-hidden rounded-xl border bg-card shadow-sm",
-        isAwaiting ? "border-destructive/60 ring-2 ring-destructive/30"
+        isFullyOutOfStock ? "border-destructive ring-2 ring-destructive/40"
+          : isAwaiting ? "border-destructive/60 ring-2 ring-destructive/30"
           : isSurcharge ? "border-warning/60 ring-2 ring-warning/30 sm:border-border sm:ring-0"
           : "border-border",
       ].join(" ")}
@@ -1254,6 +1256,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
             <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
             <HeaderActions />
           </div>
+          {!isFullyOutOfStock && (
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <Truck className="h-5 w-5 text-primary" />
@@ -1281,7 +1284,16 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
               </button>
             </div>
           </div>
-          {order.cdek && order.trackNumber && (
+          )}
+          {isFullyOutOfStock && (
+            <div className="mt-2 hidden sm:flex items-center justify-end gap-1.5 text-base text-muted-foreground">
+              <span># {order.number}</span>
+              <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
+                <Copy className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          )}
+          {order.cdek && order.trackNumber && !isFullyOutOfStock && (
             <div className="mt-2.5 flex flex-wrap items-center gap-2 text-sm">
               <span className="text-muted-foreground">Трек-номер СДЭК:</span>
               <span className="rounded-md bg-info/15 px-2.5 py-1 font-mono text-base font-bold tracking-wide text-info">
@@ -1308,34 +1320,29 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
         </header>
       )}
 
+      {/* Refund status banner for fully out-of-stock orders */}
+      {isFullyOutOfStock && (
+        <div className="flex items-center gap-2 border-b border-destructive/40 bg-destructive/10 px-5 py-2.5 text-sm font-semibold text-destructive">
+          <AlertCircle className="h-4 w-4" />
+          Денежные средства вернутся по заказу
+        </div>
+      )}
+
       {/* Groups: each status group has its own pipeline + items */}
       <div className="divide-y divide-border/70">
         {order.groups.map((g, i) => (
           <GroupBlock
             key={i}
             group={g}
-            hidePipeline={isAwaiting}
-            hideStatusLabel={isAwaiting}
+            hidePipeline={isAwaiting || isFullyOutOfStock}
+            hideStatusLabel={isAwaiting || isFullyOutOfStock}
             accentPrice={isAwaiting}
           />
         ))}
       </div>
 
-      {/* Payment footer for paid / surcharge */}
-      {!isAwaiting && <PaymentBar order={order} />}
-
-      {/* Download contract — every order except awaiting */}
-      {!isAwaiting && (
-        <div className="border-t border-border/70 px-5 py-2">
-          <a
-            href="#"
-            className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-          >
-            <Download className="h-3 w-3" />
-            Скачать договор
-          </a>
-        </div>
-      )}
+      {/* Payment footer for paid / surcharge (hidden when fully OOS) */}
+      {!isAwaiting && !isFullyOutOfStock && <PaymentBar order={order} />}
     </article>
   );
 }
