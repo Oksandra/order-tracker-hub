@@ -26,7 +26,6 @@ import {
   MessageSquare,
   X,
   Receipt,
-  Receipt,
   QrCode,
   ChevronRight,
 } from "lucide-react";
