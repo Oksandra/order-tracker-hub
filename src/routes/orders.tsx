@@ -1450,13 +1450,6 @@ function CompletedOrderCard({ order }: { order: Order }) {
         </div>
       ) : (
         <div className="flex flex-wrap items-center gap-4 border-t border-border/70 px-5 py-2.5">
-          <a
-            href="#"
-            className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-          >
-            <Download className="h-3 w-3" />
-            Скачать договор
-          </a>
           <button
             type="button"
             onClick={() => setReturnMode(true)}
