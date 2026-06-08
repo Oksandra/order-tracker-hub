@@ -884,28 +884,47 @@ function PaymentBar({ order }: { order: Order }) {
   }
 
   // surcharge
+  const total = orderTotal(order);
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border/70 bg-warning/10 px-5 py-2">
-      <div className="hidden sm:flex items-center gap-2 text-warning">
-        <Wallet className="h-4 w-4" />
-        <span className="text-sm font-medium text-foreground">
-          Нужна доплата:{" "}
-          <span className="font-semibold text-warning">
-            {formatPrice(order.payAmount ?? 0)}
+    <>
+      {/* Mobile layout per design ref */}
+      <div className="sm:hidden flex items-center gap-3 border-t border-border/70 bg-warning/10 px-4 py-2.5">
+        <div className="flex flex-col text-sm leading-tight">
+          <span className="text-muted-foreground">
+            Осталось доплатить:{" "}
+            <span className="font-bold text-warning">{formatPrice(order.payAmount ?? 0)}</span>
           </span>
-        </span>
-      </div>
-      <div className="ml-auto flex flex-1 sm:flex-none flex-wrap items-center justify-center sm:justify-end gap-x-3 gap-y-2">
-        <span className="text-sm text-muted-foreground">
-          Итого по заказу:{" "}
-          <TotalWithTooltip order={order} className="text-base font-bold text-foreground" />
-        </span>
-        <button className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
-          <CreditCard className="h-4 w-4" />
-          Доплатить {formatPrice(order.payAmount ?? 0)}
+          <span className="mt-0.5 text-xs text-muted-foreground">
+            Итого заказа: {formatPrice(total)}
+          </span>
+        </div>
+        <button className="ml-auto inline-flex items-center justify-center rounded-full bg-info px-5 py-2 text-sm font-semibold text-info-foreground shadow-sm hover:opacity-95">
+          Доплатить
         </button>
       </div>
-    </div>
+      {/* Desktop / tablet */}
+      <div className="hidden sm:flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border/70 bg-warning/10 px-5 py-2">
+        <div className="flex items-center gap-2 text-warning">
+          <Wallet className="h-4 w-4" />
+          <span className="text-sm font-medium text-foreground">
+            Нужна доплата:{" "}
+            <span className="font-semibold text-warning">
+              {formatPrice(order.payAmount ?? 0)}
+            </span>
+          </span>
+        </div>
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-x-3 gap-y-2">
+          <span className="text-sm text-muted-foreground">
+            Итого по заказу:{" "}
+            <TotalWithTooltip order={order} className="text-base font-bold text-foreground" />
+          </span>
+          <button className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
+            <CreditCard className="h-4 w-4" />
+            Доплатить {formatPrice(order.payAmount ?? 0)}
+          </button>
+        </div>
+      </div>
+    </>
   );
 }
 
