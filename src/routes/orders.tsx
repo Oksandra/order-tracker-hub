@@ -1521,7 +1521,7 @@ function OrdersPage() {
   });
 
   const isActive = tab === "active";
-  const list = isActive ? sorted : COMPLETED_ORDERS;
+  
 
   return (
     <TooltipProvider delayDuration={150}>
