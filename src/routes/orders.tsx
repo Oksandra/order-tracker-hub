@@ -1176,6 +1176,9 @@ function HeaderActions() {
       <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Вопрос поставщику">
         <MessageSquare className="h-4 w-4" />
       </button>
+      <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Скачать договор">
+        <Receipt className="h-4 w-4" />
+      </button>
     </>
   );
   return (
@@ -1205,6 +1208,10 @@ function HeaderActions() {
             <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
               <MessageSquare className="h-4 w-4 text-muted-foreground" />
               Вопрос поставщику
+            </button>
+            <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
+              <Receipt className="h-4 w-4 text-muted-foreground" />
+              Скачать договор
             </button>
           </PopoverContent>
         </Popover>
