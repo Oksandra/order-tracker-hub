@@ -26,6 +26,9 @@ import {
   MessageSquare,
   X,
   Download,
+  Receipt,
+  QrCode,
+  ChevronRight,
 } from "lucide-react";
 import {
   Tooltip,
