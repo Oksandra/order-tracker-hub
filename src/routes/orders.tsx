@@ -1483,21 +1483,10 @@ function OrdersPage() {
             <span className="text-foreground">Мои заказы</span>
           </nav>
 
-          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-                Мои заказы
-              </h1>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {isActive
-                  ? "Активные заказы — отслеживайте статус и путь каждой позиции"
-                  : "Завершённые заказы — в течение 30 дней с момента выдачи можно оформить возврат"}
-              </p>
-            </div>
-            <div className="text-sm text-muted-foreground">
-              {isActive ? "Всего активных: " : "Всего завершённых: "}
-              <span className="font-semibold text-foreground">{list.length}</span>
-            </div>
+          <div className="mb-4">
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+              Мои заказы
+            </h1>
           </div>
 
           {/* Tabs */}
