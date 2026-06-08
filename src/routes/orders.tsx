@@ -25,7 +25,9 @@ import {
   Share2,
   MessageSquare,
   X,
-  Download,
+  Receipt,
+  QrCode,
+  ChevronRight,
 } from "lucide-react";
 import {
   Tooltip,
@@ -881,28 +883,47 @@ function PaymentBar({ order }: { order: Order }) {
   }
 
   // surcharge
+  const total = orderTotal(order);
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border/70 bg-warning/10 px-5 py-2">
-      <div className="hidden sm:flex items-center gap-2 text-warning">
-        <Wallet className="h-4 w-4" />
-        <span className="text-sm font-medium text-foreground">
-          Нужна доплата:{" "}
-          <span className="font-semibold text-warning">
-            {formatPrice(order.payAmount ?? 0)}
+    <>
+      {/* Mobile layout per design ref */}
+      <div className="sm:hidden flex items-center gap-3 border-t border-border/70 bg-warning/10 px-4 py-2.5">
+        <div className="flex flex-col text-sm leading-tight">
+          <span className="text-muted-foreground">
+            Осталось доплатить:{" "}
+            <span className="font-bold text-warning">{formatPrice(order.payAmount ?? 0)}</span>
           </span>
-        </span>
-      </div>
-      <div className="ml-auto flex flex-1 sm:flex-none flex-wrap items-center justify-center sm:justify-end gap-x-3 gap-y-2">
-        <span className="text-sm text-muted-foreground">
-          Итого по заказу:{" "}
-          <TotalWithTooltip order={order} className="text-base font-bold text-foreground" />
-        </span>
-        <button className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
-          <CreditCard className="h-4 w-4" />
-          Доплатить {formatPrice(order.payAmount ?? 0)}
+          <span className="mt-0.5 text-xs text-muted-foreground">
+            Итого заказа: {formatPrice(total)}
+          </span>
+        </div>
+        <button className="ml-auto inline-flex items-center justify-center rounded-full bg-info px-5 py-2 text-sm font-semibold text-info-foreground shadow-sm hover:opacity-95">
+          Доплатить
         </button>
       </div>
-    </div>
+      {/* Desktop / tablet */}
+      <div className="hidden sm:flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border/70 bg-warning/10 px-5 py-2">
+        <div className="flex items-center gap-2 text-warning">
+          <Wallet className="h-4 w-4" />
+          <span className="text-sm font-medium text-foreground">
+            Нужна доплата:{" "}
+            <span className="font-semibold text-warning">
+              {formatPrice(order.payAmount ?? 0)}
+            </span>
+          </span>
+        </div>
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-x-3 gap-y-2">
+          <span className="text-sm text-muted-foreground">
+            Итого по заказу:{" "}
+            <TotalWithTooltip order={order} className="text-base font-bold text-foreground" />
+          </span>
+          <button className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
+            <CreditCard className="h-4 w-4" />
+            Доплатить {formatPrice(order.payAmount ?? 0)}
+          </button>
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -1072,57 +1093,85 @@ function GroupBlock({
         </div>
       )}
       {group.status === "out_of_stock" && <OutOfStockNotice group={group} />}
-      <div className="flex flex-wrap items-start gap-4">
-        {visibleItems.map((item) => (
-          <ItemTile
-            key={item.id}
-            item={item}
-            removable={removable && !selectable}
-            accentPrice={accentPrice}
-            selectable={selectable}
-            selected={selectedIds?.has(item.id)}
-            onToggle={() => onToggleItem?.(item.id)}
-          />
-        ))}
-        {canCollapse && !expanded && hiddenCount > 0 && (
-          <button
-            type="button"
-            onClick={() => setExpanded(true)}
-            className="group w-[140px] flex-none"
-            aria-label={`Показать ещё ${hiddenCount} ${hiddenCount === 1 ? "товар" : hiddenCount < 5 ? "товара" : "товаров"}`}
-          >
-            <div className="relative h-[140px] w-full overflow-hidden rounded-lg border border-dashed border-primary/40 bg-primary/5 transition group-hover:bg-primary/10">
-              <div className="absolute inset-0 grid grid-cols-2 gap-0.5 p-0.5 opacity-50">
-                {group.items.slice(4, 8).map((it) => (
-                  <img
-                    key={it.id}
-                    src={it.image}
-                    alt=""
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                  />
-                ))}
-              </div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-primary/40 text-primary-foreground">
-                <span className="text-2xl font-bold">+{hiddenCount}</span>
-                <span className="mt-0.5 text-xs font-medium">
-                  {hiddenCount === 1 ? "товар" : hiddenCount < 5 ? "товара" : "товаров"}
-                </span>
-              </div>
+      {group.status === "ready" && (
+        <div className="mb-3 flex items-center gap-3 rounded-lg border border-warning/40 bg-warning/5 px-3 py-2.5">
+          <div className="flex h-16 w-16 flex-none items-center justify-center rounded-md border border-border bg-card">
+            <QrCode className="h-12 w-12 text-foreground" />
+          </div>
+          <div className="text-sm">
+            <div className="font-medium text-foreground">QR-код для получения</div>
+            <div className="mt-0.5 text-xs text-muted-foreground">
+              Срок хранения: до 12 июля 2025
             </div>
-            <div className="mt-2 text-xs font-medium text-primary">
-              Показать все
+          </div>
+        </div>
+      )}
+      <div className="relative">
+        <div
+          className={[
+            "flex items-start gap-4",
+            "sm:flex-wrap",
+            visibleItems.length > 2 ? "overflow-x-auto pb-2 sm:overflow-visible sm:pb-0 -mx-1 px-1" : "flex-wrap",
+          ].join(" ")}
+        >
+          {visibleItems.map((item) => (
+            <ItemTile
+              key={item.id}
+              item={item}
+              removable={removable && !selectable}
+              accentPrice={accentPrice}
+              selectable={selectable}
+              selected={selectedIds?.has(item.id)}
+              onToggle={() => onToggleItem?.(item.id)}
+            />
+          ))}
+          {canCollapse && !expanded && hiddenCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setExpanded(true)}
+              className="group w-[140px] flex-none"
+              aria-label={`Показать ещё ${hiddenCount} ${hiddenCount === 1 ? "товар" : hiddenCount < 5 ? "товара" : "товаров"}`}
+            >
+              <div className="relative h-[140px] w-full overflow-hidden rounded-lg border border-dashed border-primary/40 bg-primary/5 transition group-hover:bg-primary/10">
+                <div className="absolute inset-0 grid grid-cols-2 gap-0.5 p-0.5 opacity-50">
+                  {group.items.slice(4, 8).map((it) => (
+                    <img
+                      key={it.id}
+                      src={it.image}
+                      alt=""
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  ))}
+                </div>
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-primary/40 text-primary-foreground">
+                  <span className="text-2xl font-bold">+{hiddenCount}</span>
+                  <span className="mt-0.5 text-xs font-medium">
+                    {hiddenCount === 1 ? "товар" : hiddenCount < 5 ? "товара" : "товаров"}
+                  </span>
+                </div>
+              </div>
+              <div className="mt-2 text-xs font-medium text-primary">
+                Показать все
+              </div>
+            </button>
+          )}
+          {canCollapse && expanded && (
+            <button
+              type="button"
+              onClick={() => setExpanded(false)}
+              className="w-[140px] flex-none self-center text-xs font-medium text-primary hover:underline"
+            >
+              Свернуть
+            </button>
+          )}
+        </div>
+        {visibleItems.length > 2 && (
+          <div className="pointer-events-none absolute right-1 top-[60px] sm:hidden">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md border border-primary/40 bg-background/95 text-primary shadow-md">
+              <ChevronRight className="h-4 w-4" strokeWidth={2.5} />
             </div>
-          </button>
-        )}
-        {canCollapse && expanded && (
-          <button
-            type="button"
-            onClick={() => setExpanded(false)}
-            className="w-[140px] flex-none self-center text-xs font-medium text-primary hover:underline"
-          >
-            Свернуть
-          </button>
+          </div>
         )}
       </div>
     </div>
@@ -1173,6 +1222,9 @@ function HeaderActions() {
       <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Вопрос поставщику">
         <MessageSquare className="h-4 w-4" />
       </button>
+      <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Скачать договор">
+        <Receipt className="h-4 w-4" />
+      </button>
     </>
   );
   return (
@@ -1203,6 +1255,10 @@ function HeaderActions() {
               <MessageSquare className="h-4 w-4 text-muted-foreground" />
               Вопрос поставщику
             </button>
+            <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
+              <Receipt className="h-4 w-4 text-muted-foreground" />
+              Скачать договор
+            </button>
           </PopoverContent>
         </Popover>
       </div>
@@ -1213,6 +1269,7 @@ function HeaderActions() {
 function OrderCard({ order, priority = false }: { order: Order; priority?: boolean }) {
   const isAwaiting = order.payment === "awaiting";
   const isSurcharge = order.payment === "surcharge";
+  const isFullyOutOfStock = order.groups.every((g) => g.status === "out_of_stock");
   const pickupEditable = order.groups.some(
     (g) => g.status === "paid" || g.status === "collecting",
   );
@@ -1221,7 +1278,8 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
     <article
       className={[
         "overflow-hidden rounded-xl border bg-card shadow-sm",
-        isAwaiting ? "border-destructive/60 ring-2 ring-destructive/30"
+        isFullyOutOfStock ? "border-destructive ring-2 ring-destructive/40"
+          : isAwaiting ? "border-destructive/60 ring-2 ring-destructive/30"
           : isSurcharge ? "border-warning/60 ring-2 ring-warning/30 sm:border-border sm:ring-0"
           : "border-border",
       ].join(" ")}
@@ -1244,6 +1302,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
             <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
             <HeaderActions />
           </div>
+          {!isFullyOutOfStock && (
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <Truck className="h-5 w-5 text-primary" />
@@ -1271,7 +1330,16 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
               </button>
             </div>
           </div>
-          {order.cdek && order.trackNumber && (
+          )}
+          {isFullyOutOfStock && (
+            <div className="mt-2 hidden sm:flex items-center justify-end gap-1.5 text-base text-muted-foreground">
+              <span># {order.number}</span>
+              <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
+                <Copy className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          )}
+          {order.cdek && order.trackNumber && !isFullyOutOfStock && (
             <div className="mt-2.5 flex flex-wrap items-center gap-2 text-sm">
               <span className="text-muted-foreground">Трек-номер СДЭК:</span>
               <span className="rounded-md bg-info/15 px-2.5 py-1 font-mono text-base font-bold tracking-wide text-info">
@@ -1298,34 +1366,29 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
         </header>
       )}
 
+      {/* Refund status banner for fully out-of-stock orders */}
+      {isFullyOutOfStock && (
+        <div className="flex items-center gap-2 border-b border-destructive/40 bg-destructive/10 px-5 py-2.5 text-sm font-semibold text-destructive">
+          <AlertCircle className="h-4 w-4" />
+          Денежные средства вернутся по заказу
+        </div>
+      )}
+
       {/* Groups: each status group has its own pipeline + items */}
       <div className="divide-y divide-border/70">
         {order.groups.map((g, i) => (
           <GroupBlock
             key={i}
             group={g}
-            hidePipeline={isAwaiting}
-            hideStatusLabel={isAwaiting}
+            hidePipeline={isAwaiting || isFullyOutOfStock}
+            hideStatusLabel={isAwaiting || isFullyOutOfStock}
             accentPrice={isAwaiting}
           />
         ))}
       </div>
 
-      {/* Payment footer for paid / surcharge */}
-      {!isAwaiting && <PaymentBar order={order} />}
-
-      {/* Download contract — every order except awaiting */}
-      {!isAwaiting && (
-        <div className="border-t border-border/70 px-5 py-2">
-          <a
-            href="#"
-            className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-          >
-            <Download className="h-3 w-3" />
-            Скачать договор
-          </a>
-        </div>
-      )}
+      {/* Payment footer for paid / surcharge (hidden when fully OOS) */}
+      {!isAwaiting && !isFullyOutOfStock && <PaymentBar order={order} />}
     </article>
   );
 }
@@ -1433,13 +1496,6 @@ function CompletedOrderCard({ order }: { order: Order }) {
         </div>
       ) : (
         <div className="flex flex-wrap items-center gap-4 border-t border-border/70 px-5 py-2.5">
-          <a
-            href="#"
-            className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-          >
-            <Download className="h-3 w-3" />
-            Скачать договор
-          </a>
           <button
             type="button"
             onClick={() => setReturnMode(true)}
@@ -1465,7 +1521,7 @@ function OrdersPage() {
   });
 
   const isActive = tab === "active";
-  const list = isActive ? sorted : COMPLETED_ORDERS;
+  
 
   return (
     <TooltipProvider delayDuration={150}>
@@ -1480,21 +1536,10 @@ function OrdersPage() {
             <span className="text-foreground">Мои заказы</span>
           </nav>
 
-          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-                Мои заказы
-              </h1>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {isActive
-                  ? "Активные заказы — отслеживайте статус и путь каждой позиции"
-                  : "Завершённые заказы — в течение 30 дней с момента выдачи можно оформить возврат"}
-              </p>
-            </div>
-            <div className="text-sm text-muted-foreground">
-              {isActive ? "Всего активных: " : "Всего завершённых: "}
-              <span className="font-semibold text-foreground">{list.length}</span>
-            </div>
+          <div className="mb-4">
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+              Мои заказы
+            </h1>
           </div>
 
           {/* Tabs */}
