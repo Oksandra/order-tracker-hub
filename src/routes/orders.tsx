@@ -25,7 +25,7 @@ import {
   Share2,
   MessageSquare,
   X,
-  Download,
+  Receipt,
   Receipt,
   QrCode,
   ChevronRight,
