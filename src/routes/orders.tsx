@@ -1114,19 +1114,20 @@ function GroupBlock({
           className={[
             "flex items-start gap-4",
             "sm:flex-wrap",
-            visibleItems.length > 2 ? "overflow-x-auto pb-2 sm:overflow-visible sm:pb-0 -mx-1 px-1" : "flex-wrap",
+            visibleItems.length > 2 ? "overflow-x-auto pb-2 sm:overflow-visible sm:pb-0 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory" : "flex-wrap",
           ].join(" ")}
         >
           {visibleItems.map((item) => (
-            <ItemTile
-              key={item.id}
-              item={item}
-              removable={removable && !selectable}
-              accentPrice={accentPrice}
-              selectable={selectable}
-              selected={selectedIds?.has(item.id)}
-              onToggle={() => onToggleItem?.(item.id)}
-            />
+            <div key={item.id} className={visibleItems.length > 2 ? "snap-start" : ""}>
+              <ItemTile
+                item={item}
+                removable={removable && !selectable}
+                accentPrice={accentPrice}
+                selectable={selectable}
+                selected={selectedIds?.has(item.id)}
+                onToggle={() => onToggleItem?.(item.id)}
+              />
+            </div>
           ))}
           {canCollapse && !expanded && hiddenCount > 0 && (
             <button
@@ -1170,10 +1171,9 @@ function GroupBlock({
           )}
         </div>
         {visibleItems.length > 2 && (
-          <div className="pointer-events-none absolute right-1 top-[60px] sm:hidden">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md border border-primary/40 bg-background/95 text-primary shadow-md">
-              <ChevronRight className="h-4 w-4" strokeWidth={2.5} />
-            </div>
+          <div className="pointer-events-none absolute right-0 top-0 bottom-2 flex items-center sm:hidden">
+            <div className="h-full w-8 bg-gradient-to-l from-card to-transparent" />
+            <ChevronRight className="-ml-5 h-4 w-4 text-muted-foreground/60" strokeWidth={2} />
           </div>
         )}
       </div>
