@@ -1359,9 +1359,13 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
                 href={`https://www.cdek.ru/ru/tracking?order_id=${order.trackNumber}`}
                 target="_blank"
                 rel="noreferrer"
+                aria-label="Отследить отправление СДЭК"
                 className="text-sm font-medium text-success hover:underline"
               >
-                Отследить
+                <span className="hidden sm:inline">Отследить</span>
+                <span className="sm:hidden inline-flex h-7 w-7 items-center justify-center rounded-full bg-success/10 text-success">
+                  <ArrowUpRight className="h-4 w-4" strokeWidth={2.5} />
+                </span>
               </a>
             </div>
           )}
