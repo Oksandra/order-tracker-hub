@@ -1551,7 +1551,7 @@ function OrdersPage() {
                   : "border-transparent text-muted-foreground hover:text-foreground",
               ].join(" ")}
             >
-              Активные заказы
+              <span className="sm:hidden">Активные</span><span className="hidden sm:inline">Активные заказы</span>
               <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
                 {sorted.length}
               </span>
