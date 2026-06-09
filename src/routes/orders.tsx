@@ -1101,9 +1101,9 @@ function GroupBlock({
           <div className="flex h-16 w-16 flex-none items-center justify-center rounded-md border border-border bg-card">
             <QrCode className="h-12 w-12 text-foreground" />
           </div>
-          <div className="text-sm">
-            <div className="font-medium text-foreground">QR-код для получения</div>
-            <div className="mt-0.5 text-xs text-muted-foreground">
+          <div>
+            <div className="text-sm font-medium text-foreground">QR-код для получения</div>
+            <div className="mt-1 text-base font-semibold text-warning">
               Срок хранения: до 12 июля 2025
             </div>
           </div>
