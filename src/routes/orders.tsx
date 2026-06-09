@@ -28,7 +28,9 @@ import {
   Receipt,
   QrCode,
   ChevronRight,
+  ArrowUpRight,
 } from "lucide-react";
+import contractIcon from "@/assets/contract-receipt.png.asset.json";
 import {
   Tooltip,
   TooltipContent,
