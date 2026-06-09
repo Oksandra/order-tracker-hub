@@ -1566,7 +1566,7 @@ function OrdersPage() {
                   : "border-transparent text-muted-foreground hover:text-foreground",
               ].join(" ")}
             >
-              Завершённые заказы
+              <span className="sm:hidden">Завершённые</span><span className="hidden sm:inline">Завершённые заказы</span>
               <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
                 {COMPLETED_ORDERS.length}
               </span>
