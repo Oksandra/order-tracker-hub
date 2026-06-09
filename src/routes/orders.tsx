@@ -28,7 +28,9 @@ import {
   Receipt,
   QrCode,
   ChevronRight,
+  ArrowUpRight,
 } from "lucide-react";
+import contractIcon from "@/assets/contract-receipt.png.asset.json";
 import {
   Tooltip,
   TooltipContent,
@@ -897,7 +899,8 @@ function PaymentBar({ order }: { order: Order }) {
             Итого заказа: {formatPrice(total)}
           </span>
         </div>
-        <button className="ml-auto inline-flex items-center justify-center rounded-full bg-info px-5 py-2 text-sm font-semibold text-info-foreground shadow-sm hover:opacity-95">
+        <button className="ml-auto inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95">
+          <CreditCard className="h-4 w-4" />
           Доплатить
         </button>
       </div>
@@ -1098,9 +1101,9 @@ function GroupBlock({
           <div className="flex h-16 w-16 flex-none items-center justify-center rounded-md border border-border bg-card">
             <QrCode className="h-12 w-12 text-foreground" />
           </div>
-          <div className="text-sm">
-            <div className="font-medium text-foreground">QR-код для получения</div>
-            <div className="mt-0.5 text-xs text-muted-foreground">
+          <div>
+            <div className="text-sm font-medium text-foreground">QR-код для получения</div>
+            <div className="mt-1 text-base font-semibold text-warning">
               Срок хранения: до 12 июля 2025
             </div>
           </div>
@@ -1111,19 +1114,20 @@ function GroupBlock({
           className={[
             "flex items-start gap-4",
             "sm:flex-wrap",
-            visibleItems.length > 2 ? "overflow-x-auto pb-2 sm:overflow-visible sm:pb-0 -mx-1 px-1" : "flex-wrap",
+            visibleItems.length > 2 ? "overflow-x-auto pb-2 sm:overflow-visible sm:pb-0 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory" : "flex-wrap",
           ].join(" ")}
         >
           {visibleItems.map((item) => (
-            <ItemTile
-              key={item.id}
-              item={item}
-              removable={removable && !selectable}
-              accentPrice={accentPrice}
-              selectable={selectable}
-              selected={selectedIds?.has(item.id)}
-              onToggle={() => onToggleItem?.(item.id)}
-            />
+            <div key={item.id} className={visibleItems.length > 2 ? "snap-start" : ""}>
+              <ItemTile
+                item={item}
+                removable={removable && !selectable}
+                accentPrice={accentPrice}
+                selectable={selectable}
+                selected={selectedIds?.has(item.id)}
+                onToggle={() => onToggleItem?.(item.id)}
+              />
+            </div>
           ))}
           {canCollapse && !expanded && hiddenCount > 0 && (
             <button
@@ -1167,10 +1171,9 @@ function GroupBlock({
           )}
         </div>
         {visibleItems.length > 2 && (
-          <div className="pointer-events-none absolute right-1 top-[60px] sm:hidden">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md border border-primary/40 bg-background/95 text-primary shadow-md">
-              <ChevronRight className="h-4 w-4" strokeWidth={2.5} />
-            </div>
+          <div className="pointer-events-none absolute right-0 top-0 bottom-2 flex items-center sm:hidden">
+            <div className="h-full w-8 bg-gradient-to-l from-card to-transparent" />
+            <ChevronRight className="-ml-5 h-4 w-4 text-muted-foreground/60" strokeWidth={2} />
           </div>
         )}
       </div>
@@ -1223,7 +1226,7 @@ function HeaderActions() {
         <MessageSquare className="h-4 w-4" />
       </button>
       <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Скачать договор">
-        <Receipt className="h-4 w-4" />
+        <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
       </button>
     </>
   );
@@ -1256,7 +1259,7 @@ function HeaderActions() {
               Вопрос поставщику
             </button>
             <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
-              <Receipt className="h-4 w-4 text-muted-foreground" />
+              <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
               Скачать договор
             </button>
           </PopoverContent>
@@ -1270,6 +1273,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
   const isAwaiting = order.payment === "awaiting";
   const isSurcharge = order.payment === "surcharge";
   const isFullyOutOfStock = order.groups.every((g) => g.status === "out_of_stock");
+  const hasReady = order.groups.some((g) => g.status === "ready");
   const pickupEditable = order.groups.some(
     (g) => g.status === "paid" || g.status === "collecting",
   );
@@ -1304,10 +1308,12 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
           </div>
           {!isFullyOutOfStock && (
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1.5">
-              <Truck className="h-5 w-5 text-primary" />
-              <span className="text-foreground text-base font-semibold">{order.date}</span>
-            </div>
+            {!hasReady && (
+              <div className="flex items-center gap-1.5">
+                <Truck className="h-5 w-5 text-primary" />
+                <span className="text-foreground text-base font-semibold">{order.date}</span>
+              </div>
+            )}
             {order.cdek ? (
               <div className="flex items-center gap-1.5">
                 <span className="inline-flex items-center rounded-sm bg-success px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-success-foreground">
@@ -1356,9 +1362,13 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
                 href={`https://www.cdek.ru/ru/tracking?order_id=${order.trackNumber}`}
                 target="_blank"
                 rel="noreferrer"
+                aria-label="Отследить отправление СДЭК"
                 className="text-sm font-medium text-success hover:underline"
               >
-                Отследить
+                <span className="hidden sm:inline">Отследить</span>
+                <span className="sm:hidden inline-flex h-7 w-7 items-center justify-center rounded-full bg-success/10 text-success">
+                  <ArrowUpRight className="h-4 w-4" strokeWidth={2.5} />
+                </span>
               </a>
             </div>
           )}
@@ -1366,13 +1376,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
         </header>
       )}
 
-      {/* Refund status banner for fully out-of-stock orders */}
-      {isFullyOutOfStock && (
-        <div className="flex items-center gap-2 border-b border-destructive/40 bg-destructive/10 px-5 py-2.5 text-sm font-semibold text-destructive">
-          <AlertCircle className="h-4 w-4" />
-          Денежные средства вернутся по заказу
-        </div>
-      )}
+      {/* Refund status banner removed per design update */}
 
       {/* Groups: each status group has its own pipeline + items */}
       <div className="divide-y divide-border/70">
@@ -1499,7 +1503,7 @@ function CompletedOrderCard({ order }: { order: Order }) {
           <button
             type="button"
             onClick={() => setReturnMode(true)}
-            className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary hover:bg-primary/10"
+            className="ml-auto inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
           >
             Оформить заявку на возврат
           </button>
@@ -1554,7 +1558,7 @@ function OrdersPage() {
                   : "border-transparent text-muted-foreground hover:text-foreground",
               ].join(" ")}
             >
-              Активные заказы
+              <span className="sm:hidden">Активные</span><span className="hidden sm:inline">Активные заказы</span>
               <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
                 {sorted.length}
               </span>
@@ -1569,7 +1573,7 @@ function OrdersPage() {
                   : "border-transparent text-muted-foreground hover:text-foreground",
               ].join(" ")}
             >
-              Завершённые заказы
+              <span className="sm:hidden">Завершённые</span><span className="hidden sm:inline">Завершённые заказы</span>
               <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
                 {COMPLETED_ORDERS.length}
               </span>
