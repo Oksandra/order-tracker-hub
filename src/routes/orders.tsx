@@ -1308,10 +1308,12 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
           </div>
           {!isFullyOutOfStock && (
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1.5">
-              <Truck className="h-5 w-5 text-primary" />
-              <span className="text-foreground text-base font-semibold">{order.date}</span>
-            </div>
+            {!hasReady && (
+              <div className="flex items-center gap-1.5">
+                <Truck className="h-5 w-5 text-primary" />
+                <span className="text-foreground text-base font-semibold">{order.date}</span>
+              </div>
+            )}
             {order.cdek ? (
               <div className="flex items-center gap-1.5">
                 <span className="inline-flex items-center rounded-sm bg-success px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-success-foreground">
