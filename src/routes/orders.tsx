@@ -1258,7 +1258,7 @@ function HeaderActions() {
               Вопрос поставщику
             </button>
             <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
-              <Receipt className="h-4 w-4 text-muted-foreground" />
+              <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
               Скачать договор
             </button>
           </PopoverContent>
