@@ -1368,13 +1368,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
         </header>
       )}
 
-      {/* Refund status banner for fully out-of-stock orders */}
-      {isFullyOutOfStock && (
-        <div className="flex items-center gap-2 border-b border-destructive/40 bg-destructive/10 px-5 py-2.5 text-sm font-semibold text-destructive">
-          <AlertCircle className="h-4 w-4" />
-          Денежные средства вернутся по заказу
-        </div>
-      )}
+      {/* Refund status banner removed per design update */}
 
       {/* Groups: each status group has its own pipeline + items */}
       <div className="divide-y divide-border/70">
