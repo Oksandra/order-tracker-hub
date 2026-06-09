@@ -1273,6 +1273,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
   const isAwaiting = order.payment === "awaiting";
   const isSurcharge = order.payment === "surcharge";
   const isFullyOutOfStock = order.groups.every((g) => g.status === "out_of_stock");
+  const hasReady = order.groups.some((g) => g.status === "ready");
   const pickupEditable = order.groups.some(
     (g) => g.status === "paid" || g.status === "collecting",
   );
