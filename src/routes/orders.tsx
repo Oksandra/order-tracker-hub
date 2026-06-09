@@ -1225,7 +1225,7 @@ function HeaderActions() {
         <MessageSquare className="h-4 w-4" />
       </button>
       <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Скачать договор">
-        <Receipt className="h-4 w-4" />
+        <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
       </button>
     </>
   );
