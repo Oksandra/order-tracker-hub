@@ -1496,7 +1496,7 @@ function CompletedOrderCard({ order }: { order: Order }) {
           <button
             type="button"
             onClick={() => setReturnMode(true)}
-            className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary hover:bg-primary/10"
+            className="ml-auto inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
           >
             Оформить заявку на возврат
           </button>
