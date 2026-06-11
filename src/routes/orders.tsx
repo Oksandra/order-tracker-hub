@@ -1248,7 +1248,7 @@ function HeaderActions() {
           <PopoverContent align="end" className="w-56 p-2">
             <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
               <Heart className="h-4 w-4 text-muted-foreground" />
-              Добавить закупку в избранное
+              Добавить поставщика в избранное
             </button>
             <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
               <Share2 className="h-4 w-4 text-muted-foreground" />
