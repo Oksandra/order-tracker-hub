@@ -28,6 +28,7 @@ import {
   Receipt,
   QrCode,
   ChevronRight,
+  ChevronsRight,
   ArrowUpRight,
   Undo2,
 } from "lucide-react";
