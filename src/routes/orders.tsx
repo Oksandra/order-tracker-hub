@@ -1216,6 +1216,9 @@ function PickupSelector({ value }: { value: string }) {
 function HeaderActions() {
   const Icons = (
     <>
+      <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Скачать договор">
+        <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
+      </button>
       <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="В избранное">
         <Heart className="h-4 w-4" />
       </button>
@@ -1224,9 +1227,6 @@ function HeaderActions() {
       </button>
       <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Вопрос поставщику">
         <MessageSquare className="h-4 w-4" />
-      </button>
-      <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Скачать договор">
-        <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
       </button>
     </>
   );
