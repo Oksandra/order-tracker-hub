@@ -1347,7 +1347,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
           )}
           {order.cdek && order.trackNumber && !isFullyOutOfStock && (
             <div className="mt-2.5 flex flex-wrap items-center gap-2 text-sm">
-              <span className="text-muted-foreground">Трек-номер СДЭК:</span>
+              <span className="text-muted-foreground">Трек-номер:</span>
               <span className="rounded-md bg-info/15 px-2.5 py-1 font-mono text-base font-bold tracking-wide text-info">
                 {order.trackNumber}
               </span>
