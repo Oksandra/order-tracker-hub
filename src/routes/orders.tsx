@@ -1467,23 +1467,39 @@ function CompletedOrderCard({ order }: { order: Order }) {
         ))}
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 border-t border-border/70 bg-muted/30 px-5 py-3">
-        <div className="ml-auto flex flex-wrap items-center gap-4">
-          {!returnMode && (
+      <div className="flex items-center gap-3 border-t border-border/70 bg-muted/30 px-5 py-3">
+        {!returnMode && (
+          <>
             <button
               type="button"
               onClick={() => setReturnMode(true)}
-              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
             >
               Оформить заявку на возврат
             </button>
-          )}
-          <div className="text-sm text-muted-foreground">
-            Итого по заказу:{" "}
-            <TotalWithTooltip order={order} className="text-base font-semibold text-foreground" />
-          </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={() => setReturnMode(true)}
+                  aria-label="Оформить заявку на возврат"
+                  className="sm:hidden inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+                >
+                  <Undo2 className="h-4 w-4" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="bg-foreground text-background">
+                Оформить заявку на возврат
+              </TooltipContent>
+            </Tooltip>
+          </>
+        )}
+        <div className="ml-auto text-sm text-muted-foreground">
+          Итого по заказу:{" "}
+          <TotalWithTooltip order={order} className="text-base font-semibold text-foreground" />
         </div>
       </div>
+
 
       {returnMode && (
         <div className="flex flex-wrap items-center gap-3 border-t border-border/70 bg-primary/5 px-5 py-3">
