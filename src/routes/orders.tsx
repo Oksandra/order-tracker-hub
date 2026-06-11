@@ -475,6 +475,62 @@ const ORDERS: Order[] = [
       },
     ],
   },
+  {
+    id: "7",
+    number: "337456960",
+    brand: "Beauty Box — косметика и уход",
+    date: "11 июля 2025",
+    pickup: "Самара, Московское шоссе, 220",
+    payment: "paid",
+    groups: [
+      {
+        status: "ready",
+        items: [
+          {
+            id: "bb1",
+            title: "Сыворотка для лица с витамином C",
+            size: "30 мл",
+            qty: 1,
+            price: 1290,
+            commission: 195,
+            image: img("photo-1556228720-195a672e8a03"),
+          },
+          {
+            id: "bb2",
+            title: "Крем для рук восстанавливающий",
+            size: "75 мл",
+            qty: 2,
+            price: 540,
+            commission: 80,
+            image: img("photo-1556228578-8c89e6adf883"),
+          },
+        ],
+      },
+      {
+        status: "out_of_stock",
+        items: [
+          {
+            id: "bb3",
+            title: "Маска для волос питательная",
+            size: "200 мл",
+            qty: 1,
+            price: 890,
+            commission: 135,
+            image: img("photo-1571781926291-c477ebfd024b"),
+          },
+          {
+            id: "bb4",
+            title: "Бальзам для губ с маслом ши",
+            color: "натуральный",
+            qty: 2,
+            price: 290,
+            commission: 45,
+            image: img("photo-1599733589046-833caccbbd03"),
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 const COMPLETED_ORDERS: Order[] = [
