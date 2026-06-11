@@ -29,6 +29,7 @@ import {
   QrCode,
   ChevronRight,
   ArrowUpRight,
+  Undo2,
 } from "lucide-react";
 import contractIcon from "@/assets/contract-receipt.png.asset.json";
 import {
