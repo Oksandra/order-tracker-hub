@@ -1216,6 +1216,9 @@ function PickupSelector({ value }: { value: string }) {
 function HeaderActions() {
   const Icons = (
     <>
+      <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Скачать договор">
+        <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
+      </button>
       <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="В избранное">
         <Heart className="h-4 w-4" />
       </button>
@@ -1224,9 +1227,6 @@ function HeaderActions() {
       </button>
       <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Вопрос поставщику">
         <MessageSquare className="h-4 w-4" />
-      </button>
-      <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Скачать договор">
-        <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
       </button>
     </>
   );
@@ -1248,7 +1248,7 @@ function HeaderActions() {
           <PopoverContent align="end" className="w-56 p-2">
             <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
               <Heart className="h-4 w-4 text-muted-foreground" />
-              Добавить закупку в избранное
+              Добавить поставщика в избранное
             </button>
             <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
               <Share2 className="h-4 w-4 text-muted-foreground" />
@@ -1347,7 +1347,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
           )}
           {order.cdek && order.trackNumber && !isFullyOutOfStock && (
             <div className="mt-2.5 flex flex-wrap items-center gap-2 text-sm">
-              <span className="text-muted-foreground">Трек-номер СДЭК:</span>
+              <span className="text-muted-foreground">Трек-номер:</span>
               <span className="rounded-md bg-info/15 px-2.5 py-1 font-mono text-base font-bold tracking-wide text-info">
                 {order.trackNumber}
               </span>
@@ -1467,13 +1467,24 @@ function CompletedOrderCard({ order }: { order: Order }) {
       </div>
 
       <div className="flex flex-wrap items-center gap-3 border-t border-border/70 bg-muted/30 px-5 py-3">
-        <div className="ml-auto text-sm text-muted-foreground">
-          Итого по заказу:{" "}
-          <TotalWithTooltip order={order} className="text-base font-semibold text-foreground" />
+        <div className="ml-auto flex flex-wrap items-center gap-4">
+          {!returnMode && (
+            <button
+              type="button"
+              onClick={() => setReturnMode(true)}
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              Оформить заявку на возврат
+            </button>
+          )}
+          <div className="text-sm text-muted-foreground">
+            Итого по заказу:{" "}
+            <TotalWithTooltip order={order} className="text-base font-semibold text-foreground" />
+          </div>
         </div>
       </div>
 
-      {returnMode ? (
+      {returnMode && (
         <div className="flex flex-wrap items-center gap-3 border-t border-border/70 bg-primary/5 px-5 py-3">
           <span className="text-sm text-foreground">
             Выберите товары, которые хотите вернуть{" "}
@@ -1497,16 +1508,6 @@ function CompletedOrderCard({ order }: { order: Order }) {
               Продолжить
             </button>
           </div>
-        </div>
-      ) : (
-        <div className="flex flex-wrap items-center gap-4 border-t border-border/70 px-5 py-2.5">
-          <button
-            type="button"
-            onClick={() => setReturnMode(true)}
-            className="ml-auto inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
-          >
-            Оформить заявку на возврат
-          </button>
         </div>
       )}
     </article>
