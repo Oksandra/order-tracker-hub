@@ -1110,74 +1110,60 @@ function GroupBlock({
           </div>
         </div>
       )}
-      <div className="relative">
-        <div
-          className={[
-            "flex items-start gap-4",
-            "sm:flex-wrap",
-            visibleItems.length > 2 ? "overflow-x-auto pb-2 sm:overflow-visible sm:pb-0 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory" : "flex-wrap",
-          ].join(" ")}
-        >
-          {visibleItems.map((item) => (
-            <div key={item.id} className={visibleItems.length > 2 ? "snap-start" : ""}>
-              <ItemTile
-                item={item}
-                removable={removable && !selectable}
-                accentPrice={accentPrice}
-                selectable={selectable}
-                selected={selectedIds?.has(item.id)}
-                onToggle={() => onToggleItem?.(item.id)}
-              />
+      <div className="flex flex-wrap items-start gap-4">
+        {visibleItems.map((item) => (
+          <ItemTile
+            key={item.id}
+            item={item}
+            removable={removable && !selectable}
+            accentPrice={accentPrice}
+            selectable={selectable}
+            selected={selectedIds?.has(item.id)}
+            onToggle={() => onToggleItem?.(item.id)}
+          />
+        ))}
+        {canCollapse && !expanded && hiddenCount > 0 && (
+          <button
+            type="button"
+            onClick={() => setExpanded(true)}
+            className="group w-[140px] flex-none"
+            aria-label={`Показать ещё ${hiddenCount} ${hiddenCount === 1 ? "товар" : hiddenCount < 5 ? "товара" : "товаров"}`}
+          >
+            <div className="relative h-[140px] w-full overflow-hidden rounded-lg border border-dashed border-primary/40 bg-primary/5 transition group-hover:bg-primary/10">
+              <div className="absolute inset-0 grid grid-cols-2 gap-0.5 p-0.5 opacity-50">
+                {group.items.slice(4, 8).map((it) => (
+                  <img
+                    key={it.id}
+                    src={it.image}
+                    alt=""
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                ))}
+              </div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-primary/40 text-primary-foreground">
+                <span className="text-2xl font-bold">+{hiddenCount}</span>
+                <span className="mt-0.5 text-xs font-medium">
+                  {hiddenCount === 1 ? "товар" : hiddenCount < 5 ? "товара" : "товаров"}
+                </span>
+              </div>
             </div>
-          ))}
-          {canCollapse && !expanded && hiddenCount > 0 && (
-            <button
-              type="button"
-              onClick={() => setExpanded(true)}
-              className="group w-[140px] flex-none"
-              aria-label={`Показать ещё ${hiddenCount} ${hiddenCount === 1 ? "товар" : hiddenCount < 5 ? "товара" : "товаров"}`}
-            >
-              <div className="relative h-[140px] w-full overflow-hidden rounded-lg border border-dashed border-primary/40 bg-primary/5 transition group-hover:bg-primary/10">
-                <div className="absolute inset-0 grid grid-cols-2 gap-0.5 p-0.5 opacity-50">
-                  {group.items.slice(4, 8).map((it) => (
-                    <img
-                      key={it.id}
-                      src={it.image}
-                      alt=""
-                      className="h-full w-full object-cover"
-                      loading="lazy"
-                    />
-                  ))}
-                </div>
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-primary/40 text-primary-foreground">
-                  <span className="text-2xl font-bold">+{hiddenCount}</span>
-                  <span className="mt-0.5 text-xs font-medium">
-                    {hiddenCount === 1 ? "товар" : hiddenCount < 5 ? "товара" : "товаров"}
-                  </span>
-                </div>
-              </div>
-              <div className="mt-2 text-xs font-medium text-primary">
-                Показать все
-              </div>
-            </button>
-          )}
-          {canCollapse && expanded && (
-            <button
-              type="button"
-              onClick={() => setExpanded(false)}
-              className="w-[140px] flex-none self-center text-xs font-medium text-primary hover:underline"
-            >
-              Свернуть
-            </button>
-          )}
-        </div>
-        {visibleItems.length > 2 && (
-          <div className="pointer-events-none absolute right-0 top-0 bottom-2 flex items-center sm:hidden">
-            <div className="h-full w-8 bg-gradient-to-l from-card to-transparent" />
-            <ChevronRight className="-ml-5 h-4 w-4 text-muted-foreground/60" strokeWidth={2} />
-          </div>
+            <div className="mt-2 text-xs font-medium text-primary">
+              Показать все
+            </div>
+          </button>
+        )}
+        {canCollapse && expanded && (
+          <button
+            type="button"
+            onClick={() => setExpanded(false)}
+            className="w-[140px] flex-none self-center text-xs font-medium text-primary hover:underline"
+          >
+            Свернуть
+          </button>
         )}
       </div>
+
     </div>
   );
 }
