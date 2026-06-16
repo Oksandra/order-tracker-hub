@@ -1063,6 +1063,45 @@ function PaymentBar({ order }: { order: Order }) {
 
 /* ---------- Order card ---------- */
 
+function StarRating({ initial = 0 }: { initial?: number }) {
+  const [rating, setRating] = useState(initial);
+  const [hover, setHover] = useState(0);
+  const active = hover || rating;
+  return (
+    <div
+      className="mt-2 inline-flex items-center justify-center gap-1 rounded-full bg-muted/60 px-3 py-1"
+      role="radiogroup"
+      aria-label="Оценка товара"
+      onMouseLeave={() => setHover(0)}
+    >
+      {[1, 2, 3, 4, 5].map((n) => {
+        const filled = n <= active;
+        return (
+          <button
+            key={n}
+            type="button"
+            role="radio"
+            aria-checked={rating === n}
+            aria-label={`${n} ${n === 1 ? "звезда" : n < 5 ? "звезды" : "звёзд"}`}
+            onMouseEnter={() => setHover(n)}
+            onFocus={() => setHover(n)}
+            onBlur={() => setHover(0)}
+            onClick={() => setRating(n === rating ? 0 : n)}
+            className="text-[#FBBF24] transition-transform hover:scale-110 focus:outline-none"
+          >
+            <Star
+              className="h-4 w-4"
+              strokeWidth={1.5}
+              fill={filled ? "currentColor" : "none"}
+              stroke={filled ? "currentColor" : "hsl(var(--muted-foreground))"}
+            />
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 function ItemTile({
   item,
   removable = false,
@@ -1071,6 +1110,7 @@ function ItemTile({
   selectable = false,
   selected = false,
   onToggle,
+  rateable = false,
 }: {
   item: OrderItem;
   removable?: boolean;
@@ -1079,6 +1119,7 @@ function ItemTile({
   selectable?: boolean;
   selected?: boolean;
   onToggle?: () => void;
+  rateable?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   return (
