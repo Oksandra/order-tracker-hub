@@ -1701,24 +1701,20 @@ function CompletedOrderCard({ order }: { order: Order }) {
             </button>
           </div>
         </div>
-        {isFullyOutOfStock ? (
-          <div className="mt-2 -mx-5 flex flex-wrap items-center justify-between gap-2 bg-muted/40 px-5 py-2 text-sm">
-            <div className="flex items-center gap-1.5">
-              <span className="text-muted-foreground">Итого по заказу:</span>
-              <TotalWithTooltip order={order} className="text-sm font-semibold text-foreground" />
-            </div>
+        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
+          {isFullyOutOfStock ? (
             <div className="flex items-center gap-1.5">
               <AlertCircle className="h-3.5 w-3.5 text-muted-foreground" />
               <span className="font-medium text-muted-foreground">Нет в наличии</span>
             </div>
-          </div>
-        ) : (
-          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
+          ) : (
             <div className="flex items-center gap-1.5">
               <CheckCircle2 className="h-3.5 w-3.5 text-success" />
               <span className="text-success font-medium">Получено {order.completedAt}</span>
             </div>
-            {order.cdek ? (
+          )}
+          {!isFullyOutOfStock && (
+            order.cdek ? (
               <div className="flex items-center gap-1.5">
                 <span className="inline-flex items-center rounded-sm bg-success px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-success-foreground">
                   CDEK
@@ -1730,12 +1726,12 @@ function CompletedOrderCard({ order }: { order: Order }) {
                 <MapPin className="h-3.5 w-3.5" />
                 <span className="max-w-[280px] truncate">{order.pickup}</span>
               </div>
-            )}
-            <div className="ml-auto hidden sm:flex items-center gap-1.5 text-base">
-              <span># {order.number}</span>
-            </div>
+            )
+          )}
+          <div className="ml-auto hidden sm:flex items-center gap-1.5 text-base">
+            <span># {order.number}</span>
           </div>
-        )}
+        </div>
       </header>
 
       {!collapsed && (
