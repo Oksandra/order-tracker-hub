@@ -599,6 +599,7 @@ const COMPLETED_ORDERS: Order[] = [
             price: 311,
             commission: 65,
             image: img("photo-1499636136210-6f4ee915583e"),
+            rating: 4,
           },
           {
             id: "tm5",
