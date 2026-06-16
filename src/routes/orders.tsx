@@ -1132,8 +1132,33 @@ function ItemTile({
   );
 }
 
-function OutOfStockNotice({ group }: { group: ItemGroup }) {
+function OutOfStockNotice({ group, refunded = false }: { group: ItemGroup; refunded?: boolean }) {
   const sum = group.items.reduce((s, it) => s + (it.price + it.commission) * it.qty, 0);
+  if (refunded) {
+    return (
+      <div className="mb-3 rounded-lg bg-destructive/10 px-4 py-3 text-sm text-foreground">
+        <div className="font-medium">Нам очень жаль, что товар закончился.</div>
+        <div className="mt-1 text-muted-foreground">
+          Мы вернули{" "}
+          <span className="font-semibold text-destructive">{formatPrice(sum)}</span> на ваш{" "}
+          <a className="text-primary underline-offset-2 hover:underline" href="#">
+            Лицевой счёт
+          </a>
+          .
+        </div>
+        <div className="mt-2 text-xs text-muted-foreground">
+          Деньги с Лицевого счёта можно использовать либо для быстрой оплаты другого товара на нашем сайте, или вернуть себе на карту.
+        </div>
+        <button
+          type="button"
+          className="mt-3 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:opacity-95"
+        >
+          <CreditCard className="h-3.5 w-3.5" />
+          Вывести деньги на карту
+        </button>
+      </div>
+    );
+  }
   return (
     <div className="mb-3 rounded-lg bg-destructive/10 px-4 py-3 text-sm text-foreground">
       <div className="font-medium">Нам очень жаль, что товар закончился.</div>
