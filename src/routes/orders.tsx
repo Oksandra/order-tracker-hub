@@ -1582,15 +1582,15 @@ function OrderCard({
           {/* Payment footer for paid / surcharge (hidden when fully OOS) */}
           {!isAwaiting && !isFullyOutOfStock && <PaymentBar order={order} />}
 
-          {/* Fully OOS footer: move to completed */}
+          {/* Fully OOS footer: move to completed (mobile only) */}
           {isFullyOutOfStock && onMoveToCompleted && (
-            <div className="flex items-center justify-end border-t border-border/70 bg-muted/30 px-5 py-3">
+            <div className="flex items-center justify-end border-t border-border/70 bg-muted/30 px-5 py-3 sm:hidden">
               <button
                 type="button"
                 onClick={() => onMoveToCompleted(order.id)}
-                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
+                className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background hover:bg-foreground/90"
               >
-                <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+                <CheckCircle2 className="h-4 w-4" />
                 Перенести в завершённые
               </button>
             </div>
