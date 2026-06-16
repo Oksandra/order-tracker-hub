@@ -1627,18 +1627,33 @@ function OrderCard({
           {/* Payment footer for paid / surcharge (hidden when fully OOS) */}
           {!isAwaiting && !isFullyOutOfStock && <PaymentBar order={order} />}
 
-          {/* Fully OOS footer: move to completed (mobile only) */}
-          {isFullyOutOfStock && onMoveToCompleted && (
-            <div className="flex items-center justify-end border-t border-border/70 bg-muted/30 px-5 py-3 sm:hidden">
-              <button
-                type="button"
-                onClick={() => onMoveToCompleted(order.id)}
-                className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background hover:bg-foreground/90"
-              >
-                <CheckCircle2 className="h-4 w-4" />
-                Перенести в завершённые
-              </button>
-            </div>
+          {/* Fully OOS footer */}
+          {isFullyOutOfStock && !isAwaiting && (
+            <>
+              <div className="flex items-center gap-3 border-t border-border/70 bg-muted/30 px-5 py-3">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <AlertCircle className="h-4 w-4" />
+                  <span className="text-sm font-medium whitespace-nowrap">Нет в наличии</span>
+                </div>
+                <div className="ml-auto text-sm text-muted-foreground whitespace-nowrap">
+                  <span className="sm:hidden">Итого:</span>
+                  <span className="hidden sm:inline">Итого по заказу:</span>{" "}
+                  <TotalWithTooltip order={order} className="text-base font-semibold text-foreground" />
+                </div>
+              </div>
+              {onMoveToCompleted && (
+                <div className="flex items-center justify-end bg-muted/30 px-5 py-3 sm:hidden">
+                  <button
+                    type="button"
+                    onClick={() => onMoveToCompleted(order.id)}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background hover:bg-foreground/90"
+                  >
+                    <CheckCircle2 className="h-4 w-4" />
+                    Перенести в завершённые
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </>
       )}
