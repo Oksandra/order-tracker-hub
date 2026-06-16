@@ -1748,8 +1748,13 @@ function OrdersPage() {
   const sorted = [...ORDERS]
     .filter((o) => !movedIds.has(o.id))
     .sort((a, b) => {
-      const order = { awaiting: 0, surcharge: 1, paid: 2 } as const;
-      return order[a.payment] - order[b.payment];
+      const score = (o: Order) => {
+        if (o.payment === "awaiting") return 0;
+        if (o.groups.every((g) => g.status === "out_of_stock")) return 1;
+        if (o.payment === "surcharge") return 2;
+        return 3;
+      };
+      return score(a) - score(b);
     });
 
   const movedToCompleted = ORDERS.filter((o) => movedIds.has(o.id)).map((o) => ({
