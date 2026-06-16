@@ -1276,6 +1276,7 @@ function GroupBlock({
   selectedIds,
   onToggleItem,
   rateable = false,
+  hideOutOfStockNotice = false,
 }: {
   group: ItemGroup;
   hidePipeline?: boolean;
@@ -1286,6 +1287,7 @@ function GroupBlock({
   selectedIds?: Set<string>;
   onToggleItem?: (id: string) => void;
   rateable?: boolean;
+  hideOutOfStockNotice?: boolean;
 }) {
   const mutedItems = group.status === "out_of_stock";
   const removable = group.status === "ordered_unpaid" || group.status === "paid";
