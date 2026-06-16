@@ -283,6 +283,40 @@ const ORDERS: Order[] = [
     ],
   },
   {
+    id: "oos-refunded",
+    number: "337456951",
+    brand: "HomeStyle — текстиль и декор",
+    date: "28 июня 2025",
+    pickup: "Самара, ул. Ново-Садовая, 160",
+    payment: "paid",
+    refunded: true,
+    groups: [
+      {
+        status: "out_of_stock",
+        items: [
+          {
+            id: "hs1",
+            title: "Комплект постельного белья 2-спальный сатин",
+            color: "графит",
+            qty: 1,
+            price: 5890,
+            commission: 880,
+            image: img("photo-1505693416388-ac5ce068fe85"),
+          },
+          {
+            id: "hs2",
+            title: "Шторы блэкаут на люверсах 200×270",
+            color: "молочный",
+            qty: 1,
+            price: 3380,
+            commission: 490,
+            image: img("photo-1513519245088-0e12902e5a38"),
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: "5",
     number: "337456920",
     brand: "Bash — спорт и стрит",
