@@ -1030,6 +1030,7 @@ function ItemTile({
   item,
   removable = false,
   accentPrice = false,
+  mutedPrice = false,
   selectable = false,
   selected = false,
   onToggle,
@@ -1037,6 +1038,7 @@ function ItemTile({
   item: OrderItem;
   removable?: boolean;
   accentPrice?: boolean;
+  mutedPrice?: boolean;
   selectable?: boolean;
   selected?: boolean;
   onToggle?: () => void;
@@ -1048,12 +1050,13 @@ function ItemTile({
         className={[
           "relative overflow-hidden rounded-lg border bg-card transition",
           selectable && selected ? "border-primary ring-2 ring-primary/40" : "border-border",
+          mutedPrice ? "opacity-80" : "",
         ].join(" ")}
       >
         <img
           src={item.image}
           alt={item.title}
-          className="h-[140px] w-full object-cover"
+          className={`h-[140px] w-full object-cover ${mutedPrice ? "grayscale-[40%]" : ""}`}
           loading="lazy"
         />
         {item.size && (
@@ -1095,14 +1098,14 @@ function ItemTile({
         )}
       </div>
       <div
-        className="mt-2 hidden sm:line-clamp-2 text-sm font-medium leading-snug text-foreground"
+        className={`mt-2 hidden sm:line-clamp-2 text-sm font-medium leading-snug ${mutedPrice ? "text-muted-foreground" : "text-foreground"}`}
         title={item.title}
       >
         {item.title}
       </div>
       <div className="mt-2 flex items-center justify-between gap-1">
         <div
-          className={`text-[15px] sm:text-base font-semibold ${accentPrice ? "text-destructive" : "text-success"}`}
+          className={`text-[15px] sm:text-base font-semibold ${mutedPrice ? "text-muted-foreground" : accentPrice ? "text-destructive" : "text-success"}`}
         >
           <PriceWithTooltip price={item.price} commission={item.commission} />
         </div>
