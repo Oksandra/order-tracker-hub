@@ -1023,7 +1023,7 @@ function PaymentBar({ order }: { order: Order }) {
           <span className="font-bold text-warning">{formatPrice(order.payAmount ?? 0)}</span>
         </span>
         <span className="text-sm text-muted-foreground">
-          Итого по заказу:{" "}
+          Итого:{" "}
           <span className="font-semibold text-foreground">{formatPrice(total)}</span>
         </span>
       </div>
