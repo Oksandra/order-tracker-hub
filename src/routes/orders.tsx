@@ -82,6 +82,7 @@ type OrderItem = {
   price: number; // base price
   commission: number; // комиссия
   image: string;
+  rating?: number;
 };
 
 type ItemGroup = {
