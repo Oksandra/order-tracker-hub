@@ -1731,28 +1731,32 @@ function CompletedOrderCard({ order }: { order: Order }) {
       <div className="flex items-center gap-3 border-t border-border/70 bg-muted/30 px-5 py-3">
         {!returnMode && (
           <>
-            <button
-              type="button"
-              onClick={() => setReturnMode(true)}
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
-            >
-              Оформить заявку на возврат
-            </button>
-            <Tooltip>
-              <TooltipTrigger asChild>
+            {!isFullyOutOfStock && (
+              <>
                 <button
                   type="button"
                   onClick={() => setReturnMode(true)}
-                  aria-label="Оформить заявку на возврат"
-                  className="sm:hidden inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+                  className="hidden sm:inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
                 >
-                  <Undo2 className="h-4 w-4" />
+                  Оформить заявку на возврат
                 </button>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="bg-foreground text-background">
-                Оформить заявку на возврат
-              </TooltipContent>
-            </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      onClick={() => setReturnMode(true)}
+                      aria-label="Оформить заявку на возврат"
+                      className="sm:hidden inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+                    >
+                      <Undo2 className="h-4 w-4" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="bg-foreground text-background">
+                    Оформить заявку на возврат
+                  </TooltipContent>
+                </Tooltip>
+              </>
+            )}
           </>
         )}
         <div className="ml-auto text-sm text-muted-foreground">
