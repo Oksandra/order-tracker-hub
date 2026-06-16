@@ -31,6 +31,7 @@ import {
   ChevronsRight,
   ArrowUpRight,
   Undo2,
+  Star,
 } from "lucide-react";
 import contractIcon from "@/assets/contract-receipt.png.asset.json";
 import {
@@ -81,6 +82,7 @@ type OrderItem = {
   price: number; // base price
   commission: number; // комиссия
   image: string;
+  rating?: number;
 };
 
 type ItemGroup = {
@@ -588,6 +590,7 @@ const COMPLETED_ORDERS: Order[] = [
             price: 143,
             commission: 30,
             image: img("photo-1558961363-fa8fdf82db35"),
+            rating: 5,
           },
           {
             id: "tm43",
@@ -596,6 +599,7 @@ const COMPLETED_ORDERS: Order[] = [
             price: 311,
             commission: 65,
             image: img("photo-1499636136210-6f4ee915583e"),
+            rating: 4,
           },
           {
             id: "tm5",
@@ -1062,6 +1066,45 @@ function PaymentBar({ order }: { order: Order }) {
 
 /* ---------- Order card ---------- */
 
+function StarRating({ initial = 0 }: { initial?: number }) {
+  const [rating, setRating] = useState(initial);
+  const [hover, setHover] = useState(0);
+  const active = hover || rating;
+  return (
+    <div
+      className="mt-2 inline-flex items-center justify-center gap-1 rounded-full bg-muted/60 px-3 py-1"
+      role="radiogroup"
+      aria-label="Оценка товара"
+      onMouseLeave={() => setHover(0)}
+    >
+      {[1, 2, 3, 4, 5].map((n) => {
+        const filled = n <= active;
+        return (
+          <button
+            key={n}
+            type="button"
+            role="radio"
+            aria-checked={rating === n}
+            aria-label={`${n} ${n === 1 ? "звезда" : n < 5 ? "звезды" : "звёзд"}`}
+            onMouseEnter={() => setHover(n)}
+            onFocus={() => setHover(n)}
+            onBlur={() => setHover(0)}
+            onClick={() => setRating(n === rating ? 0 : n)}
+            className="text-[#FBBF24] transition-transform hover:scale-110 focus:outline-none"
+          >
+            <Star
+              className="h-4 w-4"
+              strokeWidth={1.5}
+              fill={filled ? "currentColor" : "none"}
+              stroke={filled ? "currentColor" : "hsl(var(--muted-foreground))"}
+            />
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 function ItemTile({
   item,
   removable = false,
@@ -1070,6 +1113,7 @@ function ItemTile({
   selectable = false,
   selected = false,
   onToggle,
+  rateable = false,
 }: {
   item: OrderItem;
   removable?: boolean;
@@ -1078,6 +1122,7 @@ function ItemTile({
   selectable?: boolean;
   selected?: boolean;
   onToggle?: () => void;
+  rateable?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   return (
@@ -1157,6 +1202,11 @@ function ItemTile({
           />
         </button>
       </div>
+      {rateable && (
+        <div className="flex justify-center">
+          <StarRating initial={item.rating ?? 0} />
+        </div>
+      )}
       {open && (
         <div className="mt-2 rounded-md bg-muted/50 px-2.5 py-2 text-xs">
           <div className="text-xs font-medium leading-snug text-foreground sm:hidden">{item.title}</div>
@@ -1225,6 +1275,7 @@ function GroupBlock({
   selectable = false,
   selectedIds,
   onToggleItem,
+  rateable = false,
 }: {
   group: ItemGroup;
   hidePipeline?: boolean;
@@ -1234,6 +1285,7 @@ function GroupBlock({
   selectable?: boolean;
   selectedIds?: Set<string>;
   onToggleItem?: (id: string) => void;
+  rateable?: boolean;
 }) {
   const mutedItems = group.status === "out_of_stock";
   const removable = group.status === "ordered_unpaid" || group.status === "paid";
@@ -1325,6 +1377,7 @@ function GroupBlock({
                   selectable={selectable}
                   selected={selectedIds?.has(item.id)}
                   onToggle={() => onToggleItem?.(item.id)}
+                  rateable={rateable}
                 />
               </div>
             ))}
@@ -1352,6 +1405,7 @@ function GroupBlock({
             selectable={selectable}
             selected={selectedIds?.has(item.id)}
             onToggle={() => onToggleItem?.(item.id)}
+            rateable={rateable}
           />
         ))}
         {collapseTile}
@@ -1780,6 +1834,7 @@ function CompletedOrderCard({ order }: { order: Order }) {
             selectable={returnMode}
             selectedIds={selected}
             onToggleItem={toggle}
+            rateable={g.status === "received" && !returnMode}
           />
         ))}
       </div>
