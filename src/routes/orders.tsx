@@ -103,6 +103,7 @@ type Order = {
   awaitingSeconds?: number; // for awaiting
   groups: ItemGroup[];
   completedAt?: string; // дата выдачи (для завершённых)
+  refunded?: boolean; // деньги уже вернули на Лицевой счёт
 };
 
 const STEPS: { key: OrderStatus; label: string; icon: typeof Package }[] = [
