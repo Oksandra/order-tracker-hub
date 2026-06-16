@@ -644,6 +644,7 @@ const COMPLETED_ORDERS: Order[] = [
     brand: "HomeStyle — текстиль и декор",
     date: "15 июня 2025",
     completedAt: "20 июня 2025",
+    pickup: "Самара, ул. Ново-Садовая, 160",
     payment: "paid",
     groups: [
       {
