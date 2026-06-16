@@ -1495,9 +1495,20 @@ function OrderCard({
           {/* Mobile-only top bar with order number */}
           <div className="flex sm:hidden items-center justify-between gap-2 border-b border-border/60 bg-muted/40 px-5 py-1.5 text-sm text-muted-foreground">
             <span className="font-medium text-foreground">№ {order.number}</span>
-            <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
-              <Copy className="h-3.5 w-3.5" />
-            </button>
+            <div className="flex items-center gap-1">
+              <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
+                <Copy className="h-3.5 w-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setCollapsed((v) => !v)}
+                aria-label={collapsed ? "Развернуть заказ" : "Свернуть заказ"}
+                aria-expanded={!collapsed}
+                className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+              >
+                <ChevronDown className={`h-4 w-4 transition-transform ${collapsed ? "-rotate-90" : ""}`} />
+              </button>
+            </div>
           </div>
           <div className="px-5 py-3.5">
           <div className="flex items-start justify-between gap-3">
@@ -1659,9 +1670,20 @@ function CompletedOrderCard({ order }: { order: Order }) {
       {/* Mobile-only top bar with order number */}
       <div className="flex sm:hidden items-center justify-between gap-2 border-b border-border/60 bg-muted/40 px-5 py-1.5 text-sm text-muted-foreground">
         <span className="font-medium text-foreground">№ {order.number}</span>
-        <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
-          <Copy className="h-3.5 w-3.5" />
-        </button>
+        <div className="flex items-center gap-1">
+          <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
+            <Copy className="h-3.5 w-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setCollapsed((v) => !v)}
+            aria-label={collapsed ? "Развернуть заказ" : "Свернуть заказ"}
+            aria-expanded={!collapsed}
+            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            <ChevronDown className={`h-4 w-4 transition-transform ${collapsed ? "-rotate-90" : ""}`} />
+          </button>
+        </div>
       </div>
       <header className="border-b border-border/70 px-5 py-3.5">
         <div className="flex items-start justify-between gap-3">
