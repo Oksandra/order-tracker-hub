@@ -1312,6 +1312,7 @@ function GroupBlock({
             item={item}
             removable={removable && !selectable}
             accentPrice={accentPrice}
+            mutedPrice={mutedItems}
             selectable={selectable}
             selected={selectedIds?.has(item.id)}
             onToggle={() => onToggleItem?.(item.id)}
