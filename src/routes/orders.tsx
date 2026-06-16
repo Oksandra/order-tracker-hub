@@ -1276,6 +1276,7 @@ function GroupBlock({
   selectedIds,
   onToggleItem,
   rateable = false,
+  hideOutOfStockNotice = false,
 }: {
   group: ItemGroup;
   hidePipeline?: boolean;
@@ -1286,6 +1287,7 @@ function GroupBlock({
   selectedIds?: Set<string>;
   onToggleItem?: (id: string) => void;
   rateable?: boolean;
+  hideOutOfStockNotice?: boolean;
 }) {
   const mutedItems = group.status === "out_of_stock";
   const removable = group.status === "ordered_unpaid" || group.status === "paid";
@@ -1345,7 +1347,7 @@ function GroupBlock({
           </span>
         </div>
       )}
-      {group.status === "out_of_stock" && <OutOfStockNotice group={group} refunded={refunded} />}
+      {group.status === "out_of_stock" && !hideOutOfStockNotice && <OutOfStockNotice group={group} refunded={refunded} />}
       {group.status === "ready" && (
         <div className="mb-3 flex items-center gap-3 rounded-lg border border-warning/40 bg-warning/5 px-3 py-2.5">
           <div className="flex h-16 w-16 flex-none items-center justify-center rounded-md border border-border bg-card">
@@ -1614,6 +1616,12 @@ function OrderCard({
           )}
           {isFullyOutOfStock && (
             <div className="mt-2 hidden sm:flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5 text-base text-muted-foreground">
+                <span># {order.number}</span>
+                <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
+                  <Copy className="h-3.5 w-3.5" />
+                </button>
+              </div>
               {onMoveToCompleted && (
                 <button
                   type="button"
@@ -1624,12 +1632,6 @@ function OrderCard({
                   Перенести в завершённые
                 </button>
               )}
-              <div className="flex items-center gap-1.5 text-base text-muted-foreground">
-                <span># {order.number}</span>
-                <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
-                  <Copy className="h-3.5 w-3.5" />
-                </button>
-              </div>
             </div>
           )}
           {order.cdek && order.trackNumber && !isFullyOutOfStock && (
@@ -1835,6 +1837,7 @@ function CompletedOrderCard({ order }: { order: Order }) {
             selectedIds={selected}
             onToggleItem={toggle}
             rateable={g.status === "received" && !returnMode}
+            hideOutOfStockNotice
           />
         ))}
       </div>
