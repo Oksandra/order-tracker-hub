@@ -1656,7 +1656,7 @@ function OrderCard({
                 </div>
               </div>
               {onMoveToCompleted && (
-                <div className="flex items-center justify-end bg-muted/30 px-5 py-3 sm:hidden">
+                <div className="flex items-center justify-center bg-muted px-5 py-3 sm:hidden">
                   <button
                     type="button"
                     onClick={() => onMoveToCompleted(order.id)}
