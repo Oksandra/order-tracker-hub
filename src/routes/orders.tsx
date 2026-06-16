@@ -638,6 +638,39 @@ const COMPLETED_ORDERS: Order[] = [
       },
     ],
   },
+  {
+    id: "c3",
+    number: "337456999",
+    brand: "HomeStyle — текстиль и декор",
+    date: "15 июня 2025",
+    completedAt: "20 июня 2025",
+    payment: "paid",
+    groups: [
+      {
+        status: "out_of_stock",
+        items: [
+          {
+            id: "hs3",
+            title: "Плед вязаный крупной вязки 150×200",
+            color: "пудровый",
+            qty: 1,
+            price: 3290,
+            commission: 490,
+            image: img("photo-1580301762395-21ffdf13d3f9"),
+          },
+          {
+            id: "hs4",
+            title: "Набор махровых полотенец 50×90, 3 шт.",
+            color: "мятный",
+            qty: 1,
+            price: 1890,
+            commission: 280,
+            image: img("photo-1616627547584-bf28aa75ad76"),
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 function formatPrice(n: number) {
