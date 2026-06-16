@@ -1273,6 +1273,7 @@ function GroupBlock({
   selectable = false,
   selectedIds,
   onToggleItem,
+  rateable = false,
 }: {
   group: ItemGroup;
   hidePipeline?: boolean;
@@ -1282,6 +1283,7 @@ function GroupBlock({
   selectable?: boolean;
   selectedIds?: Set<string>;
   onToggleItem?: (id: string) => void;
+  rateable?: boolean;
 }) {
   const mutedItems = group.status === "out_of_stock";
   const removable = group.status === "ordered_unpaid" || group.status === "paid";
