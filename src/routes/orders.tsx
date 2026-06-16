@@ -1403,6 +1403,7 @@ function GroupBlock({
             selectable={selectable}
             selected={selectedIds?.has(item.id)}
             onToggle={() => onToggleItem?.(item.id)}
+            rateable={rateable}
           />
         ))}
         {collapseTile}
