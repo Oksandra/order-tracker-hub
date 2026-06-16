@@ -1743,13 +1743,31 @@ function CompletedOrderCard({ order }: { order: Order }) {
 
 function OrdersPage() {
   const [tab, setTab] = useState<"active" | "completed">("active");
+  const [movedIds, setMovedIds] = useState<Set<string>>(new Set());
 
-  const sorted = [...ORDERS].sort((a, b) => {
-    const order = { awaiting: 0, surcharge: 1, paid: 2 } as const;
-    return order[a.payment] - order[b.payment];
-  });
+  const sorted = [...ORDERS]
+    .filter((o) => !movedIds.has(o.id))
+    .sort((a, b) => {
+      const order = { awaiting: 0, surcharge: 1, paid: 2 } as const;
+      return order[a.payment] - order[b.payment];
+    });
+
+  const movedToCompleted = ORDERS.filter((o) => movedIds.has(o.id)).map((o) => ({
+    ...o,
+    completedAt: o.completedAt ?? "сегодня",
+  }));
+  const completedList = [...movedToCompleted, ...COMPLETED_ORDERS];
+
+  const moveToCompleted = (id: string) => {
+    setMovedIds((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+  };
 
   const isActive = tab === "active";
+  
   
 
   return (
