@@ -1837,6 +1837,7 @@ function CompletedOrderCard({ order }: { order: Order }) {
             selectedIds={selected}
             onToggleItem={toggle}
             rateable={g.status === "received" && !returnMode}
+            hideOutOfStockNotice
           />
         ))}
       </div>
