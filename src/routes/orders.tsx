@@ -1178,6 +1178,11 @@ function ItemTile({
           </button>
         )}
       </div>
+      {rateable && (
+        <div className="mt-2 flex justify-center">
+          <StarRating initial={item.rating ?? 0} />
+        </div>
+      )}
       <div
         className={`mt-2 hidden sm:line-clamp-2 text-sm font-medium leading-snug ${mutedPrice ? "text-muted-foreground" : "text-foreground"}`}
         title={item.title}
@@ -1202,11 +1207,6 @@ function ItemTile({
           />
         </button>
       </div>
-      {rateable && (
-        <div className="flex justify-center">
-          <StarRating initial={item.rating ?? 0} />
-        </div>
-      )}
       {open && (
         <div className="mt-2 rounded-md bg-muted/50 px-2.5 py-2 text-xs">
           <div className="text-xs font-medium leading-snug text-foreground sm:hidden">{item.title}</div>
