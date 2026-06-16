@@ -1732,6 +1732,8 @@ function CompletedOrderCard({ order }: { order: Order }) {
           </div>
         </div>
       )}
+      </>
+      )}
     </article>
   );
 }
