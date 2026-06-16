@@ -964,13 +964,14 @@ function PaymentBar({ order }: { order: Order }) {
 
   if (order.payment === "paid") {
     return (
-      <div className="flex flex-wrap items-center gap-3 border-t border-border/70 bg-success/5 px-5 py-3">
+      <div className="flex items-center gap-3 border-t border-border/70 bg-success/5 px-5 py-3">
         <div className="flex items-center gap-2 text-success">
           <CheckCircle2 className="h-4 w-4" />
-          <span className="text-sm font-medium">Заказ оплачен</span>
+          <span className="text-sm font-medium whitespace-nowrap">Заказ оплачен</span>
         </div>
-        <div className="ml-auto text-sm text-muted-foreground">
-          Итого по заказу:{" "}
+        <div className="ml-auto text-sm text-muted-foreground whitespace-nowrap">
+          <span className="sm:hidden">Итого:</span>
+          <span className="hidden sm:inline">Итого по заказу:</span>{" "}
           <TotalWithTooltip order={order} className="text-base font-semibold text-foreground" />
         </div>
       </div>
