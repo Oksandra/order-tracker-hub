@@ -1633,7 +1633,7 @@ function OrderCard({
             <>
               <div className="sm:hidden flex items-center justify-end gap-x-3 gap-y-2 border-t border-border/70 bg-destructive/10 px-5 py-3">
                 <span className="text-sm text-muted-foreground">
-                  Итого по заказу:{" "}
+                  Итого:{" "}
                   <TotalWithTooltip order={order} className="text-base font-bold text-destructive" />
                 </span>
               </div>
