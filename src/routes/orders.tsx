@@ -689,7 +689,7 @@ function formatTimer(sec: number) {
 function SiteHeader() {
   return (
     <header className="border-b border-border bg-card">
-      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
+      <div className="mx-auto flex max-w-[84rem] items-center gap-3 px-4 py-3">
         <button className="md:hidden rounded-md p-1.5 hover:bg-muted" aria-label="Меню">
           <Menu className="h-5 w-5 text-muted-foreground" />
         </button>
@@ -754,7 +754,7 @@ function SiteHeader() {
 
       {/* Nav row */}
       <div className="border-t border-border/70">
-        <div className="mx-auto flex max-w-6xl items-center gap-5 overflow-x-auto px-4 py-2.5 text-sm">
+        <div className="mx-auto flex max-w-[84rem] items-center gap-5 overflow-x-auto px-4 py-2.5 text-sm">
           <Link to="/" className="flex items-center gap-1.5 text-primary font-medium">
             Лента
           </Link>
@@ -1877,7 +1877,7 @@ function OrdersPage() {
       <div className="min-h-screen bg-background">
         <SiteHeader />
 
-        <main className="mx-auto max-w-6xl px-4 py-6">
+        <main className="mx-auto max-w-[84rem] px-4 py-6">
           {/* Breadcrumbs */}
           <nav className="mb-5 text-sm text-muted-foreground">
             <Link to="/" className="hover:text-primary">Главная</Link>
