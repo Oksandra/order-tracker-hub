@@ -1257,7 +1257,7 @@ function GroupBlock({
           </span>
         </div>
       )}
-      {group.status === "out_of_stock" && <OutOfStockNotice group={group} />}
+      {group.status === "out_of_stock" && <OutOfStockNotice group={group} refunded={refunded} />}
       {group.status === "ready" && (
         <div className="mb-3 flex items-center gap-3 rounded-lg border border-warning/40 bg-warning/5 px-3 py-2.5">
           <div className="flex h-16 w-16 flex-none items-center justify-center rounded-md border border-border bg-card">
