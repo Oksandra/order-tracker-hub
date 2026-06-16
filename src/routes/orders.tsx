@@ -1818,7 +1818,7 @@ function OrdersPage() {
             >
               <span className="sm:hidden">Завершённые</span><span className="hidden sm:inline">Завершённые заказы</span>
               <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                {COMPLETED_ORDERS.length}
+                {completedList.length}
               </span>
             </button>
           </div>
@@ -1831,9 +1831,10 @@ function OrdersPage() {
                     key={order.id}
                     order={order}
                     priority={order.payment === "awaiting"}
+                    onMoveToCompleted={moveToCompleted}
                   />
                 ))
-              : COMPLETED_ORDERS.map((order) => (
+              : completedList.map((order) => (
                   <CompletedOrderCard key={order.id} order={order} />
                 ))}
           </div>
