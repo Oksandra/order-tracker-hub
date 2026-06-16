@@ -1832,6 +1832,7 @@ function CompletedOrderCard({ order }: { order: Order }) {
             selectable={returnMode}
             selectedIds={selected}
             onToggleItem={toggle}
+            rateable={g.status === "received" && !returnMode}
           />
         ))}
       </div>
