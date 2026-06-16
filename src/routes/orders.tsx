@@ -1072,7 +1072,7 @@ function StarRating({ initial = 0 }: { initial?: number }) {
   const active = hover || rating;
   return (
     <div
-      className="mt-2 inline-flex items-center justify-center gap-1 rounded-full bg-muted/60 px-3 py-1"
+      className="mt-2 inline-flex items-center justify-center gap-1 rounded-full bg-background border px-3 py-1 shadow-sm"
       role="radiogroup"
       aria-label="Оценка товара"
       onMouseLeave={() => setHover(0)}
@@ -1093,7 +1093,7 @@ function StarRating({ initial = 0 }: { initial?: number }) {
             className="text-[#FBBF24] transition-transform hover:scale-110 focus:outline-none"
           >
             <Star
-              className="h-4 w-4"
+              className="h-5 w-5"
               strokeWidth={1.5}
               fill={filled ? "currentColor" : "none"}
               stroke={filled ? "currentColor" : "hsl(var(--muted-foreground))"}
