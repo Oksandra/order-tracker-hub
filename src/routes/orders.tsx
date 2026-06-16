@@ -1593,6 +1593,7 @@ function OrderCard({
 function CompletedOrderCard({ order }: { order: Order }) {
   const [returnMode, setReturnMode] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [collapsed, setCollapsed] = useState(false);
 
   const toggle = (id: string) =>
     setSelected((prev) => {
@@ -1618,7 +1619,18 @@ function CompletedOrderCard({ order }: { order: Order }) {
       <header className="border-b border-border/70 px-5 py-3.5">
         <div className="flex items-start justify-between gap-3">
           <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
-          <HeaderActions />
+          <div className="flex items-center gap-1">
+            <HeaderActions />
+            <button
+              type="button"
+              onClick={() => setCollapsed((v) => !v)}
+              aria-label={collapsed ? "Развернуть заказ" : "Свернуть заказ"}
+              aria-expanded={!collapsed}
+              className="hidden sm:inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              <ChevronDown className={`h-4 w-4 transition-transform ${collapsed ? "-rotate-90" : ""}`} />
+            </button>
+          </div>
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
           <div className="flex items-center gap-1.5">
@@ -1644,6 +1656,8 @@ function CompletedOrderCard({ order }: { order: Order }) {
         </div>
       </header>
 
+      {!collapsed && (
+      <>
       <div className="divide-y divide-border/70">
         {order.groups.map((g, i) => (
           <GroupBlock
