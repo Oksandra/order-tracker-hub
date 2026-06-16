@@ -1513,11 +1513,23 @@ function OrderCard({
           </div>
           )}
           {isFullyOutOfStock && (
-            <div className="mt-2 hidden sm:flex items-center justify-end gap-1.5 text-base text-muted-foreground">
-              <span># {order.number}</span>
-              <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
-                <Copy className="h-3.5 w-3.5" />
-              </button>
+            <div className="mt-2 hidden sm:flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5 text-base text-muted-foreground">
+                <span># {order.number}</span>
+                <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
+                  <Copy className="h-3.5 w-3.5" />
+                </button>
+              </div>
+              {onMoveToCompleted && (
+                <button
+                  type="button"
+                  onClick={() => onMoveToCompleted(order.id)}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background hover:bg-foreground/90"
+                >
+                  <CheckCircle2 className="h-4 w-4" />
+                  Перенести в завершённые
+                </button>
+              )}
             </div>
           )}
           {order.cdek && order.trackNumber && !isFullyOutOfStock && (
