@@ -103,6 +103,7 @@ type Order = {
   awaitingSeconds?: number; // for awaiting
   groups: ItemGroup[];
   completedAt?: string; // дата выдачи (для завершённых)
+  refunded?: boolean; // деньги уже вернули на Лицевой счёт
 };
 
 const STEPS: { key: OrderStatus; label: string; icon: typeof Package }[] = [
@@ -276,6 +277,40 @@ const ORDERS: Order[] = [
             price: 2490,
             commission: 370,
             image: img("photo-1609592424332-5bd4996db89c"),
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "oos-refunded",
+    number: "337456951",
+    brand: "HomeStyle — текстиль и декор",
+    date: "28 июня 2025",
+    pickup: "Самара, ул. Ново-Садовая, 160",
+    payment: "paid",
+    refunded: true,
+    groups: [
+      {
+        status: "out_of_stock",
+        items: [
+          {
+            id: "hs1",
+            title: "Комплект постельного белья 2-спальный сатин",
+            color: "графит",
+            qty: 1,
+            price: 5890,
+            commission: 880,
+            image: img("photo-1505693416388-ac5ce068fe85"),
+          },
+          {
+            id: "hs2",
+            title: "Шторы блэкаут на люверсах 200×270",
+            color: "молочный",
+            qty: 1,
+            price: 3380,
+            commission: 490,
+            image: img("photo-1513519245088-0e12902e5a38"),
           },
         ],
       },
@@ -929,13 +964,14 @@ function PaymentBar({ order }: { order: Order }) {
 
   if (order.payment === "paid") {
     return (
-      <div className="flex flex-wrap items-center gap-3 border-t border-border/70 bg-success/5 px-5 py-3">
+      <div className="flex items-center gap-3 border-t border-border/70 bg-success/5 px-5 py-3">
         <div className="flex items-center gap-2 text-success">
           <CheckCircle2 className="h-4 w-4" />
-          <span className="text-sm font-medium">Заказ оплачен</span>
+          <span className="text-sm font-medium whitespace-nowrap">Заказ оплачен</span>
         </div>
-        <div className="ml-auto text-sm text-muted-foreground">
-          Итого по заказу:{" "}
+        <div className="ml-auto text-sm text-muted-foreground whitespace-nowrap">
+          <span className="sm:hidden">Итого:</span>
+          <span className="hidden sm:inline">Итого по заказу:</span>{" "}
           <TotalWithTooltip order={order} className="text-base font-semibold text-foreground" />
         </div>
       </div>
@@ -995,6 +1031,7 @@ function ItemTile({
   item,
   removable = false,
   accentPrice = false,
+  mutedPrice = false,
   selectable = false,
   selected = false,
   onToggle,
@@ -1002,6 +1039,7 @@ function ItemTile({
   item: OrderItem;
   removable?: boolean;
   accentPrice?: boolean;
+  mutedPrice?: boolean;
   selectable?: boolean;
   selected?: boolean;
   onToggle?: () => void;
@@ -1013,12 +1051,13 @@ function ItemTile({
         className={[
           "relative overflow-hidden rounded-lg border bg-card transition",
           selectable && selected ? "border-primary ring-2 ring-primary/40" : "border-border",
+          mutedPrice ? "opacity-80" : "",
         ].join(" ")}
       >
         <img
           src={item.image}
           alt={item.title}
-          className="h-[140px] w-full object-cover"
+          className={`h-[140px] w-full object-cover ${mutedPrice ? "grayscale-[40%]" : ""}`}
           loading="lazy"
         />
         {item.size && (
@@ -1060,14 +1099,14 @@ function ItemTile({
         )}
       </div>
       <div
-        className="mt-2 hidden sm:line-clamp-2 text-sm font-medium leading-snug text-foreground"
+        className={`mt-2 hidden sm:line-clamp-2 text-sm font-medium leading-snug ${mutedPrice ? "text-muted-foreground" : "text-foreground"}`}
         title={item.title}
       >
         {item.title}
       </div>
       <div className="mt-2 flex items-center justify-between gap-1">
         <div
-          className={`text-[15px] sm:text-base font-semibold ${accentPrice ? "text-destructive" : "text-success"}`}
+          className={`text-[15px] sm:text-base font-semibold ${mutedPrice ? "text-muted-foreground" : accentPrice ? "text-destructive" : "text-success"}`}
         >
           <PriceWithTooltip price={item.price} commission={item.commission} />
         </div>
@@ -1097,8 +1136,33 @@ function ItemTile({
   );
 }
 
-function OutOfStockNotice({ group }: { group: ItemGroup }) {
+function OutOfStockNotice({ group, refunded = false }: { group: ItemGroup; refunded?: boolean }) {
   const sum = group.items.reduce((s, it) => s + (it.price + it.commission) * it.qty, 0);
+  if (refunded) {
+    return (
+      <div className="mb-3 rounded-lg bg-destructive/10 px-4 py-3 text-sm text-foreground">
+        <div className="font-medium">Нам очень жаль, что товар закончился.</div>
+        <div className="mt-1 text-muted-foreground">
+          Мы вернули{" "}
+          <span className="font-semibold text-destructive">{formatPrice(sum)}</span> на ваш{" "}
+          <a className="text-primary underline-offset-2 hover:underline" href="#">
+            Лицевой счёт
+          </a>
+          .
+        </div>
+        <div className="mt-2 text-xs text-muted-foreground">
+          Деньги с Лицевого счёта можно использовать либо для быстрой оплаты другого товара на нашем сайте, или вернуть себе на карту.
+        </div>
+        <button
+          type="button"
+          className="mt-3 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:opacity-95"
+        >
+          <CreditCard className="h-3.5 w-3.5" />
+          Вывести деньги на карту
+        </button>
+      </div>
+    );
+  }
   return (
     <div className="mb-3 rounded-lg bg-destructive/10 px-4 py-3 text-sm text-foreground">
       <div className="font-medium">Нам очень жаль, что товар закончился.</div>
@@ -1122,6 +1186,7 @@ function GroupBlock({
   hidePipeline = false,
   hideStatusLabel = false,
   accentPrice = false,
+  refunded = false,
   selectable = false,
   selectedIds,
   onToggleItem,
@@ -1130,10 +1195,12 @@ function GroupBlock({
   hidePipeline?: boolean;
   hideStatusLabel?: boolean;
   accentPrice?: boolean;
+  refunded?: boolean;
   selectable?: boolean;
   selectedIds?: Set<string>;
   onToggleItem?: (id: string) => void;
 }) {
+  const mutedItems = group.status === "out_of_stock";
   const removable = group.status === "ordered_unpaid" || group.status === "paid";
   const showHeader = !hidePipeline || !hideStatusLabel;
   const COLLAPSE_THRESHOLD = 7;
@@ -1191,7 +1258,7 @@ function GroupBlock({
           </span>
         </div>
       )}
-      {group.status === "out_of_stock" && <OutOfStockNotice group={group} />}
+      {group.status === "out_of_stock" && <OutOfStockNotice group={group} refunded={refunded} />}
       {group.status === "ready" && (
         <div className="mb-3 flex items-center gap-3 rounded-lg border border-warning/40 bg-warning/5 px-3 py-2.5">
           <div className="flex h-16 w-16 flex-none items-center justify-center rounded-md border border-border bg-card">
@@ -1219,6 +1286,7 @@ function GroupBlock({
                   item={item}
                   removable={removable && !selectable}
                   accentPrice={accentPrice}
+                  mutedPrice={mutedItems}
                   selectable={selectable}
                   selected={selectedIds?.has(item.id)}
                   onToggle={() => onToggleItem?.(item.id)}
@@ -1245,6 +1313,7 @@ function GroupBlock({
             item={item}
             removable={removable && !selectable}
             accentPrice={accentPrice}
+            mutedPrice={mutedItems}
             selectable={selectable}
             selected={selectedIds?.has(item.id)}
             onToggle={() => onToggleItem?.(item.id)}
@@ -1355,7 +1424,15 @@ function HeaderActions() {
   );
 }
 
-function OrderCard({ order, priority = false }: { order: Order; priority?: boolean }) {
+function OrderCard({
+  order,
+  priority = false,
+  onMoveToCompleted,
+}: {
+  order: Order;
+  priority?: boolean;
+  onMoveToCompleted?: (id: string) => void;
+}) {
   const isAwaiting = order.payment === "awaiting";
   const isSurcharge = order.payment === "surcharge";
   const isFullyOutOfStock = order.groups.every((g) => g.status === "out_of_stock");
@@ -1363,6 +1440,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
   const pickupEditable = order.groups.some(
     (g) => g.status === "paid" || g.status === "collecting",
   );
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
     <article
@@ -1390,7 +1468,18 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
           <div className="px-5 py-3.5">
           <div className="flex items-start justify-between gap-3">
             <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
-            <HeaderActions />
+            <div className="flex items-center gap-1">
+              <HeaderActions />
+              <button
+                type="button"
+                onClick={() => setCollapsed((v) => !v)}
+                aria-label={collapsed ? "Развернуть заказ" : "Свернуть заказ"}
+                aria-expanded={!collapsed}
+                className="hidden sm:inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+              >
+                <ChevronDown className={`h-4 w-4 transition-transform ${collapsed ? "-rotate-90" : ""}`} />
+              </button>
+            </div>
           </div>
           {!isFullyOutOfStock && (
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
@@ -1462,23 +1551,40 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
         </header>
       )}
 
-      {/* Refund status banner removed per design update */}
+      {!collapsed && (
+        <>
+          {/* Groups: each status group has its own pipeline + items */}
+          <div className="divide-y divide-border/70">
+            {order.groups.map((g, i) => (
+              <GroupBlock
+                key={i}
+                group={g}
+                hidePipeline={isAwaiting || isFullyOutOfStock}
+                hideStatusLabel={isAwaiting || isFullyOutOfStock}
+                accentPrice={isAwaiting}
+                refunded={order.refunded}
+              />
+            ))}
+          </div>
 
-      {/* Groups: each status group has its own pipeline + items */}
-      <div className="divide-y divide-border/70">
-        {order.groups.map((g, i) => (
-          <GroupBlock
-            key={i}
-            group={g}
-            hidePipeline={isAwaiting || isFullyOutOfStock}
-            hideStatusLabel={isAwaiting || isFullyOutOfStock}
-            accentPrice={isAwaiting}
-          />
-        ))}
-      </div>
+          {/* Payment footer for paid / surcharge (hidden when fully OOS) */}
+          {!isAwaiting && !isFullyOutOfStock && <PaymentBar order={order} />}
 
-      {/* Payment footer for paid / surcharge (hidden when fully OOS) */}
-      {!isAwaiting && !isFullyOutOfStock && <PaymentBar order={order} />}
+          {/* Fully OOS footer: move to completed */}
+          {isFullyOutOfStock && onMoveToCompleted && (
+            <div className="flex items-center justify-end border-t border-border/70 bg-muted/30 px-5 py-3">
+              <button
+                type="button"
+                onClick={() => onMoveToCompleted(order.id)}
+                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
+              >
+                <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+                Перенести в завершённые
+              </button>
+            </div>
+          )}
+        </>
+      )}
     </article>
   );
 }
@@ -1487,6 +1593,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
 function CompletedOrderCard({ order }: { order: Order }) {
   const [returnMode, setReturnMode] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [collapsed, setCollapsed] = useState(false);
 
   const toggle = (id: string) =>
     setSelected((prev) => {
@@ -1512,7 +1619,18 @@ function CompletedOrderCard({ order }: { order: Order }) {
       <header className="border-b border-border/70 px-5 py-3.5">
         <div className="flex items-start justify-between gap-3">
           <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
-          <HeaderActions />
+          <div className="flex items-center gap-1">
+            <HeaderActions />
+            <button
+              type="button"
+              onClick={() => setCollapsed((v) => !v)}
+              aria-label={collapsed ? "Развернуть заказ" : "Свернуть заказ"}
+              aria-expanded={!collapsed}
+              className="hidden sm:inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              <ChevronDown className={`h-4 w-4 transition-transform ${collapsed ? "-rotate-90" : ""}`} />
+            </button>
+          </div>
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
           <div className="flex items-center gap-1.5">
@@ -1538,6 +1656,8 @@ function CompletedOrderCard({ order }: { order: Order }) {
         </div>
       </header>
 
+      {!collapsed && (
+      <>
       <div className="divide-y divide-border/70">
         {order.groups.map((g, i) => (
           <GroupBlock
@@ -1612,6 +1732,8 @@ function CompletedOrderCard({ order }: { order: Order }) {
           </div>
         </div>
       )}
+      </>
+      )}
     </article>
   );
 }
@@ -1621,13 +1743,31 @@ function CompletedOrderCard({ order }: { order: Order }) {
 
 function OrdersPage() {
   const [tab, setTab] = useState<"active" | "completed">("active");
+  const [movedIds, setMovedIds] = useState<Set<string>>(new Set());
 
-  const sorted = [...ORDERS].sort((a, b) => {
-    const order = { awaiting: 0, surcharge: 1, paid: 2 } as const;
-    return order[a.payment] - order[b.payment];
-  });
+  const sorted = [...ORDERS]
+    .filter((o) => !movedIds.has(o.id))
+    .sort((a, b) => {
+      const order = { awaiting: 0, surcharge: 1, paid: 2 } as const;
+      return order[a.payment] - order[b.payment];
+    });
+
+  const movedToCompleted = ORDERS.filter((o) => movedIds.has(o.id)).map((o) => ({
+    ...o,
+    completedAt: o.completedAt ?? "сегодня",
+  }));
+  const completedList = [...movedToCompleted, ...COMPLETED_ORDERS];
+
+  const moveToCompleted = (id: string) => {
+    setMovedIds((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+  };
 
   const isActive = tab === "active";
+  
   
 
   return (
@@ -1678,7 +1818,7 @@ function OrdersPage() {
             >
               <span className="sm:hidden">Завершённые</span><span className="hidden sm:inline">Завершённые заказы</span>
               <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                {COMPLETED_ORDERS.length}
+                {completedList.length}
               </span>
             </button>
           </div>
@@ -1691,9 +1831,10 @@ function OrdersPage() {
                     key={order.id}
                     order={order}
                     priority={order.payment === "awaiting"}
+                    onMoveToCompleted={moveToCompleted}
                   />
                 ))
-              : COMPLETED_ORDERS.map((order) => (
+              : completedList.map((order) => (
                   <CompletedOrderCard key={order.id} order={order} />
                 ))}
           </div>
