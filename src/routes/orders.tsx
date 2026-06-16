@@ -1185,6 +1185,7 @@ function GroupBlock({
   hidePipeline = false,
   hideStatusLabel = false,
   accentPrice = false,
+  refunded = false,
   selectable = false,
   selectedIds,
   onToggleItem,
@@ -1193,10 +1194,12 @@ function GroupBlock({
   hidePipeline?: boolean;
   hideStatusLabel?: boolean;
   accentPrice?: boolean;
+  refunded?: boolean;
   selectable?: boolean;
   selectedIds?: Set<string>;
   onToggleItem?: (id: string) => void;
 }) {
+  const mutedItems = group.status === "out_of_stock";
   const removable = group.status === "ordered_unpaid" || group.status === "paid";
   const showHeader = !hidePipeline || !hideStatusLabel;
   const COLLAPSE_THRESHOLD = 7;
