@@ -1514,12 +1514,6 @@ function OrderCard({
           )}
           {isFullyOutOfStock && (
             <div className="mt-2 hidden sm:flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center gap-1.5 text-base text-muted-foreground">
-                <span># {order.number}</span>
-                <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
-                  <Copy className="h-3.5 w-3.5" />
-                </button>
-              </div>
               {onMoveToCompleted && (
                 <button
                   type="button"
@@ -1530,6 +1524,12 @@ function OrderCard({
                   Перенести в завершённые
                 </button>
               )}
+              <div className="flex items-center gap-1.5 text-base text-muted-foreground">
+                <span># {order.number}</span>
+                <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
+                  <Copy className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
           )}
           {order.cdek && order.trackNumber && !isFullyOutOfStock && (
