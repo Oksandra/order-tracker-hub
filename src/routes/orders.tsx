@@ -1680,7 +1680,12 @@ function CompletedOrderCard({ order }: { order: Order }) {
           </div>
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
-          {!isFullyOutOfStock && (
+          {isFullyOutOfStock ? (
+            <div className="flex items-center gap-1.5">
+              <AlertCircle className="h-3.5 w-3.5 text-muted-foreground" />
+              <span className="font-medium text-muted-foreground">Нет в наличии</span>
+            </div>
+          ) : (
             <div className="flex items-center gap-1.5">
               <CheckCircle2 className="h-3.5 w-3.5 text-success" />
               <span className="text-success font-medium">Получено {order.completedAt}</span>
