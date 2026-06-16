@@ -1424,7 +1424,15 @@ function HeaderActions() {
   );
 }
 
-function OrderCard({ order, priority = false }: { order: Order; priority?: boolean }) {
+function OrderCard({
+  order,
+  priority = false,
+  onMoveToCompleted,
+}: {
+  order: Order;
+  priority?: boolean;
+  onMoveToCompleted?: (id: string) => void;
+}) {
   const isAwaiting = order.payment === "awaiting";
   const isSurcharge = order.payment === "surcharge";
   const isFullyOutOfStock = order.groups.every((g) => g.status === "out_of_stock");
@@ -1432,6 +1440,7 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
   const pickupEditable = order.groups.some(
     (g) => g.status === "paid" || g.status === "collecting",
   );
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
     <article
@@ -1459,7 +1468,18 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
           <div className="px-5 py-3.5">
           <div className="flex items-start justify-between gap-3">
             <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
-            <HeaderActions />
+            <div className="flex items-center gap-1">
+              <HeaderActions />
+              <button
+                type="button"
+                onClick={() => setCollapsed((v) => !v)}
+                aria-label={collapsed ? "Развернуть заказ" : "Свернуть заказ"}
+                aria-expanded={!collapsed}
+                className="hidden sm:inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+              >
+                <ChevronDown className={`h-4 w-4 transition-transform ${collapsed ? "-rotate-90" : ""}`} />
+              </button>
+            </div>
           </div>
           {!isFullyOutOfStock && (
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
@@ -1531,23 +1551,40 @@ function OrderCard({ order, priority = false }: { order: Order; priority?: boole
         </header>
       )}
 
-      {/* Refund status banner removed per design update */}
+      {!collapsed && (
+        <>
+          {/* Groups: each status group has its own pipeline + items */}
+          <div className="divide-y divide-border/70">
+            {order.groups.map((g, i) => (
+              <GroupBlock
+                key={i}
+                group={g}
+                hidePipeline={isAwaiting || isFullyOutOfStock}
+                hideStatusLabel={isAwaiting || isFullyOutOfStock}
+                accentPrice={isAwaiting}
+                refunded={order.refunded}
+              />
+            ))}
+          </div>
 
-      {/* Groups: each status group has its own pipeline + items */}
-      <div className="divide-y divide-border/70">
-        {order.groups.map((g, i) => (
-          <GroupBlock
-            key={i}
-            group={g}
-            hidePipeline={isAwaiting || isFullyOutOfStock}
-            hideStatusLabel={isAwaiting || isFullyOutOfStock}
-            accentPrice={isAwaiting}
-          />
-        ))}
-      </div>
+          {/* Payment footer for paid / surcharge (hidden when fully OOS) */}
+          {!isAwaiting && !isFullyOutOfStock && <PaymentBar order={order} />}
 
-      {/* Payment footer for paid / surcharge (hidden when fully OOS) */}
-      {!isAwaiting && !isFullyOutOfStock && <PaymentBar order={order} />}
+          {/* Fully OOS footer: move to completed */}
+          {isFullyOutOfStock && onMoveToCompleted && (
+            <div className="flex items-center justify-end border-t border-border/70 bg-muted/30 px-5 py-3">
+              <button
+                type="button"
+                onClick={() => onMoveToCompleted(order.id)}
+                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
+              >
+                <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+                Перенести в завершённые
+              </button>
+            </div>
+          )}
+        </>
+      )}
     </article>
   );
 }
