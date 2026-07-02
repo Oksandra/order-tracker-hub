@@ -1788,7 +1788,7 @@ function OrderCard({
               <MobileActionsMenu />
             </div>
           </div>
-          <div className={`px-5 ${isConfirming || isFullyOutOfStock ? "sm:py-3.5" : "py-3.5"}`}>
+          <div className={`px-5 ${isConfirming || isFullyOutOfStock ? "sm:py-3.5" : "py-2 sm:py-3.5"}`}>
           <div className="flex items-start justify-between gap-3">
             {!isConfirming && <h3 className="hidden sm:block text-base font-semibold text-foreground">{order.brand}</h3>}
             {isConfirming && <div className="hidden sm:block" />}
