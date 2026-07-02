@@ -2058,9 +2058,8 @@ function OrdersPage() {
     .sort((a, b) => {
       const score = (o: Order) => {
         if (o.payment === "awaiting") return 0;
-        if (o.groups.every((g) => g.status === "out_of_stock")) return 1;
-        if (o.payment === "surcharge") return 2;
-        return 3;
+        if (o.groups.every((g) => g.status === "ordered_unpaid")) return 1;
+        return 2;
       };
       return score(a) - score(b);
     });
