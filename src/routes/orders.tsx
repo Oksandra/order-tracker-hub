@@ -1659,9 +1659,10 @@ function OrderCard({
           </div>
           <div className="px-5 py-3.5">
           <div className="flex items-start justify-between gap-3">
-            <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
+            {!isConfirming && <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>}
+            {isConfirming && <div className="hidden sm:block" />}
             <div className="flex items-center gap-1">
-              <HeaderActions />
+              {!isConfirming && <HeaderActions />}
               <button
                 type="button"
                 onClick={() => setCollapsed((v) => !v)}
