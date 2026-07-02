@@ -988,7 +988,6 @@ function StatusTimeline({ status, variant = "dark" }: { status: OrderStatus; var
   );
 }
 
-}
 
 function StatusTrigger({ status }: { status: OrderStatus }) {
   const isMobile = useIsMobile();
