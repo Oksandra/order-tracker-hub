@@ -22,7 +22,7 @@ import {
   AlertCircle,
   AlertTriangle,
   Clock,
-  
+  HelpCircle,
   MessageSquare,
   X,
   Receipt,
