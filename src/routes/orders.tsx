@@ -1466,21 +1466,26 @@ function PickupSelector({ value }: { value: string }) {
 
 function ContractButton() {
   return (
-    <button
-      className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary"
-      aria-label="Скачать договор"
-    >
-      <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
-    </button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary"
+          aria-label="Скачать договор"
+        >
+          <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="top">Скачать договор</TooltipContent>
+    </Tooltip>
   );
 }
 
-function HeaderActions({ hideContractOnDesktop = false }: { hideContractOnDesktop?: boolean }) {
+function HeaderActions() {
   return (
     <div className="flex items-center">
       {/* Desktop: inline icons */}
       <div className="hidden sm:flex items-center gap-0.5">
-        {!hideContractOnDesktop && <ContractButton />}
+        <ContractButton />
         <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Вопрос поставщику">
           <MessageSquare className="h-4 w-4" />
         </button>
