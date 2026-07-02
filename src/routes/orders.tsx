@@ -1096,7 +1096,7 @@ function PaymentBar({ order }: { order: Order }) {
         <div className="flex items-center gap-2 text-warning">
           <Clock className="h-4 w-4" />
           <span className="text-sm font-medium whitespace-nowrap text-foreground">
-            Ожидает
+            Ожидает подтверждения оплаты
           </span>
         </div>
         <div className="ml-auto text-sm text-muted-foreground whitespace-nowrap">
@@ -1573,9 +1573,14 @@ function HeaderActions() {
       {/* Desktop: inline icons */}
       <div className="hidden sm:flex items-center gap-0.5">
         <ContractButton />
-        <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Вопрос поставщику">
-          <MessageSquare className="h-4 w-4" />
-        </button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Вопрос поставщику">
+              <MessageSquare className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="bg-foreground text-background">Задать вопрос</TooltipContent>
+        </Tooltip>
       </div>
       {/* Mobile: three-dots opens popover */}
       <div className="sm:hidden">
