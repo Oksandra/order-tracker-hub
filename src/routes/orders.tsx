@@ -1007,9 +1007,24 @@ function PaymentBar({ order }: { order: Order }) {
         <div className="flex items-center gap-2 text-success">
           <CheckCircle2 className="h-4 w-4" />
           <span className="text-sm font-medium whitespace-nowrap">Заказ оплачен</span>
-          <div className="hidden sm:inline-flex">
-            <ContractButton />
-          </div>
+        </div>
+        <div className="ml-auto text-sm text-muted-foreground whitespace-nowrap">
+          <span className="sm:hidden">Итого:</span>
+          <span className="hidden sm:inline">Итого по заказу:</span>{" "}
+          <TotalWithTooltip order={order} className="text-base font-semibold text-foreground" />
+        </div>
+      </div>
+    );
+  }
+
+  if (order.payment === "confirming") {
+    return (
+      <div className="flex items-center gap-3 border-t border-border/70 bg-warning/10 px-5 py-3">
+        <div className="flex items-center gap-2 text-warning">
+          <Clock className="h-4 w-4" />
+          <span className="text-sm font-medium whitespace-nowrap text-foreground">
+            Ожидается подтверждение оплаты
+          </span>
         </div>
         <div className="ml-auto text-sm text-muted-foreground whitespace-nowrap">
           <span className="sm:hidden">Итого:</span>
