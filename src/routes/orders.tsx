@@ -943,8 +943,11 @@ const TIMELINE_DATES = [
   "26.06.2026 14:22",
 ];
 
-function StatusTimeline({ status }: { status: OrderStatus }) {
+function StatusTimeline({ status, variant = "dark" }: { status: OrderStatus; variant?: "dark" | "light" }) {
   const currentIndex = STEPS.findIndex((s) => s.key === status);
+  const inactiveLine = variant === "light" ? "bg-border" : "bg-white/20";
+  const inactiveDot =
+    variant === "light" ? "bg-muted text-muted-foreground" : "bg-white/15 text-white/60";
   return (
     <ol className="relative">
       {STEPS.map((step, idx) => {
@@ -957,7 +960,7 @@ function StatusTimeline({ status }: { status: OrderStatus }) {
             {idx < STEPS.length - 1 && (
               <span
                 className={`absolute left-[11px] top-6 bottom-0 w-px ${
-                  isDone ? "bg-primary" : "bg-white/20"
+                  isDone ? "bg-primary" : inactiveLine
                 }`}
               />
             )}
@@ -967,12 +970,12 @@ function StatusTimeline({ status }: { status: OrderStatus }) {
                   ? "bg-primary text-primary-foreground"
                   : isDone
                   ? "bg-primary/80 text-primary-foreground"
-                  : "bg-white/15 text-white/60"
+                  : inactiveDot
               }`}
             >
               <Icon className="h-3 w-3" />
             </div>
-            <div className={active ? "" : "opacity-50"}>
+            <div className={active ? "" : "opacity-60"}>
               <div className="text-sm leading-snug">{step.label}</div>
               {active && (
                 <div className="mt-0.5 text-xs opacity-70">{TIMELINE_DATES[idx]}</div>
@@ -983,6 +986,8 @@ function StatusTimeline({ status }: { status: OrderStatus }) {
       })}
     </ol>
   );
+}
+
 }
 
 function StatusTrigger({ status }: { status: OrderStatus }) {
