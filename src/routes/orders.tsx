@@ -1096,7 +1096,7 @@ function PaymentBar({ order }: { order: Order }) {
         <div className="flex items-center gap-2 text-warning">
           <Clock className="h-4 w-4" />
           <span className="text-sm font-medium whitespace-nowrap text-foreground">
-            Ожидается подтверждение оплаты
+            Ожидает
           </span>
         </div>
         <div className="ml-auto text-sm text-muted-foreground whitespace-nowrap">
@@ -1562,7 +1562,7 @@ function ContractButton() {
           <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
         </button>
       </TooltipTrigger>
-      <TooltipContent side="top">Скачать договор</TooltipContent>
+      <TooltipContent side="top" className="bg-foreground text-background">Скачать договор</TooltipContent>
     </Tooltip>
   );
 }
@@ -1614,6 +1614,7 @@ function OrderCard({
   onMoveToCompleted?: (id: string) => void;
 }) {
   const isAwaiting = order.payment === "awaiting";
+  const isConfirming = order.payment === "confirming";
   const isSurcharge = order.payment === "surcharge";
   const isFullyOutOfStock = order.groups.every((g) => g.status === "out_of_stock");
   const hasReady = order.groups.some((g) => g.status === "ready");
@@ -1658,9 +1659,10 @@ function OrderCard({
           </div>
           <div className="px-5 py-3.5">
           <div className="flex items-start justify-between gap-3">
-            <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
+            {!isConfirming && <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>}
+            {isConfirming && <div className="hidden sm:block" />}
             <div className="flex items-center gap-1">
-              <HeaderActions />
+              {!isConfirming && <HeaderActions />}
               <button
                 type="button"
                 onClick={() => setCollapsed((v) => !v)}
@@ -1672,7 +1674,7 @@ function OrderCard({
               </button>
             </div>
           </div>
-          {!isFullyOutOfStock && (
+          {!isFullyOutOfStock && !isConfirming && (
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
             {!hasReady && (
               <div className="flex items-center gap-1.5">
@@ -1723,6 +1725,20 @@ function OrderCard({
               )}
             </div>
           )}
+          {isConfirming && (
+            <div className="mt-2 hidden sm:flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5 text-base text-muted-foreground">
+                <span># {order.number}</span>
+                <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
+                  <Copy className="h-3.5 w-3.5" />
+                </button>
+              </div>
+              <button className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
+                <CreditCard className="h-4 w-4" />
+                Оплатить {formatPrice(order.payAmount ?? orderTotal(order))}
+              </button>
+            </div>
+          )}
           {order.cdek && order.trackNumber && !isFullyOutOfStock && (
             <div className="mt-2.5 flex flex-wrap items-center gap-2 text-sm">
               <span className="text-muted-foreground">Трек-номер:</span>
@@ -1764,7 +1780,7 @@ function OrderCard({
                     <HelpCircle className="h-4 w-4" />
                   </button>
                 </TooltipTrigger>
-                <TooltipContent side="top" className="max-w-[240px] text-center">
+                <TooltipContent side="top" className="max-w-[240px] text-center bg-foreground text-background">
                   В пути. Заказ ещё не передан в транспортную компанию
                 </TooltipContent>
               </Tooltip>
