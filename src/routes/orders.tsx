@@ -1764,7 +1764,7 @@ function OrderCard({
                     <HelpCircle className="h-4 w-4" />
                   </button>
                 </TooltipTrigger>
-                <TooltipContent side="top" className="max-w-[240px] text-center">
+                <TooltipContent side="top" className="max-w-[240px] text-center bg-foreground text-background">
                   В пути. Заказ ещё не передан в транспортную компанию
                 </TooltipContent>
               </Tooltip>
