@@ -1573,7 +1573,7 @@ function OrderCard({
           <div className="flex items-start justify-between gap-3">
             <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
             <div className="flex items-center gap-1">
-              <HeaderActions hideContractOnDesktop />
+              <HeaderActions />
               <button
                 type="button"
                 onClick={() => setCollapsed((v) => !v)}
