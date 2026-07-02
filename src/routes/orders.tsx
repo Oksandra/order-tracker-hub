@@ -1651,15 +1651,17 @@ function OrderCard({
               <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
                 <Copy className="h-3.5 w-3.5" />
               </button>
-              <button
-                type="button"
-                onClick={() => setCollapsed((v) => !v)}
-                aria-label={collapsed ? "Развернуть заказ" : "Свернуть заказ"}
-                aria-expanded={!collapsed}
-                className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
-              >
-                <ChevronDown className={`h-4 w-4 transition-transform ${collapsed ? "-rotate-90" : ""}`} />
-              </button>
+              {!isConfirming && (
+                <button
+                  type="button"
+                  onClick={() => setCollapsed((v) => !v)}
+                  aria-label={collapsed ? "Развернуть заказ" : "Свернуть заказ"}
+                  aria-expanded={!collapsed}
+                  className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+                >
+                  <ChevronDown className={`h-4 w-4 transition-transform ${collapsed ? "-rotate-90" : ""}`} />
+                </button>
+              )}
             </div>
           </div>
           <div className="px-5 py-3.5">
