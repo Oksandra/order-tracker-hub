@@ -1670,15 +1670,17 @@ function OrderCard({
             {isConfirming && <div className="hidden sm:block" />}
             <div className="flex items-center gap-1">
               {!isConfirming && <HeaderActions />}
-              <button
-                type="button"
-                onClick={() => setCollapsed((v) => !v)}
-                aria-label={collapsed ? "Развернуть заказ" : "Свернуть заказ"}
-                aria-expanded={!collapsed}
-                className="hidden sm:inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
-              >
-                <ChevronDown className={`h-4 w-4 transition-transform ${collapsed ? "-rotate-90" : ""}`} />
-              </button>
+              {!isConfirming && (
+                <button
+                  type="button"
+                  onClick={() => setCollapsed((v) => !v)}
+                  aria-label={collapsed ? "Развернуть заказ" : "Свернуть заказ"}
+                  aria-expanded={!collapsed}
+                  className="hidden sm:inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+                >
+                  <ChevronDown className={`h-4 w-4 transition-transform ${collapsed ? "-rotate-90" : ""}`} />
+                </button>
+              )}
             </div>
           </div>
           {!isFullyOutOfStock && !isConfirming && (
