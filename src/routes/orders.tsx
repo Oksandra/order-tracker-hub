@@ -22,7 +22,7 @@ import {
   AlertCircle,
   AlertTriangle,
   Clock,
-  
+  HelpCircle,
   MessageSquare,
   X,
   Receipt,
@@ -71,7 +71,7 @@ type OrderStatus =
   | "received"
   | "awaiting_payment"
   | "delayed";
-type PaymentState = "awaiting" | "paid" | "surcharge";
+type PaymentState = "awaiting" | "paid" | "surcharge" | "confirming";
 
 type OrderItem = {
   id: string;
@@ -99,6 +99,7 @@ type Order = {
   cdek?: boolean; // pickup point is СДЭК
   deliveryFee?: number; // СДЭК delivery cost included in total
   trackNumber?: string; // СДЭК track number
+  expectingTrack?: boolean; // ожидаем присвоение трек-номера от СДЭК
   payment: PaymentState;
   payAmount?: number; // for awaiting / surcharge
   paidAmount?: number; // already paid for surcharge
@@ -367,6 +368,79 @@ const ORDERS: Order[] = [
       },
     ],
   },
+  {
+    id: "track-pending",
+    number: "337456921",
+    brand: "Happywear — гипермаркет одежды",
+    date: "9 июля 2025",
+    pickup: "Самара, Московское шоссе, 220",
+    cdek: true,
+    deliveryFee: 299,
+    expectingTrack: true,
+    payment: "paid",
+    groups: [
+      {
+        status: "from_supplier",
+        items: [
+          {
+            id: "hw-tp1",
+            title: "Ветровка женская непромокаемая",
+            size: "M",
+            color: "оливковый",
+            qty: 1,
+            price: 2390,
+            commission: 350,
+            image: img("photo-1495121605193-b116b5b9c5fe"),
+          },
+          {
+            id: "hw-tp2",
+            title: "Брюки карго хлопок",
+            size: "M",
+            color: "бежевый",
+            qty: 1,
+            price: 1890,
+            commission: 280,
+            image: img("photo-1521572163474-6864f9cf17ab"),
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "confirming",
+    number: "337456922",
+    brand: "Nordic Home — текстиль и уют",
+    date: "14 июля 2025",
+    pickup: "Самара, ул. Ново-Садовая, 160",
+    payment: "confirming",
+    groups: [
+      {
+        status: "ordered_unpaid",
+        items: [
+          {
+            id: "nh1",
+            title: "Плед вязаный крупной вязки",
+            color: "молочный",
+            qty: 1,
+            price: 3290,
+            commission: 480,
+            image: img("photo-1520006403909-838d6b92c22e"),
+          },
+          {
+            id: "nh2",
+            title: "Наволочка декоративная 45×45",
+            color: "серый",
+            qty: 2,
+            price: 690,
+            commission: 100,
+            image: img("photo-1493552152660-f915ab47ae9d"),
+          },
+        ],
+      },
+    ],
+  },
+
+
 
   {
     id: "3",
@@ -1006,9 +1080,24 @@ function PaymentBar({ order }: { order: Order }) {
         <div className="flex items-center gap-2 text-success">
           <CheckCircle2 className="h-4 w-4" />
           <span className="text-sm font-medium whitespace-nowrap">Заказ оплачен</span>
-          <div className="hidden sm:inline-flex">
-            <ContractButton />
-          </div>
+        </div>
+        <div className="ml-auto text-sm text-muted-foreground whitespace-nowrap">
+          <span className="sm:hidden">Итого:</span>
+          <span className="hidden sm:inline">Итого по заказу:</span>{" "}
+          <TotalWithTooltip order={order} className="text-base font-semibold text-foreground" />
+        </div>
+      </div>
+    );
+  }
+
+  if (order.payment === "confirming") {
+    return (
+      <div className="flex items-center gap-3 border-t border-border/70 bg-warning/10 px-5 py-3">
+        <div className="flex items-center gap-2 text-warning">
+          <Clock className="h-4 w-4" />
+          <span className="text-sm font-medium whitespace-nowrap text-foreground">
+            Ожидается подтверждение оплаты
+          </span>
         </div>
         <div className="ml-auto text-sm text-muted-foreground whitespace-nowrap">
           <span className="sm:hidden">Итого:</span>
@@ -1050,7 +1139,6 @@ function PaymentBar({ order }: { order: Order }) {
               {formatPrice(order.payAmount ?? 0)}
             </span>
           </span>
-          <ContractButton />
         </div>
         <div className="ml-auto flex flex-wrap items-center justify-end gap-x-3 gap-y-2">
           <span className="text-sm text-muted-foreground">
@@ -1465,21 +1553,26 @@ function PickupSelector({ value }: { value: string }) {
 
 function ContractButton() {
   return (
-    <button
-      className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary"
-      aria-label="Скачать договор"
-    >
-      <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
-    </button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary"
+          aria-label="Скачать договор"
+        >
+          <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="top">Скачать договор</TooltipContent>
+    </Tooltip>
   );
 }
 
-function HeaderActions({ hideContractOnDesktop = false }: { hideContractOnDesktop?: boolean }) {
+function HeaderActions() {
   return (
     <div className="flex items-center">
       {/* Desktop: inline icons */}
       <div className="hidden sm:flex items-center gap-0.5">
-        {!hideContractOnDesktop && <ContractButton />}
+        <ContractButton />
         <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Вопрос поставщику">
           <MessageSquare className="h-4 w-4" />
         </button>
@@ -1567,7 +1660,7 @@ function OrderCard({
           <div className="flex items-start justify-between gap-3">
             <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
             <div className="flex items-center gap-1">
-              <HeaderActions hideContractOnDesktop />
+              <HeaderActions />
               <button
                 type="button"
                 onClick={() => setCollapsed((v) => !v)}
@@ -1655,6 +1748,26 @@ function OrderCard({
                   <ArrowUpRight className="h-4 w-4" strokeWidth={2.5} />
                 </span>
               </a>
+            </div>
+          )}
+          {order.cdek && !order.trackNumber && order.expectingTrack && !isFullyOutOfStock && (
+            <div className="mt-2.5 flex flex-wrap items-center gap-2 text-sm">
+              <span className="text-muted-foreground">Трек-номер:</span>
+              <span className="text-muted-foreground italic">пока не присвоен</span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    className="rounded-full p-0.5 text-muted-foreground hover:text-foreground"
+                    aria-label="Информация о треке"
+                  >
+                    <HelpCircle className="h-4 w-4" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[240px] text-center">
+                  В пути. Заказ ещё не передан в транспортную компанию
+                </TooltipContent>
+              </Tooltip>
             </div>
           )}
           </div>
