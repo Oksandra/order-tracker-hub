@@ -1562,7 +1562,7 @@ function ContractButton() {
           <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
         </button>
       </TooltipTrigger>
-      <TooltipContent side="top">Скачать договор</TooltipContent>
+      <TooltipContent side="top" className="bg-foreground text-background">Скачать договор</TooltipContent>
     </Tooltip>
   );
 }
