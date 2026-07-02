@@ -1689,44 +1689,43 @@ function ContractButton() {
   );
 }
 
+function MobileActionsMenu() {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          className="rounded-md p-1.5 text-muted-foreground hover:bg-muted"
+          aria-label="Действия"
+        >
+          <MoreHorizontal className="h-4 w-4" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-56 p-2">
+        <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
+          <MessageSquare className="h-4 w-4 text-muted-foreground" />
+          Вопрос поставщику
+        </button>
+        <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
+          <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
+          Скачать договор
+        </button>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 function HeaderActions() {
   return (
-    <div className="flex items-center">
-      {/* Desktop: inline icons */}
-      <div className="hidden sm:flex items-center gap-0.5">
-        <ContractButton />
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Вопрос поставщику">
-              <MessageSquare className="h-4 w-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="top" className="bg-foreground text-background">Задать вопрос</TooltipContent>
-        </Tooltip>
-      </div>
-      {/* Mobile: three-dots opens popover */}
-      <div className="sm:hidden">
-        <Popover>
-          <PopoverTrigger asChild>
-            <button
-              className="rounded-md p-1.5 text-muted-foreground hover:bg-muted"
-              aria-label="Действия"
-            >
-              <MoreHorizontal className="h-4 w-4" />
-            </button>
-          </PopoverTrigger>
-          <PopoverContent align="end" className="w-56 p-2">
-            <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
-              <MessageSquare className="h-4 w-4 text-muted-foreground" />
-              Вопрос поставщику
-            </button>
-            <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
-              <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
-              Скачать договор
-            </button>
-          </PopoverContent>
-        </Popover>
-      </div>
+    <div className="hidden sm:flex items-center gap-0.5">
+      <ContractButton />
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Вопрос поставщику">
+            <MessageSquare className="h-4 w-4" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="bg-foreground text-background">Задать вопрос</TooltipContent>
+      </Tooltip>
     </div>
   );
 }
