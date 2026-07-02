@@ -99,6 +99,7 @@ type Order = {
   cdek?: boolean; // pickup point is СДЭК
   deliveryFee?: number; // СДЭК delivery cost included in total
   trackNumber?: string; // СДЭК track number
+  expectingTrack?: boolean; // ожидаем присвоение трек-номера от СДЭК
   payment: PaymentState;
   payAmount?: number; // for awaiting / surcharge
   paidAmount?: number; // already paid for surcharge
