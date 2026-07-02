@@ -1548,8 +1548,7 @@ function GroupBlock({
     <div className="px-5 py-4">
       {showHeader && (
         <div className="mb-3 flex flex-wrap items-center gap-3">
-          {!hidePipeline && <StatusPipeline status={group.status} />}
-          {!hideStatusLabel && <StatusLabel status={group.status} />}
+          {!hideStatusLabel && <StatusTrigger status={group.status} />}
           <span className="ml-auto text-xs text-muted-foreground">
             {group.items.length}{" "}
             {group.items.length === 1 ? "товар" : group.items.length < 5 ? "товара" : "товаров"}
