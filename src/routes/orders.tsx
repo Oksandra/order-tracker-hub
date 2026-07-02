@@ -2027,7 +2027,7 @@ function CompletedOrderCard({ order }: { order: Order }) {
       </div>
       <header className="border-b border-border/70 px-5 py-3.5">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
+          <h3 className="hidden sm:block text-base font-semibold text-foreground">{order.brand}</h3>
           <div className="flex items-center gap-1">
             <HeaderActions />
             <button
