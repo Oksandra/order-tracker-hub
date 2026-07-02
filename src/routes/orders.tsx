@@ -13,7 +13,7 @@ import {
   Search,
   SlidersHorizontal,
   Bell,
-  Heart,
+  
   ShoppingCart,
   Menu,
   CreditCard,
@@ -1006,6 +1006,9 @@ function PaymentBar({ order }: { order: Order }) {
         <div className="flex items-center gap-2 text-success">
           <CheckCircle2 className="h-4 w-4" />
           <span className="text-sm font-medium whitespace-nowrap">Заказ оплачен</span>
+          <div className="hidden sm:inline-flex">
+            <ContractButton />
+          </div>
         </div>
         <div className="ml-auto text-sm text-muted-foreground whitespace-nowrap">
           <span className="sm:hidden">Итого:</span>
@@ -1563,7 +1566,7 @@ function OrderCard({
           <div className="flex items-start justify-between gap-3">
             <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
             <div className="flex items-center gap-1">
-              <HeaderActions />
+              <HeaderActions hideContractOnDesktop />
               <button
                 type="button"
                 onClick={() => setCollapsed((v) => !v)}
