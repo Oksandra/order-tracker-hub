@@ -368,6 +368,79 @@ const ORDERS: Order[] = [
       },
     ],
   },
+  {
+    id: "track-pending",
+    number: "337456921",
+    brand: "Happywear — гипермаркет одежды",
+    date: "9 июля 2025",
+    pickup: "Самара, Московское шоссе, 220",
+    cdek: true,
+    deliveryFee: 299,
+    expectingTrack: true,
+    payment: "paid",
+    groups: [
+      {
+        status: "from_supplier",
+        items: [
+          {
+            id: "hw-tp1",
+            title: "Ветровка женская непромокаемая",
+            size: "M",
+            color: "оливковый",
+            qty: 1,
+            price: 2390,
+            commission: 350,
+            image: img("photo-1495121605193-b116b5b9c5fe"),
+          },
+          {
+            id: "hw-tp2",
+            title: "Брюки карго хлопок",
+            size: "M",
+            color: "бежевый",
+            qty: 1,
+            price: 1890,
+            commission: 280,
+            image: img("photo-1521572163474-6864f9cf17ab"),
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "confirming",
+    number: "337456922",
+    brand: "Nordic Home — текстиль и уют",
+    date: "14 июля 2025",
+    pickup: "Самара, ул. Ново-Садовая, 160",
+    payment: "confirming",
+    groups: [
+      {
+        status: "ordered_unpaid",
+        items: [
+          {
+            id: "nh1",
+            title: "Плед вязаный крупной вязки",
+            color: "молочный",
+            qty: 1,
+            price: 3290,
+            commission: 480,
+            image: img("photo-1520006403909-838d6b92c22e"),
+          },
+          {
+            id: "nh2",
+            title: "Наволочка декоративная 45×45",
+            color: "серый",
+            qty: 2,
+            price: 690,
+            commission: 100,
+            image: img("photo-1493552152660-f915ab47ae9d"),
+          },
+        ],
+      },
+    ],
+  },
+
+
 
   {
     id: "3",
