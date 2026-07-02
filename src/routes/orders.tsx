@@ -13,7 +13,7 @@ import {
   Search,
   SlidersHorizontal,
   Bell,
-  
+  Heart,
   ShoppingCart,
   Menu,
   CreditCard,
