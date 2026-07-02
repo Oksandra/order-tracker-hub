@@ -1096,7 +1096,7 @@ function PaymentBar({ order }: { order: Order }) {
         <div className="flex items-center gap-2 text-warning">
           <Clock className="h-4 w-4" />
           <span className="text-sm font-medium whitespace-nowrap text-foreground">
-            Ожидается подтверждение оплаты
+            Ожидает
           </span>
         </div>
         <div className="ml-auto text-sm text-muted-foreground whitespace-nowrap">
