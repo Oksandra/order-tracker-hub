@@ -71,7 +71,7 @@ type OrderStatus =
   | "received"
   | "awaiting_payment"
   | "delayed";
-type PaymentState = "awaiting" | "paid" | "surcharge";
+type PaymentState = "awaiting" | "paid" | "surcharge" | "confirming";
 
 type OrderItem = {
   id: string;
