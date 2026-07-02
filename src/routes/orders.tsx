@@ -1774,7 +1774,6 @@ function OrderCard({
               </button>
             </div>
             <div className="flex items-center gap-1">
-              <MobileActionsMenu />
               {!isConfirming && (
                 <button
                   type="button"
@@ -1786,6 +1785,7 @@ function OrderCard({
                   <ChevronDown className={`h-4 w-4 transition-transform ${collapsed ? "-rotate-90" : ""}`} />
                 </button>
               )}
+              <MobileActionsMenu />
             </div>
           </div>
           <div className={`px-5 ${isConfirming ? "sm:py-3.5" : "py-3.5"}`}>
@@ -1811,7 +1811,14 @@ function OrderCard({
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
             {!hasReady && (
               <div className="flex items-center gap-1.5">
-                <Truck className="h-5 w-5 text-primary" />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex cursor-help">
+                      <Truck className="h-5 w-5 text-primary" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="bg-foreground text-background">Ориентировочная дата доставки</TooltipContent>
+                </Tooltip>
                 <span className="text-foreground text-base font-semibold">{order.date}</span>
               </div>
             )}
@@ -2024,7 +2031,6 @@ function CompletedOrderCard({ order }: { order: Order }) {
           </button>
         </div>
         <div className="flex items-center gap-1">
-          <MobileActionsMenu />
           <button
             type="button"
             onClick={() => setCollapsed((v) => !v)}
@@ -2034,6 +2040,7 @@ function CompletedOrderCard({ order }: { order: Order }) {
           >
             <ChevronDown className={`h-4 w-4 transition-transform ${collapsed ? "-rotate-90" : ""}`} />
           </button>
+          <MobileActionsMenu />
         </div>
       </div>
       <header className="border-b border-border/70 px-5 py-3.5">
