@@ -1808,7 +1808,7 @@ function OrderCard({
             </div>
           </div>
           {!isFullyOutOfStock && !isConfirming && (
-          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
+          <div className="mt-1 sm:mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
             {!hasReady && (
               <div className="flex items-center gap-1.5">
                 <Tooltip>
