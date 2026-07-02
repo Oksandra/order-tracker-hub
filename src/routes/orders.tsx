@@ -1022,15 +1022,17 @@ function StatusTrigger({ status }: { status: OrderStatus }) {
       <>
         {triggerEl}
         <Drawer open={open} onOpenChange={setOpen}>
-          <DrawerContent className="bg-foreground text-background border-0">
-            <div className="px-2 pb-6 pt-2 max-h-[80vh] overflow-y-auto">
-              {panel}
+          <DrawerContent className="bg-background text-foreground">
+            <div className="px-4 pb-6 pt-2 max-h-[80vh] overflow-y-auto">
+              <div className="mb-3 mt-2 text-base font-semibold">Статус заказа</div>
+              <StatusTimeline status={status} variant="light" />
             </div>
           </DrawerContent>
         </Drawer>
       </>
     );
   }
+
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
