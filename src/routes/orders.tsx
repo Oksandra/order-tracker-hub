@@ -1050,6 +1050,7 @@ function PaymentBar({ order }: { order: Order }) {
               {formatPrice(order.payAmount ?? 0)}
             </span>
           </span>
+          <ContractButton />
         </div>
         <div className="ml-auto flex flex-wrap items-center justify-end gap-x-3 gap-y-2">
           <span className="text-sm text-muted-foreground">
