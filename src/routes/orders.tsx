@@ -1725,6 +1725,20 @@ function OrderCard({
               )}
             </div>
           )}
+          {isConfirming && (
+            <div className="mt-2 hidden sm:flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5 text-base text-muted-foreground">
+                <span># {order.number}</span>
+                <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
+                  <Copy className="h-3.5 w-3.5" />
+                </button>
+              </div>
+              <button className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
+                <CreditCard className="h-4 w-4" />
+                Оплатить {formatPrice(order.payAmount ?? orderTotal(order))}
+              </button>
+            </div>
+          )}
           {order.cdek && order.trackNumber && !isFullyOutOfStock && (
             <div className="mt-2.5 flex flex-wrap items-center gap-2 text-sm">
               <span className="text-muted-foreground">Трек-номер:</span>
