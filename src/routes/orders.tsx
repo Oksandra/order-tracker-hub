@@ -22,7 +22,7 @@ import {
   AlertCircle,
   AlertTriangle,
   Clock,
-  Share2,
+  
   MessageSquare,
   X,
   Receipt,
@@ -1006,6 +1006,9 @@ function PaymentBar({ order }: { order: Order }) {
         <div className="flex items-center gap-2 text-success">
           <CheckCircle2 className="h-4 w-4" />
           <span className="text-sm font-medium whitespace-nowrap">Заказ оплачен</span>
+          <div className="hidden sm:inline-flex">
+            <ContractButton />
+          </div>
         </div>
         <div className="ml-auto text-sm text-muted-foreground whitespace-nowrap">
           <span className="sm:hidden">Итого:</span>
@@ -1047,6 +1050,7 @@ function PaymentBar({ order }: { order: Order }) {
               {formatPrice(order.payAmount ?? 0)}
             </span>
           </span>
+          <ContractButton />
         </div>
         <div className="ml-auto flex flex-wrap items-center justify-end gap-x-3 gap-y-2">
           <span className="text-sm text-muted-foreground">
@@ -1459,27 +1463,27 @@ function PickupSelector({ value }: { value: string }) {
   );
 }
 
-function HeaderActions() {
-  const Icons = (
-    <>
-      <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Скачать договор">
-        <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
-      </button>
-      <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="В избранное">
-        <Heart className="h-4 w-4" />
-      </button>
-      <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Поделиться">
-        <Share2 className="h-4 w-4" />
-      </button>
-      <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Вопрос поставщику">
-        <MessageSquare className="h-4 w-4" />
-      </button>
-    </>
+function ContractButton() {
+  return (
+    <button
+      className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary"
+      aria-label="Скачать договор"
+    >
+      <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
+    </button>
   );
+}
+
+function HeaderActions({ hideContractOnDesktop = false }: { hideContractOnDesktop?: boolean }) {
   return (
     <div className="flex items-center">
       {/* Desktop: inline icons */}
-      <div className="hidden sm:flex items-center gap-0.5">{Icons}</div>
+      <div className="hidden sm:flex items-center gap-0.5">
+        {!hideContractOnDesktop && <ContractButton />}
+        <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Вопрос поставщику">
+          <MessageSquare className="h-4 w-4" />
+        </button>
+      </div>
       {/* Mobile: three-dots opens popover */}
       <div className="sm:hidden">
         <Popover>
@@ -1492,14 +1496,6 @@ function HeaderActions() {
             </button>
           </PopoverTrigger>
           <PopoverContent align="end" className="w-56 p-2">
-            <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
-              <Heart className="h-4 w-4 text-muted-foreground" />
-              Добавить поставщика в избранное
-            </button>
-            <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
-              <Share2 className="h-4 w-4 text-muted-foreground" />
-              Поделиться
-            </button>
             <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
               <MessageSquare className="h-4 w-4 text-muted-foreground" />
               Вопрос поставщику
@@ -1571,7 +1567,7 @@ function OrderCard({
           <div className="flex items-start justify-between gap-3">
             <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
             <div className="flex items-center gap-1">
-              <HeaderActions />
+              <HeaderActions hideContractOnDesktop />
               <button
                 type="button"
                 onClick={() => setCollapsed((v) => !v)}
