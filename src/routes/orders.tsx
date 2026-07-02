@@ -1689,44 +1689,43 @@ function ContractButton() {
   );
 }
 
+function MobileActionsMenu() {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          className="rounded-md p-1.5 text-muted-foreground hover:bg-muted"
+          aria-label="Действия"
+        >
+          <MoreHorizontal className="h-4 w-4" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-56 p-2">
+        <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
+          <MessageSquare className="h-4 w-4 text-muted-foreground" />
+          Вопрос поставщику
+        </button>
+        <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
+          <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
+          Скачать договор
+        </button>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 function HeaderActions() {
   return (
-    <div className="flex items-center">
-      {/* Desktop: inline icons */}
-      <div className="hidden sm:flex items-center gap-0.5">
-        <ContractButton />
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Вопрос поставщику">
-              <MessageSquare className="h-4 w-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="top" className="bg-foreground text-background">Задать вопрос</TooltipContent>
-        </Tooltip>
-      </div>
-      {/* Mobile: three-dots opens popover */}
-      <div className="sm:hidden">
-        <Popover>
-          <PopoverTrigger asChild>
-            <button
-              className="rounded-md p-1.5 text-muted-foreground hover:bg-muted"
-              aria-label="Действия"
-            >
-              <MoreHorizontal className="h-4 w-4" />
-            </button>
-          </PopoverTrigger>
-          <PopoverContent align="end" className="w-56 p-2">
-            <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
-              <MessageSquare className="h-4 w-4 text-muted-foreground" />
-              Вопрос поставщику
-            </button>
-            <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
-              <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
-              Скачать договор
-            </button>
-          </PopoverContent>
-        </Popover>
-      </div>
+    <div className="hidden sm:flex items-center gap-0.5">
+      <ContractButton />
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Вопрос поставщику">
+            <MessageSquare className="h-4 w-4" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="bg-foreground text-background">Задать вопрос</TooltipContent>
+      </Tooltip>
     </div>
   );
 }
@@ -1768,11 +1767,14 @@ function OrderCard({
         <header className="border-b border-border/70">
           {/* Mobile-only top bar with order number */}
           <div className="flex sm:hidden items-center justify-between gap-2 border-b border-border/60 bg-muted/40 px-5 py-1.5 text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">№ {order.number}</span>
             <div className="flex items-center gap-1">
+              <span className="font-medium text-foreground">№ {order.number}</span>
               <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
                 <Copy className="h-3.5 w-3.5" />
               </button>
+            </div>
+            <div className="flex items-center gap-1">
+              <MobileActionsMenu />
               {!isConfirming && (
                 <button
                   type="button"
@@ -1786,7 +1788,7 @@ function OrderCard({
               )}
             </div>
           </div>
-          <div className="px-5 py-3.5">
+          <div className={`px-5 ${isConfirming ? "sm:py-3.5" : "py-3.5"}`}>
           <div className="flex items-start justify-between gap-3">
             {!isConfirming && <h3 className="hidden sm:block text-base font-semibold text-foreground">{order.brand}</h3>}
             {isConfirming && <div className="hidden sm:block" />}
@@ -2015,11 +2017,14 @@ function CompletedOrderCard({ order }: { order: Order }) {
     <article className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       {/* Mobile-only top bar with order number */}
       <div className="flex sm:hidden items-center justify-between gap-2 border-b border-border/60 bg-muted/40 px-5 py-1.5 text-sm text-muted-foreground">
-        <span className="font-medium text-foreground">№ {order.number}</span>
         <div className="flex items-center gap-1">
+          <span className="font-medium text-foreground">№ {order.number}</span>
           <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
             <Copy className="h-3.5 w-3.5" />
           </button>
+        </div>
+        <div className="flex items-center gap-1">
+          <MobileActionsMenu />
           <button
             type="button"
             onClick={() => setCollapsed((v) => !v)}
