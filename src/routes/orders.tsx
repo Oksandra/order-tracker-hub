@@ -1614,6 +1614,7 @@ function OrderCard({
   onMoveToCompleted?: (id: string) => void;
 }) {
   const isAwaiting = order.payment === "awaiting";
+  const isConfirming = order.payment === "confirming";
   const isSurcharge = order.payment === "surcharge";
   const isFullyOutOfStock = order.groups.every((g) => g.status === "out_of_stock");
   const hasReady = order.groups.some((g) => g.status === "ready");
