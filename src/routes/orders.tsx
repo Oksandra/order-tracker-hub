@@ -32,6 +32,7 @@ import {
   ArrowUpRight,
   Undo2,
   Star,
+  Circle,
 } from "lucide-react";
 import contractIcon from "@/assets/contract-receipt.png.asset.json";
 import {
@@ -1726,9 +1727,9 @@ function OrderCard({
                 <button
                   type="button"
                   onClick={() => onMoveToCompleted(order.id)}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background hover:bg-foreground/90"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-background px-4 py-2 text-sm font-medium text-foreground shadow-sm hover:bg-accent"
                 >
-                  <CheckCircle2 className="h-4 w-4" />
+                  <Circle className="h-3.5 w-3.5 fill-foreground" />
                   Перенести в завершённые
                 </button>
               )}
@@ -1855,9 +1856,9 @@ function OrderCard({
                   <button
                     type="button"
                     onClick={() => onMoveToCompleted(order.id)}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background hover:bg-foreground/90"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-background px-4 py-2 text-sm font-medium text-foreground shadow-sm hover:bg-accent"
                   >
-                    <CheckCircle2 className="h-4 w-4" />
+                    <Circle className="h-3.5 w-3.5 fill-foreground" />
                     Перенести в завершённые
                   </button>
                 </div>
