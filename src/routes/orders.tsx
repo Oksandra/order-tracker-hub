@@ -1459,27 +1459,27 @@ function PickupSelector({ value }: { value: string }) {
   );
 }
 
-function HeaderActions() {
-  const Icons = (
-    <>
-      <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Скачать договор">
-        <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
-      </button>
-      <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="В избранное">
-        <Heart className="h-4 w-4" />
-      </button>
-      <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Поделиться">
-        <Share2 className="h-4 w-4" />
-      </button>
-      <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Вопрос поставщику">
-        <MessageSquare className="h-4 w-4" />
-      </button>
-    </>
+function ContractButton() {
+  return (
+    <button
+      className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary"
+      aria-label="Скачать договор"
+    >
+      <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
+    </button>
   );
+}
+
+function HeaderActions({ hideContractOnDesktop = false }: { hideContractOnDesktop?: boolean }) {
   return (
     <div className="flex items-center">
       {/* Desktop: inline icons */}
-      <div className="hidden sm:flex items-center gap-0.5">{Icons}</div>
+      <div className="hidden sm:flex items-center gap-0.5">
+        {!hideContractOnDesktop && <ContractButton />}
+        <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Вопрос поставщику">
+          <MessageSquare className="h-4 w-4" />
+        </button>
+      </div>
       {/* Mobile: three-dots opens popover */}
       <div className="sm:hidden">
         <Popover>
@@ -1492,14 +1492,6 @@ function HeaderActions() {
             </button>
           </PopoverTrigger>
           <PopoverContent align="end" className="w-56 p-2">
-            <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
-              <Heart className="h-4 w-4 text-muted-foreground" />
-              Добавить поставщика в избранное
-            </button>
-            <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
-              <Share2 className="h-4 w-4 text-muted-foreground" />
-              Поделиться
-            </button>
             <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
               <MessageSquare className="h-4 w-4 text-muted-foreground" />
               Вопрос поставщику
