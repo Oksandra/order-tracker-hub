@@ -1777,7 +1777,7 @@ function OrderCard({
               {!isConfirming && (
                 <button
                   type="button"
-                  onClick={()}, () => setCollapsed((v) => !v)}
+                  onClick={() => setCollapsed((v) => !v)}
                   aria-label={collapsed ? "Развернуть заказ" : "Свернуть заказ"}
                   aria-expanded={!collapsed}
                   className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
