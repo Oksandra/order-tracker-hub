@@ -1677,6 +1677,26 @@ function OrderCard({
               </a>
             </div>
           )}
+          {order.cdek && !order.trackNumber && order.expectingTrack && !isFullyOutOfStock && (
+            <div className="mt-2.5 flex flex-wrap items-center gap-2 text-sm">
+              <span className="text-muted-foreground">Трек-номер:</span>
+              <span className="text-muted-foreground italic">пока не присвоен</span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    className="rounded-full p-0.5 text-muted-foreground hover:text-foreground"
+                    aria-label="Информация о треке"
+                  >
+                    <HelpCircle className="h-4 w-4" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[240px] text-center">
+                  В пути. Заказ ещё не передан в транспортную компанию
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          )}
           </div>
         </header>
       )}
