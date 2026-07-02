@@ -45,6 +45,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 
 export const Route = createFileRoute("/orders")({
@@ -931,6 +933,121 @@ function StatusLabel({ status }: { status: OrderStatus }) {
   );
 }
 
+const TIMELINE_DATES = [
+  "21.06.2026 10:40",
+  "22.06.2026 09:15",
+  "23.06.2026 12:00",
+  "24.06.2026 09:59",
+  "24.06.2026 10:28",
+  "25.06.2026 11:00",
+  "26.06.2026 14:22",
+];
+
+function StatusTimeline({ status }: { status: OrderStatus }) {
+  const currentIndex = STEPS.findIndex((s) => s.key === status);
+  return (
+    <ol className="relative">
+      {STEPS.map((step, idx) => {
+        const Icon = step.icon;
+        const isDone = currentIndex !== -1 && idx < currentIndex;
+        const isCurrent = idx === currentIndex;
+        const active = isDone || isCurrent;
+        return (
+          <li key={step.key} className="relative flex gap-3 pb-4 last:pb-0">
+            {idx < STEPS.length - 1 && (
+              <span
+                className={`absolute left-[11px] top-6 bottom-0 w-px ${
+                  isDone ? "bg-primary" : "bg-white/20"
+                }`}
+              />
+            )}
+            <div
+              className={`relative z-10 mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full ${
+                isCurrent
+                  ? "bg-primary text-primary-foreground"
+                  : isDone
+                  ? "bg-primary/80 text-primary-foreground"
+                  : "bg-white/15 text-white/60"
+              }`}
+            >
+              <Icon className="h-3 w-3" />
+            </div>
+            <div className={active ? "" : "opacity-50"}>
+              <div className="text-sm leading-snug">{step.label}</div>
+              {active && (
+                <div className="mt-0.5 text-xs opacity-70">{TIMELINE_DATES[idx]}</div>
+              )}
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
+function StatusTrigger({ status }: { status: OrderStatus }) {
+  const isMobile = useIsMobile();
+  const [open, setOpen] = useState(false);
+  const meta = STATUS_META[status];
+  const known = STEPS.some((s) => s.key === status);
+
+  if (!known) {
+    return <StatusLabel status={status} />;
+  }
+
+  const triggerEl = (
+    <button
+      type="button"
+      onClick={() => isMobile && setOpen(true)}
+      className={`inline-flex items-center gap-1 text-base font-medium ${meta.color} hover:opacity-80 transition-opacity`}
+    >
+      {meta.label}
+      <ChevronRight className="h-4 w-4" />
+    </button>
+  );
+
+  const panel = (
+    <div className="p-4">
+      <div className="mb-3 text-sm font-semibold opacity-90">Статус заказа</div>
+      <StatusTimeline status={status} />
+    </div>
+  );
+
+  if (isMobile) {
+    return (
+      <>
+        {triggerEl}
+        <Drawer open={open} onOpenChange={setOpen}>
+          <DrawerContent className="bg-foreground text-background border-0">
+            <div className="px-2 pb-6 pt-2 max-h-[80vh] overflow-y-auto">
+              {panel}
+            </div>
+          </DrawerContent>
+        </Drawer>
+      </>
+    );
+  }
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+        {triggerEl}
+      </PopoverTrigger>
+      <PopoverContent
+        side="bottom"
+        align="start"
+        sideOffset={8}
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+        className="w-80 rounded-2xl border-0 bg-foreground p-0 text-background shadow-xl"
+      >
+        {panel}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+
 /* ---------- Price with tooltip ---------- */
 
 function PriceWithTooltip({
@@ -1431,8 +1548,7 @@ function GroupBlock({
     <div className="px-5 py-4">
       {showHeader && (
         <div className="mb-3 flex flex-wrap items-center gap-3">
-          {!hidePipeline && <StatusPipeline status={group.status} />}
-          {!hideStatusLabel && <StatusLabel status={group.status} />}
+          {!hideStatusLabel && <StatusTrigger status={group.status} />}
           <span className="ml-auto text-xs text-muted-foreground">
             {group.items.length}{" "}
             {group.items.length === 1 ? "товар" : group.items.length < 5 ? "товара" : "товаров"}
