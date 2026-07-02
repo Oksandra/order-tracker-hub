@@ -943,8 +943,11 @@ const TIMELINE_DATES = [
   "26.06.2026 14:22",
 ];
 
-function StatusTimeline({ status }: { status: OrderStatus }) {
+function StatusTimeline({ status, variant = "dark" }: { status: OrderStatus; variant?: "dark" | "light" }) {
   const currentIndex = STEPS.findIndex((s) => s.key === status);
+  const inactiveLine = variant === "light" ? "bg-border" : "bg-white/20";
+  const inactiveDot =
+    variant === "light" ? "bg-muted text-muted-foreground" : "bg-white/15 text-white/60";
   return (
     <ol className="relative">
       {STEPS.map((step, idx) => {
@@ -957,7 +960,7 @@ function StatusTimeline({ status }: { status: OrderStatus }) {
             {idx < STEPS.length - 1 && (
               <span
                 className={`absolute left-[11px] top-6 bottom-0 w-px ${
-                  isDone ? "bg-primary" : "bg-white/20"
+                  isDone ? "bg-primary" : inactiveLine
                 }`}
               />
             )}
@@ -967,12 +970,12 @@ function StatusTimeline({ status }: { status: OrderStatus }) {
                   ? "bg-primary text-primary-foreground"
                   : isDone
                   ? "bg-primary/80 text-primary-foreground"
-                  : "bg-white/15 text-white/60"
+                  : inactiveDot
               }`}
             >
               <Icon className="h-3 w-3" />
             </div>
-            <div className={active ? "" : "opacity-50"}>
+            <div className={active ? "" : "opacity-60"}>
               <div className="text-sm leading-snug">{step.label}</div>
               {active && (
                 <div className="mt-0.5 text-xs opacity-70">{TIMELINE_DATES[idx]}</div>
@@ -984,6 +987,7 @@ function StatusTimeline({ status }: { status: OrderStatus }) {
     </ol>
   );
 }
+
 
 function StatusTrigger({ status }: { status: OrderStatus }) {
   const isMobile = useIsMobile();
@@ -1018,15 +1022,17 @@ function StatusTrigger({ status }: { status: OrderStatus }) {
       <>
         {triggerEl}
         <Drawer open={open} onOpenChange={setOpen}>
-          <DrawerContent className="bg-foreground text-background border-0">
-            <div className="px-2 pb-6 pt-2 max-h-[80vh] overflow-y-auto">
-              {panel}
+          <DrawerContent className="bg-background text-foreground">
+            <div className="px-4 pb-6 pt-2 max-h-[80vh] overflow-y-auto">
+              <div className="mb-3 mt-2 text-base font-semibold">Статус заказа</div>
+              <StatusTimeline status={status} variant="light" />
             </div>
           </DrawerContent>
         </Drawer>
       </>
     );
   }
+
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -1782,7 +1788,7 @@ function OrderCard({
           </div>
           <div className="px-5 py-3.5">
           <div className="flex items-start justify-between gap-3">
-            {!isConfirming && <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>}
+            {!isConfirming && <h3 className="hidden sm:block text-base font-semibold text-foreground">{order.brand}</h3>}
             {isConfirming && <div className="hidden sm:block" />}
             <div className="flex items-center gap-1">
               {!isConfirming && <HeaderActions />}
@@ -2027,7 +2033,7 @@ function CompletedOrderCard({ order }: { order: Order }) {
       </div>
       <header className="border-b border-border/70 px-5 py-3.5">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="text-base font-semibold text-foreground">{order.brand}</h3>
+          <h3 className="hidden sm:block text-base font-semibold text-foreground">{order.brand}</h3>
           <div className="flex items-center gap-1">
             <HeaderActions />
             <button
