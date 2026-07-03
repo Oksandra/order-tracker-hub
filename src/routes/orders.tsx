@@ -1265,10 +1265,15 @@ function PaymentBar({ order }: { order: Order }) {
         </span>
       </div>
       <div className="flex items-center justify-center bg-warning/10 px-4 py-2.5 sm:hidden">
-        <button className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95">
-          <CreditCard className="h-4 w-4" />
-          Доплатить {formatPrice(order.payAmount ?? 0)}
-        </button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <button className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95">
+              <CreditCard className="h-4 w-4" />
+              Доплатить {formatPrice(order.payAmount ?? 0)}
+            </button>
+          </DialogTrigger>
+          <PayDialogContent order={order} />
+        </Dialog>
       </div>
       {/* Desktop / tablet */}
       <div className="hidden sm:flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border/70 bg-warning/10 px-5 py-2">
