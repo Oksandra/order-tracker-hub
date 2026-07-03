@@ -35,6 +35,7 @@ import {
   Paperclip,
   Info,
   Camera,
+  ArrowLeft,
 } from "lucide-react";
 import {
   Dialog,
