@@ -1720,13 +1720,16 @@ const PICKUP_OPTIONS = [
   "Ново-Садовая, 160 — Пункт выдачи",
 ];
 
-function PickupSelector({ value }: { value: string }) {
+function PickupSelector({ value, inactive = false }: { value: string; inactive?: boolean }) {
   const [pickup, setPickup] = useState(value);
   const options = PICKUP_OPTIONS.includes(pickup) ? PICKUP_OPTIONS : [pickup, ...PICKUP_OPTIONS];
+  const base = inactive
+    ? "border-destructive/60 bg-destructive/10 text-destructive hover:bg-destructive/15"
+    : "border-primary/40 bg-primary/5 text-primary hover:bg-primary/10";
   return (
-    <div className="relative inline-flex items-center gap-1 rounded-md border border-dashed border-primary/40 bg-primary/5 px-2 py-0.5 text-primary hover:bg-primary/10">
+    <div className={`relative inline-flex items-center gap-1 rounded-md border border-dashed px-2 py-0.5 ${base}`}>
       <MapPin className="h-3.5 w-3.5" />
-      <span className="max-w-[260px] truncate">{pickup}</span>
+      <span className="max-w-[260px] truncate font-medium">{pickup}</span>
       <ChevronDown className="h-3.5 w-3.5 opacity-70" />
       <select
         value={pickup}
@@ -1740,6 +1743,22 @@ function PickupSelector({ value }: { value: string }) {
           </option>
         ))}
       </select>
+    </div>
+  );
+}
+
+function PickupInactiveWarning() {
+  return (
+    <div
+      role="alert"
+      className="relative inline-flex max-w-[280px] items-start gap-1.5 rounded-md bg-destructive px-2.5 py-1.5 text-xs font-medium leading-snug text-destructive-foreground shadow-sm sm:max-w-none"
+    >
+      <span
+        aria-hidden
+        className="absolute -left-1 top-1/2 hidden h-2 w-2 -translate-y-1/2 rotate-45 bg-destructive sm:block"
+      />
+      <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+      <span>Доставка в выбранный пункт выдачи недоступна. Пожалуйста, выберите другой ПВЗ</span>
     </div>
   );
 }
