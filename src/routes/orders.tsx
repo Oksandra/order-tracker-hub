@@ -2744,6 +2744,92 @@ function PayDialogContent({ order }: { order: Order }) {
 }
 
 
+/* ---------- Withdraw dialog ---------- */
+
+function WithdrawDialogContent({ balance }: { balance: number }) {
+  const [amount, setAmount] = useState("");
+  const fieldClass =
+    "w-full rounded-lg border border-input bg-background px-3 pt-5 pb-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary";
+  const labelClass =
+    "pointer-events-none absolute left-3 top-1.5 text-[11px] font-medium text-muted-foreground";
+
+  const Field = ({
+    label,
+    placeholder,
+    value,
+    onChange,
+    inputMode,
+  }: {
+    label: string;
+    placeholder: string;
+    value?: string;
+    onChange?: (v: string) => void;
+    inputMode?: "text" | "numeric" | "decimal";
+  }) => (
+    <div className="relative">
+      <label className={labelClass}>{label}</label>
+      <input
+        type="text"
+        inputMode={inputMode}
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange?.(e.target.value)}
+        className={fieldClass}
+      />
+    </div>
+  );
+
+  return (
+    <DialogContent className="max-w-md rounded-2xl p-0 gap-0">
+      <div className="flex items-center justify-between border-b px-6 py-4">
+        <DialogTitle className="text-lg font-semibold">Вывод денежных средств</DialogTitle>
+      </div>
+      <div className="space-y-3 px-6 py-5">
+        <div className="flex items-center justify-between rounded-xl bg-muted/60 px-4 py-3">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Wallet className="h-4 w-4" />
+            Баланс лицевого счёта
+          </div>
+          <div className="text-base font-semibold text-foreground">{formatPrice(balance)}</div>
+        </div>
+        <div className="relative">
+          <label className={labelClass}>Сумма</label>
+          <input
+            type="text"
+            inputMode="decimal"
+            placeholder="Введите сумму"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className={fieldClass}
+          />
+          <button
+            type="button"
+            onClick={() => setAmount(String(balance))}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-primary hover:underline"
+          >
+            Всё
+          </button>
+        </div>
+        <Field label="Номер карты" placeholder="0000 0000 0000 0000" inputMode="numeric" />
+        <Field label="Наименование банка" placeholder="Введите наименование банка" />
+        <Field label="БИК" placeholder="000000000" inputMode="numeric" />
+        <Field label="Расчётный счёт" placeholder="00000000000000000000" inputMode="numeric" />
+        <Field label="ФИО держателя карты" placeholder="Например, Иванов Иван Иванович" />
+      </div>
+      <div className="px-6 pb-6">
+        <DialogClose asChild>
+          <button
+            type="button"
+            className="w-full rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95"
+          >
+            Вывести средства
+          </button>
+        </DialogClose>
+      </div>
+    </DialogContent>
+  );
+}
+
 
 /* ---------- Page ---------- */
 
