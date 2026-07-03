@@ -2058,6 +2058,11 @@ function OrderCard({
                 </span>
                 <span className="text-foreground font-medium">{order.pickup}</span>
               </div>
+            ) : order.pickupInactive ? (
+              <div className="flex w-full flex-col items-start gap-1.5 sm:w-auto sm:flex-row sm:items-center sm:gap-2">
+                <PickupSelector value={order.pickup} inactive />
+                <PickupInactiveWarning />
+              </div>
             ) : pickupEditable ? (
               <PickupSelector value={order.pickup} />
             ) : (
