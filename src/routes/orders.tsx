@@ -32,7 +32,16 @@ import {
   ArrowUpRight,
   Undo2,
   Star,
+  Paperclip,
+  Info,
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import contractIcon from "@/assets/contract-receipt.png.asset.json";
 import {
   Tooltip,
