@@ -2333,7 +2333,183 @@ function CompletedOrderCard({ order }: { order: Order }) {
 }
 
 
+/* ---------- Return / Pay dialogs ---------- */
+
+function ReturnDialogContent({ order }: { order: Order }) {
+  const allItems = order.groups.flatMap((g) => g.items);
+  const [kept, setKept] = useState<Set<string>>(new Set(allItems.map((i) => i.id)));
+  const items = allItems.filter((i) => kept.has(i.id));
+  const total = items.reduce((s, i) => s + (i.price + i.commission) * i.qty, 0);
+  const remove = (id: string) =>
+    setKept((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+
+  return (
+    <DialogContent className="max-w-lg p-0 gap-0 rounded-2xl overflow-hidden">
+      <div className="px-6 pt-6 pb-3">
+        <DialogTitle className="text-xl font-bold">Заявка на возврат</DialogTitle>
+      </div>
+      <div className="px-6 pb-4 space-y-3">
+        <h4 className="text-sm font-semibold text-foreground">Товары</h4>
+        <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+          {items.map((it) => (
+            <div key={it.id} className="flex items-center gap-3 text-sm">
+              <button
+                type="button"
+                onClick={() => remove(it.id)}
+                className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+                aria-label="Убрать из заявки"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+              <span className="flex-1 truncate text-foreground">{it.title}</span>
+              <span className="font-medium text-foreground whitespace-nowrap">
+                {formatPrice((it.price + it.commission) * it.qty)}
+              </span>
+            </div>
+          ))}
+          {items.length === 0 && (
+            <div className="rounded-lg border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
+              Не выбрано ни одного товара
+            </div>
+          )}
+        </div>
+        <div className="flex justify-end text-sm">
+          <span className="font-bold text-foreground">Всего: {formatPrice(total)}</span>
+        </div>
+      </div>
+      <div className="mx-6 mb-4 rounded-xl bg-muted/60 p-4 text-sm">
+        <div className="mb-1 font-medium text-foreground">Оформить возврат возможно:</div>
+        <ol className="ml-4 list-decimal space-y-0.5 text-muted-foreground">
+          <li>Пересорт по размеру, цвету, модели</li>
+          <li>Производственный брак, бой, течь</li>
+          <li>Товар не соответствует заявленным характеристикам</li>
+        </ol>
+      </div>
+      <div className="px-6 pb-4 space-y-3">
+        <Select defaultValue="current">
+          <SelectTrigger className="rounded-xl h-11">
+            <SelectValue placeholder="Пункт выдачи" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="current">{order.pickup}</SelectItem>
+            <SelectItem value="other">Другой пункт выдачи…</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select>
+          <SelectTrigger className="rounded-xl h-11">
+            <SelectValue placeholder="Выберите причину возврата" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="size">Пересорт по размеру / цвету</SelectItem>
+            <SelectItem value="defect">Производственный брак</SelectItem>
+            <SelectItem value="mismatch">Не соответствует характеристикам</SelectItem>
+            <SelectItem value="other">Другая причина</SelectItem>
+          </SelectContent>
+        </Select>
+        <div>
+          <div className="text-sm text-muted-foreground mb-1.5">Добавьте фото</div>
+          <label className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-dashed border-border text-muted-foreground cursor-pointer hover:bg-muted hover:text-foreground">
+            <Camera className="h-4 w-4" />
+            <input type="file" accept="image/*" className="hidden" multiple />
+          </label>
+        </div>
+      </div>
+      <div className="border-t border-border px-6 py-4">
+        <DialogClose asChild>
+          <button
+            type="button"
+            disabled={items.length === 0}
+            className="w-full rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Отправить
+          </button>
+        </DialogClose>
+      </div>
+    </DialogContent>
+  );
+}
+
+function PayDialogContent({ order }: { order: Order }) {
+  const isSurcharge = order.payment === "surcharge";
+  const amount = order.payAmount ?? orderTotal(order);
+  const [method, setMethod] = useState<"sbp" | "transfer">("sbp");
+  const [pickupTitle, ...rest] = order.pickup.split(",");
+  const pickupSub = rest.join(",").trim() || order.pickup;
+  return (
+    <DialogContent className="max-w-md p-0 gap-0 rounded-2xl overflow-hidden">
+      <div className="border-b border-border/60 px-6 pt-6 pb-4">
+        <DialogTitle className="text-xl font-bold">
+          {isSurcharge ? "Доплата по заказу" : "Оплата заказа"}
+        </DialogTitle>
+      </div>
+      <div className="px-6 pt-4 pb-3 space-y-2">
+        <div className="text-sm text-muted-foreground">Пункт выдачи</div>
+        <div className="rounded-xl border border-border p-4">
+          <div className="font-semibold text-foreground">{pickupTitle.trim()}</div>
+          <div className="text-sm text-muted-foreground">{pickupSub}</div>
+        </div>
+        <div className="flex justify-center pt-1">
+          <button type="button" className="text-sm font-semibold text-primary hover:underline">
+            Изменить
+          </button>
+        </div>
+      </div>
+      <div className="border-t border-border/60 px-6 pt-4 pb-4 space-y-2">
+        <div className="text-sm font-semibold text-foreground mb-1">Выберите способ оплаты</div>
+        <button
+          type="button"
+          onClick={() => setMethod("sbp")}
+          className={`w-full flex items-center gap-3 rounded-xl border p-4 text-left transition-colors ${method === "sbp" ? "border-primary ring-2 ring-primary/30 bg-primary/5" : "border-border hover:bg-muted/40"}`}
+        >
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary text-[10px] font-bold">
+            СБП
+          </div>
+          <div>
+            <div className="font-semibold text-foreground">Оплата через СБП</div>
+            <div className="text-xs text-muted-foreground">Быстрое подтверждение платежа</div>
+          </div>
+        </button>
+        <button
+          type="button"
+          onClick={() => setMethod("transfer")}
+          className={`w-full flex items-center gap-3 rounded-xl border p-4 text-left transition-colors ${method === "transfer" ? "border-primary ring-2 ring-primary/30 bg-primary/5" : "border-border hover:bg-muted/40"}`}
+        >
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-foreground">
+            <QrCode className="h-5 w-5" />
+          </div>
+          <div>
+            <div className="font-semibold text-foreground">Банковский перевод</div>
+            <div className="text-xs text-muted-foreground">Подтверждение платежа более суток</div>
+          </div>
+        </button>
+      </div>
+      <div className="border-t border-border px-6 py-4 flex items-center justify-between gap-3">
+        <div className="text-sm text-muted-foreground">
+          К оплате:{" "}
+          <span className="text-base font-bold text-foreground">{formatPrice(amount)}</span>
+        </div>
+        <DialogClose asChild>
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-95"
+          >
+            <CreditCard className="h-4 w-4" />
+            {isSurcharge ? "Доплатить" : "Оплатить"}
+          </button>
+        </DialogClose>
+      </div>
+    </DialogContent>
+  );
+}
+
+
 /* ---------- Page ---------- */
+
+
 
 function OrdersPage() {
   const [tab, setTab] = useState<"active" | "completed">("active");
