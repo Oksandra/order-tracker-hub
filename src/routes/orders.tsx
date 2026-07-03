@@ -2709,7 +2709,7 @@ function PayDialogContent({ order }: { order: Order }) {
         <div className="text-sm font-semibold text-foreground mb-1">Выберите способ оплаты</div>
         <button
           type="button"
-          onClick={() => setMethod("sbp")}
+          onClick={() => { setMethod("sbp"); setStep("sbp"); }}
           className={`w-full flex items-center gap-3 rounded-xl border p-4 text-left transition-colors ${method === "sbp" ? "border-primary ring-2 ring-primary/30 bg-primary/5" : "border-border hover:bg-muted/40"}`}
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary text-[10px] font-bold">
@@ -2722,7 +2722,7 @@ function PayDialogContent({ order }: { order: Order }) {
         </button>
         <button
           type="button"
-          onClick={() => setMethod("transfer")}
+          onClick={() => { setMethod("transfer"); setStep("transfer"); }}
           className={`w-full flex items-center gap-3 rounded-xl border p-4 text-left transition-colors ${method === "transfer" ? "border-primary ring-2 ring-primary/30 bg-primary/5" : "border-border hover:bg-muted/40"}`}
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-foreground">
@@ -2734,23 +2734,10 @@ function PayDialogContent({ order }: { order: Order }) {
           </div>
         </button>
       </div>
-      <div className="border-t border-border px-6 py-4 flex items-center justify-between gap-3">
-        <div className="text-sm text-muted-foreground">
-          К оплате:{" "}
-          <span className="text-base font-bold text-foreground">{formatPrice(amount)}</span>
-        </div>
-        <button
-          type="button"
-          onClick={goPay}
-          className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-95"
-        >
-          <CreditCard className="h-4 w-4" />
-          {isSurcharge ? "Доплатить" : "Оплатить"}
-        </button>
-      </div>
     </DialogContent>
   );
 }
+
 
 
 /* ---------- Page ---------- */
