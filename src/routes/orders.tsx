@@ -1835,12 +1835,15 @@ function MobileActionsMenu() {
         </button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-56 p-2">
-        <QuestionDialog>
-          <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
-            Связаться с поставщиком
-          </button>
-        </QuestionDialog>
+        <Dialog>
+          <DialogTrigger asChild>
+            <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
+              <MessageSquare className="h-4 w-4 text-muted-foreground" />
+              Связаться с поставщиком
+            </button>
+          </DialogTrigger>
+          <QuestionDialogContent />
+        </Dialog>
         <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
           <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
           Скачать договор
