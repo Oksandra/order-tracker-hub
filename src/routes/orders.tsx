@@ -117,6 +117,7 @@ type Order = {
   brand: string;
   date: string;
   pickup: string;
+  pickupInactive?: boolean; // выбранный ПВЗ временно недоступен
   cdek?: boolean; // pickup point is СДЭК
   deliveryFee?: number; // СДЭК delivery cost included in total
   trackNumber?: string; // СДЭК track number
