@@ -2528,7 +2528,6 @@ function PayDialogContent({ order }: { order: Order }) {
   const [method, setMethod] = useState<"sbp" | "transfer">("sbp");
   const [bankQuery, setBankQuery] = useState("");
   const [asBusiness, setAsBusiness] = useState(false);
-  const isMobile = useIsMobile();
   const [pickupTitle, ...rest] = order.pickup.split(",");
   const pickupSub = rest.join(",").trim() || order.pickup;
 
