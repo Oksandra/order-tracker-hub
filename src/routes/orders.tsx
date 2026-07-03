@@ -1693,6 +1693,138 @@ function ContractButton() {
   );
 }
 
+function ConfirmingStatus() {
+  const tipText = "Платежи по реквизитам подтверждаются на следующий рабочий день";
+  return (
+    <div className="flex items-center gap-2 text-warning">
+      <Clock className="h-4 w-4" />
+      {/* Desktop: hover tooltip on the whole label + icon */}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="hidden sm:inline-flex items-center gap-1.5 cursor-help">
+            <span className="text-sm font-medium whitespace-nowrap text-foreground">
+              Ожидает подтверждения оплаты
+            </span>
+            <HelpCircle className="h-3.5 w-3.5 text-muted-foreground" />
+          </span>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-xs bg-foreground text-background">
+          {tipText}
+        </TooltipContent>
+      </Tooltip>
+      {/* Mobile: tap-to-open popover */}
+      <Popover>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            className="sm:hidden inline-flex items-center gap-1.5"
+            aria-label="Подробнее о статусе"
+          >
+            <span className="text-sm font-medium whitespace-nowrap text-foreground">
+              Ожидает подтверждения оплаты
+            </span>
+            <HelpCircle className="h-3.5 w-3.5 text-muted-foreground" />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent side="top" align="start" className="max-w-[260px] bg-foreground p-3 text-xs text-background border-foreground">
+          {tipText}
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}
+
+function QuestionDialog({ children }: { children: React.ReactNode }) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="max-w-xl p-0 gap-0 rounded-2xl overflow-hidden">
+        {/* Mobile hero icon */}
+        <div className="flex flex-col items-center sm:hidden pt-6 pb-2">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <MessageSquare className="h-6 w-6" />
+          </div>
+        </div>
+        <div className="px-6 pt-6 sm:pt-8 pb-4">
+          <DialogTitle className="text-xl sm:text-2xl font-bold text-center sm:text-left">
+            Задать вопрос
+          </DialogTitle>
+        </div>
+        <div className="px-6 pb-4 space-y-2">
+          <label className="text-sm font-semibold text-foreground">Сообщение</label>
+          <div className="relative">
+            <Textarea
+              placeholder="Опишите ваш вопрос"
+              className="min-h-[140px] sm:min-h-[200px] resize-none rounded-xl border-border pr-10"
+            />
+            <button
+              type="button"
+              className="absolute bottom-3 right-3 text-primary hover:text-primary/80"
+              aria-label="Прикрепить файл"
+            >
+              <Paperclip className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+        <div className="hidden sm:block px-6 pb-3">
+          <label className="flex items-center gap-3 rounded-xl border border-dashed border-border px-4 py-3 cursor-pointer hover:bg-muted/40">
+            <Paperclip className="h-5 w-5 text-muted-foreground" />
+            <div className="flex flex-col">
+              <span className="text-sm text-foreground">
+                Прикрепить файл <span className="text-muted-foreground">(необязательно)</span>
+              </span>
+              <span className="text-xs text-muted-foreground">jpg, png · до 5 МБ</span>
+            </div>
+            <input type="file" accept="image/png,image/jpeg" className="hidden" />
+          </label>
+        </div>
+        <div className="px-6 pb-4 flex items-start gap-2 text-xs text-muted-foreground">
+          <Info className="h-4 w-4 shrink-0 mt-0.5" />
+          <span>
+            Максимальный размер изображения — 800x600 пикселей, объем до 5МБ.
+            <br className="hidden sm:block" />
+            Допустимые форматы: jpg, png
+          </span>
+        </div>
+        {/* Desktop footer */}
+        <div className="hidden sm:flex items-center justify-end gap-3 border-t border-border px-6 py-4">
+          <button
+            type="button"
+            className="rounded-full border border-border px-6 py-2.5 text-sm font-semibold hover:bg-muted"
+            onClick={(e) => {
+              const dialog = (e.currentTarget.closest("[role='dialog']") as HTMLElement | null);
+              dialog?.querySelector<HTMLButtonElement>("[aria-label='Close']")?.click();
+            }}
+          >
+            Отмена
+          </button>
+          <button
+            type="button"
+            className="rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-95"
+          >
+            Отправить
+          </button>
+        </div>
+        {/* Mobile footer */}
+        <div className="sm:hidden flex flex-col gap-2 px-6 pb-6 pt-2">
+          <button
+            type="button"
+            className="w-full rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:opacity-95"
+          >
+            Отправить
+          </button>
+          <button
+            type="button"
+            className="w-full rounded-full px-6 py-2 text-sm font-semibold text-primary"
+          >
+            Отмена
+          </button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 function MobileActionsMenu() {
   return (
     <Popover>
@@ -1705,10 +1837,12 @@ function MobileActionsMenu() {
         </button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-56 p-2">
-        <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
-          <MessageSquare className="h-4 w-4 text-muted-foreground" />
-          Вопрос поставщику
-        </button>
+        <QuestionDialog>
+          <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
+            <MessageSquare className="h-4 w-4 text-muted-foreground" />
+            Связаться с поставщиком
+          </button>
+        </QuestionDialog>
         <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted">
           <img src={contractIcon.url} alt="" className="h-4 w-4 object-contain" />
           Скачать договор
@@ -1724,11 +1858,13 @@ function HeaderActions() {
       <ContractButton />
       <Tooltip>
         <TooltipTrigger asChild>
-          <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Вопрос поставщику">
-            <MessageSquare className="h-4 w-4" />
-          </button>
+          <QuestionDialog>
+            <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Связаться с поставщиком">
+              <MessageSquare className="h-4 w-4" />
+            </button>
+          </QuestionDialog>
         </TooltipTrigger>
-        <TooltipContent side="top" className="bg-foreground text-background">Задать вопрос</TooltipContent>
+        <TooltipContent side="top" className="bg-foreground text-background">Связаться с поставщиком</TooltipContent>
       </Tooltip>
     </div>
   );
