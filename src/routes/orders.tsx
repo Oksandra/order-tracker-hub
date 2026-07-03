@@ -2292,28 +2292,36 @@ function CompletedOrderCard({ order }: { order: Order }) {
           <>
             {!isFullyOutOfStock && (
               <>
-                <button
-                  type="button"
-                  onClick={() => setReturnMode(true)}
-                  className="hidden sm:inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
-                >
-                  Оформить заявку на возврат
-                </button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button
+                    type="button"
+                    className="hidden sm:inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+                  >
+                    Оформить заявку на возврат
+                  </button>
+                </DialogTrigger>
+                <ReturnDialogContent order={order} />
+              </Dialog>
+              <Dialog>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button
-                      type="button"
-                      onClick={() => setReturnMode(true)}
-                      aria-label="Оформить заявку на возврат"
-                      className="sm:hidden inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
-                    >
-                      <Undo2 className="h-4 w-4" />
-                    </button>
+                    <DialogTrigger asChild>
+                      <button
+                        type="button"
+                        aria-label="Оформить заявку на возврат"
+                        className="sm:hidden inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+                      >
+                        <Undo2 className="h-4 w-4" />
+                      </button>
+                    </DialogTrigger>
                   </TooltipTrigger>
                   <TooltipContent side="top" className="bg-foreground text-background">
                     Оформить заявку на возврат
                   </TooltipContent>
                 </Tooltip>
+                <ReturnDialogContent order={order} />
+              </Dialog>
               </>
             )}
           </>
