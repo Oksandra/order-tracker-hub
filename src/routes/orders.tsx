@@ -1856,16 +1856,19 @@ function HeaderActions() {
   return (
     <div className="hidden sm:flex items-center gap-0.5">
       <ContractButton />
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <QuestionDialog>
-            <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Связаться с поставщиком">
-              <MessageSquare className="h-4 w-4" />
-            </button>
-          </QuestionDialog>
-        </TooltipTrigger>
-        <TooltipContent side="top" className="bg-foreground text-background">Связаться с поставщиком</TooltipContent>
-      </Tooltip>
+      <Dialog>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <DialogTrigger asChild>
+              <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" aria-label="Связаться с поставщиком">
+                <MessageSquare className="h-4 w-4" />
+              </button>
+            </DialogTrigger>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="bg-foreground text-background">Связаться с поставщиком</TooltipContent>
+        </Tooltip>
+        <QuestionDialogContent />
+      </Dialog>
     </div>
   );
 }
