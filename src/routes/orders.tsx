@@ -35,6 +35,7 @@ import {
   Paperclip,
   Info,
   Camera,
+  ArrowLeft,
 } from "lucide-react";
 import {
   Dialog,
@@ -2466,12 +2467,225 @@ function ReturnDialogContent({ order }: { order: Order }) {
   );
 }
 
+const SBP_BANKS = [
+  { name: "Сбербанк", color: "bg-emerald-500", initial: "С" },
+  { name: "Т-Банк", color: "bg-yellow-400 text-black", initial: "Т" },
+  { name: "Банк ВТБ", color: "bg-sky-500", initial: "В" },
+  { name: "АЛЬФА-БАНК", color: "bg-red-500", initial: "А" },
+  { name: "Плайт", color: "bg-indigo-500", initial: "П" },
+  { name: "Райффайзенбанк", color: "bg-yellow-500 text-black", initial: "Р" },
+  { name: "Открытие", color: "bg-cyan-500", initial: "О" },
+  { name: "Газпромбанк", color: "bg-blue-600", initial: "Г" },
+];
+
+function SbpLogo({ className = "" }: { className?: string }) {
+  return (
+    <div className={`inline-flex items-center gap-1.5 ${className}`}>
+      <div className="flex h-6 w-6 items-center justify-center">
+        <div className="grid grid-cols-2 gap-0.5">
+          <div className="h-2 w-2 rounded-sm bg-red-500" />
+          <div className="h-2 w-2 rounded-sm bg-blue-500" />
+          <div className="h-2 w-2 rounded-sm bg-yellow-400" />
+          <div className="h-2 w-2 rounded-sm bg-green-500" />
+        </div>
+      </div>
+      <span className="text-sm font-bold tracking-tight text-foreground">сбп</span>
+    </div>
+  );
+}
+
+function QrPlaceholder({ size = 180 }: { size?: number }) {
+  return (
+    <div
+      className="relative rounded-lg bg-white p-2 shadow-sm ring-1 ring-border"
+      style={{ width: size, height: size }}
+    >
+      <div
+        className="h-full w-full"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, #0a0a0a 1px, transparent 1.2px)",
+          backgroundSize: "8px 8px",
+        }}
+      />
+      <div className="absolute left-2 top-2 h-8 w-8 border-[3px] border-foreground rounded-sm" />
+      <div className="absolute right-2 top-2 h-8 w-8 border-[3px] border-foreground rounded-sm" />
+      <div className="absolute left-2 bottom-2 h-8 w-8 border-[3px] border-foreground rounded-sm" />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="rounded-md bg-white p-1 shadow">
+          <SbpLogo />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PayDialogContent({ order }: { order: Order }) {
   const isSurcharge = order.payment === "surcharge";
   const amount = order.payAmount ?? orderTotal(order);
+  const commission = Math.round(amount * 0.2 * 100) / 100;
+  const [step, setStep] = useState<"select" | "sbp" | "transfer">("select");
   const [method, setMethod] = useState<"sbp" | "transfer">("sbp");
+  const [bankQuery, setBankQuery] = useState("");
+  const [asBusiness, setAsBusiness] = useState(false);
   const [pickupTitle, ...rest] = order.pickup.split(",");
   const pickupSub = rest.join(",").trim() || order.pickup;
+
+  const goPay = () => setStep(method);
+  const goBack = () => setStep("select");
+
+  if (step === "sbp") {
+    return (
+      <DialogContent className="max-w-md p-0 gap-0 rounded-2xl overflow-hidden sm:max-w-2xl">
+        <div className="flex items-center gap-3 border-b border-border/60 px-5 py-4">
+          <button
+            type="button"
+            onClick={goBack}
+            aria-label="Назад"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <DialogTitle className="text-lg font-bold">Оплата через СБП</DialogTitle>
+        </div>
+
+        {/* Desktop: recipient + amount + QR */}
+        <div className="hidden sm:grid grid-cols-[1fr_auto] gap-6 px-6 py-6">
+          <div className="space-y-5">
+            <div>
+              <div className="text-sm text-muted-foreground">Получатель</div>
+              <div className="font-bold text-foreground">ПСК "63 ПОКУПКИ"</div>
+            </div>
+            <div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-base text-foreground">Сумма к оплате</span>
+                <span className="text-xl font-bold text-foreground">{formatPrice(amount)}</span>
+              </div>
+              <div className="mt-1 text-sm text-muted-foreground">
+                Включая комиссию {formatPrice(commission)}
+              </div>
+            </div>
+            <SbpLogo />
+            <div className="text-sm text-muted-foreground max-w-[220px]">
+              Для оплаты зайдите в мобильное приложение банка и отсканируйте QR-код
+            </div>
+          </div>
+          <div className="flex items-center justify-center">
+            <QrPlaceholder size={200} />
+          </div>
+        </div>
+
+        {/* Mobile: recipient + amount + bank list */}
+        <div className="sm:hidden">
+          <div className="border-b border-border/60 px-5 py-4">
+            <div className="text-sm text-muted-foreground">Получатель</div>
+            <div className="font-bold text-foreground">ПСК "63 ПОКУПКИ"</div>
+            <div className="mt-3 flex items-baseline gap-2">
+              <span className="text-base text-foreground">Сумма к оплате</span>
+              <span className="text-lg font-bold text-foreground">{formatPrice(amount)}</span>
+            </div>
+            <div className="mt-1 text-sm text-muted-foreground">
+              Включая комиссию {formatPrice(commission)}
+            </div>
+          </div>
+          <div className="px-5 py-4 space-y-3">
+            <div>
+              <div className="text-base font-semibold text-foreground">Выберите банк для оплаты</div>
+              <div className="mt-1 text-sm text-muted-foreground">
+                У вас откроется банковское приложение, где вы сможете подтвердить платёж
+              </div>
+            </div>
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="text"
+                value={bankQuery}
+                onChange={(e) => setBankQuery(e.target.value)}
+                placeholder="Найти банк"
+                className="w-full rounded-full border border-border bg-background pl-9 pr-4 py-2.5 text-sm outline-none focus:border-primary"
+              />
+            </div>
+            <div>
+              <div className="mb-2 text-sm font-semibold text-foreground">Ваши банки:</div>
+              <ul className="max-h-72 divide-y divide-border/60 overflow-y-auto rounded-xl border border-border/60">
+                {SBP_BANKS.filter((b) =>
+                  b.name.toLowerCase().includes(bankQuery.toLowerCase()),
+                ).map((b) => (
+                  <li key={b.name}>
+                    <button
+                      type="button"
+                      className="flex w-full items-center gap-3 px-3 py-2.5 text-left hover:bg-muted/50"
+                    >
+                      <div
+                        className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white ${b.color}`}
+                      >
+                        {b.initial}
+                      </div>
+                      <span className="text-sm font-medium text-foreground">{b.name}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <DialogClose asChild>
+              <button
+                type="button"
+                className="mt-2 w-full rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground hover:opacity-95"
+              >
+                Оплатить
+              </button>
+            </DialogClose>
+          </div>
+        </div>
+      </DialogContent>
+    );
+  }
+
+  if (step === "transfer") {
+    return (
+      <DialogContent className="max-w-md p-0 gap-0 rounded-2xl overflow-hidden">
+        <div className="flex items-center gap-3 border-b border-border/60 px-5 py-4">
+          <button
+            type="button"
+            onClick={goBack}
+            aria-label="Назад"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <DialogTitle className="text-lg font-bold">Банковский перевод</DialogTitle>
+        </div>
+        <div className="border-b border-border/60 px-5 py-4">
+          <div className="text-sm text-muted-foreground">Получатель</div>
+          <div className="font-bold text-foreground">ПСК "63 ПОКУПКИ"</div>
+          <div className="mt-2 text-sm text-muted-foreground">
+            К оплате <span className="text-base font-bold text-foreground">{formatPrice(amount)}</span>
+          </div>
+        </div>
+        <div className="px-5 py-5 space-y-4">
+          <p className="text-center text-sm text-muted-foreground">
+            Для оплаты сделайте скриншот QR-кода и загрузите изображение в мобильном приложении банка
+          </p>
+          <div className="flex justify-center">
+            <QrPlaceholder size={180} />
+          </div>
+          <div className="rounded-lg bg-emerald-50 dark:bg-emerald-950/40 px-4 py-3 text-center text-sm text-emerald-800 dark:text-emerald-200">
+            Оплата будет подтверждена в течение одного-двух рабочих дней.
+          </div>
+          <label className="flex items-center gap-3 rounded-xl border border-border p-3 cursor-pointer hover:bg-muted/40">
+            <input
+              type="checkbox"
+              checked={asBusiness}
+              onChange={(e) => setAsBusiness(e.target.checked)}
+              className="h-4 w-4 rounded border-border accent-primary"
+            />
+            <span className="text-sm font-medium text-foreground">Покупаю как бизнес</span>
+          </label>
+        </div>
+      </DialogContent>
+    );
+  }
+
   return (
     <DialogContent className="max-w-md p-0 gap-0 rounded-2xl overflow-hidden">
       <div className="border-b border-border/60 px-6 pt-6 pb-4">
@@ -2525,15 +2739,14 @@ function PayDialogContent({ order }: { order: Order }) {
           К оплате:{" "}
           <span className="text-base font-bold text-foreground">{formatPrice(amount)}</span>
         </div>
-        <DialogClose asChild>
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-95"
-          >
-            <CreditCard className="h-4 w-4" />
-            {isSurcharge ? "Доплатить" : "Оплатить"}
-          </button>
-        </DialogClose>
+        <button
+          type="button"
+          onClick={goPay}
+          className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-95"
+        >
+          <CreditCard className="h-4 w-4" />
+          {isSurcharge ? "Доплатить" : "Оплатить"}
+        </button>
       </div>
     </DialogContent>
   );
