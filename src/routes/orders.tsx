@@ -117,6 +117,7 @@ type Order = {
   brand: string;
   date: string;
   pickup: string;
+  pickupInactive?: boolean; // выбранный ПВЗ временно недоступен
   cdek?: boolean; // pickup point is СДЭК
   deliveryFee?: number; // СДЭК delivery cost included in total
   trackNumber?: string; // СДЭК track number
@@ -165,6 +166,42 @@ const ORDERS: Order[] = [
             price: 250,
             commission: 41,
             image: img("photo-1521369909029-2afed882baee"),
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "pvz-inactive",
+    number: "0253984240-0007",
+    brand: "URBAN — базовый гардероб",
+    date: "18 июня 2025",
+    pickup: "Стройкерамика, Макси ПВЗ",
+    pickupInactive: true,
+    payment: "paid",
+    groups: [
+      {
+        status: "collecting",
+        items: [
+          {
+            id: "urb1",
+            title: "Свитшот оверсайз хлопковый",
+            size: "L",
+            color: "молочный",
+            qty: 1,
+            price: 2490,
+            commission: 320,
+            image: img("photo-1556821840-3a63f95609a7"),
+          },
+          {
+            id: "urb2",
+            title: "Джинсы прямого кроя",
+            size: "32",
+            color: "индиго",
+            qty: 1,
+            price: 3890,
+            commission: 480,
+            image: img("photo-1541099649105-f69ad21f3246"),
           },
         ],
       },
@@ -1683,13 +1720,16 @@ const PICKUP_OPTIONS = [
   "Ново-Садовая, 160 — Пункт выдачи",
 ];
 
-function PickupSelector({ value }: { value: string }) {
+function PickupSelector({ value, inactive = false }: { value: string; inactive?: boolean }) {
   const [pickup, setPickup] = useState(value);
   const options = PICKUP_OPTIONS.includes(pickup) ? PICKUP_OPTIONS : [pickup, ...PICKUP_OPTIONS];
+  const base = inactive
+    ? "border-destructive/60 bg-destructive/10 text-destructive hover:bg-destructive/15"
+    : "border-primary/40 bg-primary/5 text-primary hover:bg-primary/10";
   return (
-    <div className="relative inline-flex items-center gap-1 rounded-md border border-dashed border-primary/40 bg-primary/5 px-2 py-0.5 text-primary hover:bg-primary/10">
+    <div className={`relative inline-flex items-center gap-1 rounded-md border border-dashed px-2 py-0.5 ${base}`}>
       <MapPin className="h-3.5 w-3.5" />
-      <span className="max-w-[260px] truncate">{pickup}</span>
+      <span className="max-w-[260px] truncate font-medium">{pickup}</span>
       <ChevronDown className="h-3.5 w-3.5 opacity-70" />
       <select
         value={pickup}
@@ -1703,6 +1743,22 @@ function PickupSelector({ value }: { value: string }) {
           </option>
         ))}
       </select>
+    </div>
+  );
+}
+
+function PickupInactiveWarning() {
+  return (
+    <div
+      role="alert"
+      className="relative inline-flex max-w-[280px] items-start gap-1.5 rounded-md bg-destructive px-2.5 py-1.5 text-xs font-medium leading-snug text-destructive-foreground shadow-sm sm:max-w-none"
+    >
+      <span
+        aria-hidden
+        className="absolute -left-1 top-1/2 hidden h-2 w-2 -translate-y-1/2 rotate-45 bg-destructive sm:block"
+      />
+      <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+      <span>Доставка в выбранный пункт выдачи недоступна. Пожалуйста, выберите другой ПВЗ</span>
     </div>
   );
 }
@@ -2001,6 +2057,11 @@ function OrderCard({
                   CDEK
                 </span>
                 <span className="text-foreground font-medium">{order.pickup}</span>
+              </div>
+            ) : order.pickupInactive ? (
+              <div className="flex w-full flex-col items-start gap-1.5 sm:w-auto sm:flex-row sm:items-center sm:gap-2">
+                <PickupSelector value={order.pickup} inactive />
+                <PickupInactiveWarning />
               </div>
             ) : pickupEditable ? (
               <PickupSelector value={order.pickup} />
