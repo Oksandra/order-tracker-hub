@@ -34,6 +34,7 @@ import {
   Star,
   Paperclip,
   Info,
+  Camera,
 } from "lucide-react";
 import {
   Dialog,
