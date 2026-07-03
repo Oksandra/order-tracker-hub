@@ -1482,13 +1482,18 @@ function OutOfStockNotice({ group, refunded = false }: { group: ItemGroup; refun
         <div className="mt-2 text-xs text-muted-foreground">
           Деньги с Лицевого счёта можно использовать либо для быстрой оплаты другого товара на нашем сайте, или вернуть себе на карту.
         </div>
-        <button
-          type="button"
-          className="mt-3 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:opacity-95"
-        >
-          <CreditCard className="h-3.5 w-3.5" />
-          Вывести деньги на карту
-        </button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <button
+              type="button"
+              className="mt-3 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:opacity-95"
+            >
+              <CreditCard className="h-3.5 w-3.5" />
+              Вывести деньги на карту
+            </button>
+          </DialogTrigger>
+          <WithdrawDialogContent balance={sum} />
+        </Dialog>
       </div>
     );
   }
