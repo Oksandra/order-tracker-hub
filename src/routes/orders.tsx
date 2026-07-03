@@ -172,6 +172,42 @@ const ORDERS: Order[] = [
     ],
   },
   {
+    id: "pvz-inactive",
+    number: "0253984240-0007",
+    brand: "URBAN — базовый гардероб",
+    date: "18 июня 2025",
+    pickup: "Стройкерамика, Макси ПВЗ",
+    pickupInactive: true,
+    payment: "paid",
+    groups: [
+      {
+        status: "collecting",
+        items: [
+          {
+            id: "urb1",
+            title: "Свитшот оверсайз хлопковый",
+            size: "L",
+            color: "молочный",
+            qty: 1,
+            price: 2490,
+            commission: 320,
+            image: img("photo-1556821840-3a63f95609a7"),
+          },
+          {
+            id: "urb2",
+            title: "Джинсы прямого кроя",
+            size: "32",
+            color: "индиго",
+            qty: 1,
+            price: 3890,
+            commission: 480,
+            image: img("photo-1541099649105-f69ad21f3246"),
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: "1",
     number: "337456914",
     brand: "ECCO — комфорт в каждом движении!",
