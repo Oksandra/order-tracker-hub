@@ -1752,26 +1752,50 @@ function MobilePickupBadge({
   cdek,
   editable,
   inactive,
+  clickable,
 }: {
   pickup: string;
   cdek: boolean;
   editable: boolean;
   inactive: boolean;
+  clickable?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(pickup);
   const [title, ...rest] = value.split(",");
   const sub = rest.join(",").trim();
   const options = PICKUP_OPTIONS.includes(value) ? PICKUP_OPTIONS : [value, ...PICKUP_OPTIONS];
+  const cdekOpen = clickable || editable;
 
   if (cdek) {
+    if (!cdekOpen) {
+      return (
+        <div className="inline-flex items-center gap-1 rounded-md">
+          <span className="inline-flex items-center rounded-sm bg-success px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-success-foreground">
+            CDEK
+          </span>
+        </div>
+      );
+    }
     return (
-      <div className="inline-flex items-center gap-1 rounded-md">
-        <span className="inline-flex items-center rounded-sm bg-success px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-success-foreground">
-          CDEK
-        </span>
-        {editable && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
-      </div>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            aria-label="Пункт выдачи"
+            className="inline-flex items-center gap-1 rounded-md"
+          >
+            <span className="inline-flex items-center rounded-sm bg-success px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-success-foreground">
+              CDEK
+            </span>
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent align="end" side="bottom" className="w-64 p-3">
+          <div className="text-sm font-semibold text-foreground">Пункт выдачи</div>
+          <div className="mt-1.5 text-sm font-medium text-foreground">{pickup}</div>
+        </PopoverContent>
+      </Popover>
     );
   }
 
