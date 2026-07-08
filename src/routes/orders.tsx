@@ -1747,6 +1747,85 @@ function PickupSelector({ value, inactive = false }: { value: string; inactive?:
   );
 }
 
+function MobilePickupBadge({
+  pickup,
+  cdek,
+  editable,
+  inactive,
+}: {
+  pickup: string;
+  cdek: boolean;
+  editable: boolean;
+  inactive: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(pickup);
+  const [title, ...rest] = value.split(",");
+  const sub = rest.join(",").trim();
+  const options = PICKUP_OPTIONS.includes(value) ? PICKUP_OPTIONS : [value, ...PICKUP_OPTIONS];
+
+  if (cdek) {
+    return (
+      <div className="inline-flex items-center gap-1 rounded-md">
+        <span className="inline-flex items-center rounded-sm bg-success px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-success-foreground">
+          CDEK
+        </span>
+        {editable && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+      </div>
+    );
+  }
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          aria-label="Пункт выдачи"
+          className={[
+            "inline-flex h-8 w-8 items-center justify-center rounded-full border",
+            inactive
+              ? "border-destructive/50 bg-destructive/10 text-destructive"
+              : "border-primary/40 bg-primary/10 text-primary",
+          ].join(" ")}
+        >
+          <MapPin className="h-4 w-4" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="end" side="bottom" className="w-64 p-3">
+        <div className="flex items-start gap-2">
+          <MapPin className={`mt-0.5 h-4 w-4 shrink-0 ${inactive ? "text-destructive" : "text-primary"}`} />
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-semibold text-foreground">Пункт выдачи</div>
+            <div className="mt-1.5 text-sm font-medium text-foreground">{title.trim()}</div>
+            {sub && <div className="text-xs text-muted-foreground">{sub}</div>}
+            {editable && (
+              <label className="mt-3 block">
+                <span className="text-xs font-medium text-primary hover:underline cursor-pointer">
+                  Изменить ПВЗ
+                </span>
+                <select
+                  value={value}
+                  onChange={(e) => {
+                    setValue(e.target.value);
+                    setOpen(false);
+                  }}
+                  aria-label="Выбрать пункт выдачи"
+                  className="sr-only"
+                >
+                  {options.map((p) => (
+                    <option key={p} value={p}>{p}</option>
+                  ))}
+                </select>
+              </label>
+            )}
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+
 function PickupInactiveWarning() {
   return (
     <div
