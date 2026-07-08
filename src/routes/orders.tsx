@@ -2141,23 +2141,23 @@ function OrderCard({
               </div>
             )}
             {order.cdek ? (
-              <div className="hidden sm:flex items-center gap-1.5">
+              <div className={hasReady ? "flex items-center gap-1.5" : "hidden sm:flex items-center gap-1.5"}>
                 <span className="inline-flex items-center rounded-sm bg-success px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-success-foreground">
                   CDEK
                 </span>
                 <span className="text-foreground font-medium">{order.pickup}</span>
               </div>
             ) : order.pickupInactive ? (
-              <div className="hidden w-full flex-col items-start gap-1.5 sm:flex sm:w-auto sm:flex-row sm:items-center sm:gap-2">
+              <div className={hasReady ? "flex w-full flex-col items-start gap-1.5 sm:w-auto sm:flex-row sm:items-center sm:gap-2" : "hidden w-full flex-col items-start gap-1.5 sm:flex sm:w-auto sm:flex-row sm:items-center sm:gap-2"}>
                 <PickupSelector value={order.pickup} inactive />
                 <PickupInactiveWarning />
               </div>
             ) : pickupEditable ? (
-              <div className="hidden sm:inline-flex">
+              <div className={hasReady ? "inline-flex" : "hidden sm:inline-flex"}>
                 <PickupSelector value={order.pickup} />
               </div>
             ) : (
-              <div className="hidden sm:flex items-center gap-1.5">
+              <div className={hasReady ? "flex items-center gap-1.5" : "hidden sm:flex items-center gap-1.5"}>
                 <MapPin className="h-3.5 w-3.5" />
                 <span className="max-w-[280px] truncate">{order.pickup}</span>
               </div>
