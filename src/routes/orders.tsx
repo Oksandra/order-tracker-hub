@@ -2039,38 +2039,51 @@ function OrderCard({
           {!isFullyOutOfStock && !isConfirming && (
           <div className="mt-1 sm:mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
             {!hasReady && (
-              <div className="flex items-center gap-1.5">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex cursor-help">
-                      <Truck className="h-5 w-5 text-primary" />
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="bg-foreground text-background">Ориентировочная дата доставки</TooltipContent>
-                </Tooltip>
-                <span className="text-foreground text-base font-semibold">{order.date}</span>
+              <div className="flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-start">
+                <div className="flex items-center gap-1.5">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="inline-flex cursor-help">
+                        <Truck className="h-5 w-5 text-primary" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="bg-foreground text-background">Ориентировочная дата доставки</TooltipContent>
+                  </Tooltip>
+                  <span className="text-foreground text-base font-semibold">{order.date}</span>
+                </div>
+                <div className="sm:hidden">
+                  <MobilePickupBadge
+                    pickup={order.pickup}
+                    cdek={!!order.cdek}
+                    editable={pickupEditable}
+                    inactive={!!order.pickupInactive}
+                  />
+                </div>
               </div>
             )}
             {order.cdek ? (
-              <div className="flex items-center gap-1.5">
+              <div className="hidden sm:flex items-center gap-1.5">
                 <span className="inline-flex items-center rounded-sm bg-success px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-success-foreground">
                   CDEK
                 </span>
                 <span className="text-foreground font-medium">{order.pickup}</span>
               </div>
             ) : order.pickupInactive ? (
-              <div className="flex w-full flex-col items-start gap-1.5 sm:w-auto sm:flex-row sm:items-center sm:gap-2">
+              <div className="hidden w-full flex-col items-start gap-1.5 sm:flex sm:w-auto sm:flex-row sm:items-center sm:gap-2">
                 <PickupSelector value={order.pickup} inactive />
                 <PickupInactiveWarning />
               </div>
             ) : pickupEditable ? (
-              <PickupSelector value={order.pickup} />
+              <div className="hidden sm:inline-flex">
+                <PickupSelector value={order.pickup} />
+              </div>
             ) : (
-              <div className="flex items-center gap-1.5">
+              <div className="hidden sm:flex items-center gap-1.5">
                 <MapPin className="h-3.5 w-3.5" />
                 <span className="max-w-[280px] truncate">{order.pickup}</span>
               </div>
             )}
+
             <div className="ml-auto hidden sm:flex items-center gap-1.5 text-base">
               <span># {order.number}</span>
               <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
