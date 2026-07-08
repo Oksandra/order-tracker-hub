@@ -1747,6 +1747,85 @@ function PickupSelector({ value, inactive = false }: { value: string; inactive?:
   );
 }
 
+function MobilePickupBadge({
+  pickup,
+  cdek,
+  editable,
+  inactive,
+}: {
+  pickup: string;
+  cdek: boolean;
+  editable: boolean;
+  inactive: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(pickup);
+  const [title, ...rest] = value.split(",");
+  const sub = rest.join(",").trim();
+  const options = PICKUP_OPTIONS.includes(value) ? PICKUP_OPTIONS : [value, ...PICKUP_OPTIONS];
+
+  if (cdek) {
+    return (
+      <div className="inline-flex items-center gap-1 rounded-md">
+        <span className="inline-flex items-center rounded-sm bg-success px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-success-foreground">
+          CDEK
+        </span>
+        {editable && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+      </div>
+    );
+  }
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          aria-label="Пункт выдачи"
+          className={[
+            "inline-flex h-8 w-8 items-center justify-center rounded-full border",
+            inactive
+              ? "border-destructive/50 bg-destructive/10 text-destructive"
+              : "border-primary/40 bg-primary/10 text-primary",
+          ].join(" ")}
+        >
+          <MapPin className="h-4 w-4" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="end" side="bottom" className="w-64 p-3">
+        <div className="flex items-start gap-2">
+          <MapPin className={`mt-0.5 h-4 w-4 shrink-0 ${inactive ? "text-destructive" : "text-primary"}`} />
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-semibold text-foreground">Пункт выдачи</div>
+            <div className="mt-1.5 text-sm font-medium text-foreground">{title.trim()}</div>
+            {sub && <div className="text-xs text-muted-foreground">{sub}</div>}
+            {editable && (
+              <label className="mt-3 block">
+                <span className="text-xs font-medium text-primary hover:underline cursor-pointer">
+                  Изменить ПВЗ
+                </span>
+                <select
+                  value={value}
+                  onChange={(e) => {
+                    setValue(e.target.value);
+                    setOpen(false);
+                  }}
+                  aria-label="Выбрать пункт выдачи"
+                  className="sr-only"
+                >
+                  {options.map((p) => (
+                    <option key={p} value={p}>{p}</option>
+                  ))}
+                </select>
+              </label>
+            )}
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+
 function PickupInactiveWarning() {
   return (
     <div
@@ -2039,38 +2118,51 @@ function OrderCard({
           {!isFullyOutOfStock && !isConfirming && (
           <div className="mt-1 sm:mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
             {!hasReady && (
-              <div className="flex items-center gap-1.5">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex cursor-help">
-                      <Truck className="h-5 w-5 text-primary" />
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="bg-foreground text-background">Ориентировочная дата доставки</TooltipContent>
-                </Tooltip>
-                <span className="text-foreground text-base font-semibold">{order.date}</span>
+              <div className="flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-start">
+                <div className="flex items-center gap-1.5">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="inline-flex cursor-help">
+                        <Truck className="h-5 w-5 text-primary" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="bg-foreground text-background">Ориентировочная дата доставки</TooltipContent>
+                  </Tooltip>
+                  <span className="text-foreground text-base font-semibold">{order.date}</span>
+                </div>
+                <div className="sm:hidden">
+                  <MobilePickupBadge
+                    pickup={order.pickup}
+                    cdek={!!order.cdek}
+                    editable={pickupEditable}
+                    inactive={!!order.pickupInactive}
+                  />
+                </div>
               </div>
             )}
             {order.cdek ? (
-              <div className="flex items-center gap-1.5">
+              <div className="hidden sm:flex items-center gap-1.5">
                 <span className="inline-flex items-center rounded-sm bg-success px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-success-foreground">
                   CDEK
                 </span>
                 <span className="text-foreground font-medium">{order.pickup}</span>
               </div>
             ) : order.pickupInactive ? (
-              <div className="flex w-full flex-col items-start gap-1.5 sm:w-auto sm:flex-row sm:items-center sm:gap-2">
+              <div className="hidden w-full flex-col items-start gap-1.5 sm:flex sm:w-auto sm:flex-row sm:items-center sm:gap-2">
                 <PickupSelector value={order.pickup} inactive />
                 <PickupInactiveWarning />
               </div>
             ) : pickupEditable ? (
-              <PickupSelector value={order.pickup} />
+              <div className="hidden sm:inline-flex">
+                <PickupSelector value={order.pickup} />
+              </div>
             ) : (
-              <div className="flex items-center gap-1.5">
+              <div className="hidden sm:flex items-center gap-1.5">
                 <MapPin className="h-3.5 w-3.5" />
                 <span className="max-w-[280px] truncate">{order.pickup}</span>
               </div>
             )}
+
             <div className="ml-auto hidden sm:flex items-center gap-1.5 text-base">
               <span># {order.number}</span>
               <button className="rounded p-1 hover:bg-muted" aria-label="Скопировать номер">
