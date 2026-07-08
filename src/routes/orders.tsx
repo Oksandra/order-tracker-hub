@@ -2432,19 +2432,32 @@ function CompletedOrderCard({ order }: { order: Order }) {
             </div>
           )}
           {!isFullyOutOfStock && (
-            order.cdek ? (
-              <div className="flex items-center gap-1.5">
-                <span className="inline-flex items-center rounded-sm bg-success px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-success-foreground">
-                  CDEK
-                </span>
-                <span className="text-foreground font-medium">{order.pickup}</span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-1.5">
-                <MapPin className="h-3.5 w-3.5" />
-                <span className="max-w-[280px] truncate">{order.pickup}</span>
-              </div>
-            )
+            <div className="hidden sm:flex items-center gap-1.5">
+              {order.cdek ? (
+                <>
+                  <span className="inline-flex items-center rounded-sm bg-success px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-success-foreground">
+                    CDEK
+                  </span>
+                  <span className="text-foreground font-medium">{order.pickup}</span>
+                </>
+              ) : (
+                <>
+                  <MapPin className="h-3.5 w-3.5" />
+                  <span className="max-w-[280px] truncate">{order.pickup}</span>
+                </>
+              )}
+            </div>
+          )}
+          {!isFullyOutOfStock && (
+            <div className="sm:hidden">
+              <MobilePickupBadge
+                pickup={order.pickup}
+                cdek={!!order.cdek}
+                editable={false}
+                inactive={!!order.pickupInactive}
+                clickable
+              />
+            </div>
           )}
           <div className="ml-auto hidden sm:flex items-center gap-1.5 text-base">
             <span># {order.number}</span>
