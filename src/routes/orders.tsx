@@ -2449,7 +2449,7 @@ function CompletedOrderCard({ order }: { order: Order }) {
             </div>
           )}
           {!isFullyOutOfStock && (
-            <div className="sm:hidden">
+            <div className="sm:hidden ml-auto">
               <MobilePickupBadge
                 pickup={order.pickup}
                 cdek={!!order.cdek}
