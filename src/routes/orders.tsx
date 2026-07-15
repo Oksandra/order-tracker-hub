@@ -6,6 +6,7 @@ import {
   Warehouse,
   Flag,
   CheckCircle2,
+  Check,
   ChevronDown,
   Copy,
   MapPin,
