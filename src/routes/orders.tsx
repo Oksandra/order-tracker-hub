@@ -1236,10 +1236,15 @@ function PaymentBar({ order }: { order: Order }) {
   if (order.payment === "awaiting") {
     return (
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b-2 border-destructive bg-destructive/10 px-5 py-3.5">
-        <div className="flex items-center gap-2 text-destructive">
-          <Clock className="h-4 w-4" />
-          <span className="font-semibold">Ожидаем оплаты {formatTimer(sec)}</span>
-        </div>
+        <UnpaidDialog order={order}>
+          <button
+            type="button"
+            className="flex items-center gap-2 bg-transparent p-0 text-destructive hover:opacity-80"
+          >
+            <Clock className="h-4 w-4" />
+            <span className="font-semibold">Ожидаем оплаты {formatTimer(sec)}</span>
+          </button>
+        </UnpaidDialog>
         <div className="ml-auto hidden sm:flex flex-1 sm:flex-none flex-wrap items-center justify-center sm:justify-end gap-x-3 gap-y-2">
           <span className="text-sm text-muted-foreground">
             Итого по заказу:{" "}
