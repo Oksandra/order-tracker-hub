@@ -2789,12 +2789,12 @@ function PaySuccessContent({
               </button>
             </DialogClose>
             <DialogClose asChild>
-              <button
-                type="button"
-                className="w-full rounded-full bg-muted py-3 text-sm font-semibold text-foreground hover:bg-muted/70"
+              <Link
+                to="/"
+                className="inline-flex w-full items-center justify-center rounded-full bg-muted py-3 text-sm font-semibold text-foreground hover:bg-muted/70"
               >
-                {isTransfer ? "На главную" : "Продолжить покупки"}
-              </button>
+                Продолжить покупки
+              </Link>
             </DialogClose>
           </div>
         </div>
