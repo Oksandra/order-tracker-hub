@@ -2826,14 +2826,13 @@ function PayDialogContent({ order }: { order: Order }) {
                 ))}
               </ul>
             </div>
-            <DialogClose asChild>
-              <button
-                type="button"
-                className="mt-2 w-full rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground hover:opacity-95"
-              >
-                Оплатить
-              </button>
-            </DialogClose>
+            <button
+              type="button"
+              onClick={() => setStep("success")}
+              className="mt-2 w-full rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground hover:opacity-95"
+            >
+              Оплатить
+            </button>
           </div>
         </div>
       </DialogContent>
