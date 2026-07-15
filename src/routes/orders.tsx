@@ -1247,7 +1247,7 @@ function PaymentBar({ order }: { order: Order }) {
             </button>
           </UnpaidDialog>
           <span className="hidden sm:inline-block h-4 w-px bg-border" />
-          <span className="text-sm text-muted-foreground whitespace-nowrap">
+          <span className="min-w-0 truncate text-sm text-muted-foreground">
             Заказ №<span className="font-medium text-foreground">{order.number}</span>
           </span>
         </div>
