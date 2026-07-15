@@ -2790,23 +2790,30 @@ function PaySuccessContent({
 }
 
 
-function PayDialogContent({ order }: { order: Order }) {
+function PayDialogContent({
+  order,
+  onAttempt,
+}: {
+  order: Order;
+  onAttempt?: () => void;
+}) {
   const isSurcharge = order.payment === "surcharge";
   const amount = order.payAmount ?? orderTotal(order);
   const commission = Math.round(amount * 0.2 * 100) / 100;
-  const [step, setStep] = useState<"select" | "sbp" | "transfer" | "success">("select");
+  const [step, setStep] = useState<"select" | "sbp" | "transfer">("select");
   const [method, setMethod] = useState<"sbp" | "transfer">("sbp");
   const [bankQuery, setBankQuery] = useState("");
   const [asBusiness, setAsBusiness] = useState(false);
   const [pickupTitle, ...rest] = order.pickup.split(",");
   const pickupSub = rest.join(",").trim() || order.pickup;
 
-  const goPay = () => setStep(method);
   const goBack = () => setStep("select");
+  const goToStep = (next: "sbp" | "transfer") => {
+    onAttempt?.();
+    setStep(next);
+  };
 
-  if (step === "success") {
-    return <PaySuccessContent orderNumber={order.number} amount={amount} />;
-  }
+
 
 
   if (step === "sbp") {
