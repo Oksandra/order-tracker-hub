@@ -1324,15 +1324,12 @@ function PaymentBar({ order }: { order: Order }) {
             Итого по заказу:{" "}
             <TotalWithTooltip order={order} className="text-base font-bold text-foreground" />
           </span>
-          <Dialog>
-            <DialogTrigger asChild>
-              <button className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
-                <CreditCard className="h-4 w-4" />
-                Доплатить {formatPrice(order.payAmount ?? 0)}
-              </button>
-            </DialogTrigger>
-            <PayDialogContent order={order} />
-          </Dialog>
+          <PayDialog order={order}>
+            <button className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
+              <CreditCard className="h-4 w-4" />
+              Доплатить {formatPrice(order.payAmount ?? 0)}
+            </button>
+          </PayDialog>
         </div>
       </div>
     </>
