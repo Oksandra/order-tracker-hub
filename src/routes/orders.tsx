@@ -2970,10 +2970,7 @@ function PayDialogContent({
     );
   }
 
-        </div>
-      </DialogContent>
-    );
-  }
+
 
   return (
     <DialogContent className="max-w-md p-0 gap-0 rounded-2xl overflow-hidden">
