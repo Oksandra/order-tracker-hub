@@ -2715,6 +2715,80 @@ function QrPlaceholder({ size = 180 }: { size?: number }) {
   );
 }
 
+function PaySuccessContent({
+  orderNumber,
+  amount,
+}: {
+  orderNumber: string;
+  amount: number;
+}) {
+  return (
+    <DialogContent className="max-w-md sm:max-w-lg p-0 gap-0 rounded-2xl overflow-hidden">
+      <DialogTitle className="sr-only">Спасибо за заказ</DialogTitle>
+      <div className="relative px-6 pt-10 pb-6 sm:pt-12">
+        {/* Decorative confetti */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+          <span className="absolute left-6 top-8 h-2.5 w-2.5 rotate-45 bg-primary/40 rounded-[2px]" />
+          <span className="absolute left-16 top-20 h-2 w-2 rotate-12 bg-success/50 rounded-[2px]" />
+          <span className="absolute left-4 top-32 h-2.5 w-2.5 -rotate-12 bg-success/40 rounded-[2px]" />
+          <span className="absolute right-8 top-6 h-2 w-2 rotate-45 bg-primary/50 rounded-[2px]" />
+          <span className="absolute right-16 top-24 h-3 w-3 rotate-12 bg-primary/40 rounded-[2px]" />
+          <span className="absolute right-4 top-36 h-2 w-2 -rotate-12 bg-success/50 rounded-[2px]" />
+        </div>
+
+        <div className="relative flex flex-col items-center text-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full border-[3px] border-success text-success">
+            <Check className="h-8 w-8" strokeWidth={3} />
+          </div>
+          <h2 className="mt-5 text-2xl sm:text-3xl font-bold text-foreground">
+            Спасибо за заказ!
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Ваш заказ принят и уже обрабатывается
+          </p>
+
+          <div className="mt-6 w-full rounded-2xl border border-border/60 bg-muted/30 px-5 py-4">
+            <div className="flex items-start justify-between gap-4">
+              <div className="text-left">
+                <div className="text-xs text-muted-foreground">Номер заказа</div>
+                <div className="mt-1 text-base font-bold text-foreground">
+                  № {orderNumber}
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-muted-foreground">Сумма заказа</div>
+                <div className="mt-1 text-base font-bold text-foreground">
+                  {formatPrice(amount)}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 flex w-full flex-col gap-2 sm:flex-row sm:gap-3">
+            <DialogClose asChild>
+              <button
+                type="button"
+                className="w-full rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground hover:opacity-95"
+              >
+                Перейти к заказам
+              </button>
+            </DialogClose>
+            <DialogClose asChild>
+              <button
+                type="button"
+                className="w-full rounded-full bg-muted py-3 text-sm font-semibold text-foreground hover:bg-muted/70"
+              >
+                Продолжить покупки
+              </button>
+            </DialogClose>
+          </div>
+        </div>
+      </div>
+    </DialogContent>
+  );
+}
+
+
 function PayDialogContent({ order }: { order: Order }) {
   const isSurcharge = order.payment === "surcharge";
   const amount = order.payAmount ?? orderTotal(order);
