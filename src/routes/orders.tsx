@@ -2719,8 +2719,12 @@ function PayDialogContent({ order }: { order: Order }) {
   const isSurcharge = order.payment === "surcharge";
   const amount = order.payAmount ?? orderTotal(order);
   const commission = Math.round(amount * 0.2 * 100) / 100;
-  const [step, setStep] = useState<"select" | "sbp" | "transfer">("select");
+  const [step, setStep] = useState<"select" | "sbp" | "transfer" | "success">("select");
   const [method, setMethod] = useState<"sbp" | "transfer">("sbp");
+
+  if (step === "success") {
+    return <PaySuccessContent orderNumber={order.number} amount={amount} />;
+  }
   const [bankQuery, setBankQuery] = useState("");
   const [asBusiness, setAsBusiness] = useState(false);
   const [pickupTitle, ...rest] = order.pickup.split(",");
