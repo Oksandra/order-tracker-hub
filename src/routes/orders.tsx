@@ -3008,7 +3008,7 @@ function PayDialogContent({
         </button>
         <button
           type="button"
-          onClick={() => { setMethod("transfer"); setStep("transfer"); }}
+          onClick={() => { setMethod("transfer"); goToStep("transfer"); }}
           className={`w-full flex items-center gap-3 rounded-xl border p-4 text-left transition-colors ${method === "transfer" ? "border-primary ring-2 ring-primary/30 bg-primary/5" : "border-border hover:bg-muted/40"}`}
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-foreground">
