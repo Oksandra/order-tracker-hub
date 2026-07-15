@@ -2852,17 +2852,11 @@ function PayDialogContent({
               Для оплаты зайдите в мобильное приложение банка и отсканируйте QR-код
             </div>
           </div>
-          <div className="flex flex-col items-center justify-center gap-4">
+          <div className="flex items-center justify-center">
             <QrPlaceholder size={200} />
-            <button
-              type="button"
-              onClick={() => setStep("success")}
-              className="w-full rounded-full bg-primary py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-95"
-            >
-              Я оплатил(а)
-            </button>
           </div>
         </div>
+
 
         {/* Mobile: recipient + amount + bank list */}
         <div className="sm:hidden">
