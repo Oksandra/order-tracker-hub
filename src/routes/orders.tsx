@@ -1236,18 +1236,21 @@ function PaymentBar({ order }: { order: Order }) {
   if (order.payment === "awaiting") {
     return (
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b-2 border-destructive bg-destructive/10 px-5 py-3.5">
-        <UnpaidDialog order={order}>
-          <button
-            type="button"
-            className="flex items-center gap-2 bg-transparent p-0 text-destructive hover:opacity-80"
-          >
-            <Clock className="h-4 w-4" />
-            <span className="font-semibold">Ожидаем оплаты {formatTimer(sec)}</span>
-          </button>
-        </UnpaidDialog>
-        <span className="inline-flex items-center rounded-full border border-border/80 bg-background px-3 py-1 text-sm font-medium text-foreground">
-          Заказ №{order.number}
-        </span>
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+          <UnpaidDialog order={order}>
+            <button
+              type="button"
+              className="flex items-center gap-2 bg-transparent p-0 text-destructive hover:opacity-80"
+            >
+              <Clock className="h-4 w-4" />
+              <span className="font-semibold whitespace-nowrap">Ожидаем оплаты {formatTimer(sec)}</span>
+            </button>
+          </UnpaidDialog>
+          <span className="hidden sm:inline-block h-4 w-px bg-border" />
+          <span className="min-w-0 truncate text-sm text-muted-foreground">
+            Заказ №<span className="font-medium text-foreground">{order.number}</span>
+          </span>
+        </div>
         <div className="ml-auto hidden sm:flex flex-1 sm:flex-none flex-wrap items-center justify-center sm:justify-end gap-x-3 gap-y-2">
           <span className="text-sm text-muted-foreground">
             Итого по заказу:{" "}
