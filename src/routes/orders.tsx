@@ -2886,6 +2886,13 @@ function PayDialogContent({ order }: { order: Order }) {
             />
             <span className="text-sm font-medium text-foreground">Покупаю как бизнес</span>
           </label>
+          <button
+            type="button"
+            onClick={() => setStep("success")}
+            className="w-full rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground hover:opacity-95"
+          >
+            Я оплатил(а)
+          </button>
         </div>
       </DialogContent>
     );
