@@ -2814,7 +2814,8 @@ function PayDialog({
 }) {
   const [payOpen, setPayOpen] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
-  const attemptedRef = useRef(false);
+  const [successVariant, setSuccessVariant] = useState<"sbp" | "transfer">("sbp");
+  const attemptedRef = useRef<null | "sbp" | "transfer">(null);
   const amount = order.payAmount ?? orderTotal(order);
   return (
     <>
@@ -2823,7 +2824,8 @@ function PayDialog({
         onOpenChange={(o) => {
           setPayOpen(o);
           if (!o && attemptedRef.current) {
-            attemptedRef.current = false;
+            setSuccessVariant(attemptedRef.current);
+            attemptedRef.current = null;
             setSuccessOpen(true);
           }
         }}
@@ -2831,13 +2833,17 @@ function PayDialog({
         <DialogTrigger asChild>{children}</DialogTrigger>
         <PayDialogContent
           order={order}
-          onAttempt={() => {
-            attemptedRef.current = true;
+          onAttempt={(m) => {
+            attemptedRef.current = m;
           }}
         />
       </Dialog>
       <Dialog open={successOpen} onOpenChange={setSuccessOpen}>
-        <PaySuccessContent orderNumber={order.number} amount={amount} />
+        <PaySuccessContent
+          orderNumber={order.number}
+          amount={amount}
+          variant={successVariant}
+        />
       </Dialog>
     </>
   );
@@ -2849,8 +2855,9 @@ function PayDialogContent({
   onAttempt,
 }: {
   order: Order;
-  onAttempt?: () => void;
+  onAttempt?: (method: "sbp" | "transfer") => void;
 }) {
+
   const isSurcharge = order.payment === "surcharge";
   const amount = order.payAmount ?? orderTotal(order);
   const commission = Math.round(amount * 0.2 * 100) / 100;
