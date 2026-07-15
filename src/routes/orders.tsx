@@ -2303,15 +2303,12 @@ function OrderCard({
                 </span>
               </div>
               <div className="flex items-center justify-center bg-destructive/10 px-5 py-3 sm:hidden">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <button className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
-                      <CreditCard className="h-4 w-4" />
-                      Оплатить {formatPrice(order.payAmount ?? 0)}
-                    </button>
-                  </DialogTrigger>
-                  <PayDialogContent order={order} />
-                </Dialog>
+                <PayDialog order={order}>
+                  <button className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
+                    <CreditCard className="h-4 w-4" />
+                    Оплатить {formatPrice(order.payAmount ?? 0)}
+                  </button>
+                </PayDialog>
               </div>
             </>
           )}
