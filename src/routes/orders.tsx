@@ -2790,6 +2790,45 @@ function PaySuccessContent({
 }
 
 
+function PayDialog({
+  order,
+  children,
+}: {
+  order: Order;
+  children: React.ReactNode;
+}) {
+  const [payOpen, setPayOpen] = useState(false);
+  const [successOpen, setSuccessOpen] = useState(false);
+  const attemptedRef = useRef(false);
+  const amount = order.payAmount ?? orderTotal(order);
+  return (
+    <>
+      <Dialog
+        open={payOpen}
+        onOpenChange={(o) => {
+          setPayOpen(o);
+          if (!o && attemptedRef.current) {
+            attemptedRef.current = false;
+            setSuccessOpen(true);
+          }
+        }}
+      >
+        <DialogTrigger asChild>{children}</DialogTrigger>
+        <PayDialogContent
+          order={order}
+          onAttempt={() => {
+            attemptedRef.current = true;
+          }}
+        />
+      </Dialog>
+      <Dialog open={successOpen} onOpenChange={setSuccessOpen}>
+        <PaySuccessContent orderNumber={order.number} amount={amount} />
+      </Dialog>
+    </>
+  );
+}
+
+
 function PayDialogContent({
   order,
   onAttempt,
