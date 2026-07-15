@@ -2870,7 +2870,7 @@ function PayDialogContent({
 
   const goBack = () => setStep("select");
   const goToStep = (next: "sbp" | "transfer") => {
-    onAttempt?.();
+    onAttempt?.(next);
     setStep(next);
   };
 
