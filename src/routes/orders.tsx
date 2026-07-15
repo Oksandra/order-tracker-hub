@@ -1236,7 +1236,7 @@ function PaymentBar({ order }: { order: Order }) {
   if (order.payment === "awaiting") {
     return (
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b-2 border-destructive bg-destructive/10 px-5 py-3.5">
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <UnpaidDialog order={order}>
             <button
               type="button"
