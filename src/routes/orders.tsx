@@ -1245,6 +1245,9 @@ function PaymentBar({ order }: { order: Order }) {
             <span className="font-semibold">Ожидаем оплаты {formatTimer(sec)}</span>
           </button>
         </UnpaidDialog>
+        <span className="inline-flex items-center rounded-full border border-border/80 bg-background px-3 py-1 text-sm font-medium text-foreground">
+          Заказ №{order.number}
+        </span>
         <div className="ml-auto hidden sm:flex flex-1 sm:flex-none flex-wrap items-center justify-center sm:justify-end gap-x-3 gap-y-2">
           <span className="text-sm text-muted-foreground">
             Итого по заказу:{" "}
