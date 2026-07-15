@@ -1245,15 +1245,12 @@ function PaymentBar({ order }: { order: Order }) {
             Итого по заказу:{" "}
             <TotalWithTooltip order={order} className="text-base font-bold text-destructive" />
           </span>
-          <Dialog>
-            <DialogTrigger asChild>
-              <button className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
-                <CreditCard className="h-4 w-4" />
-                Оплатить {formatPrice(order.payAmount ?? 0)}
-              </button>
-            </DialogTrigger>
-            <PayDialogContent order={order} />
-          </Dialog>
+          <PayDialog order={order}>
+            <button className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
+              <CreditCard className="h-4 w-4" />
+              Оплатить {formatPrice(order.payAmount ?? 0)}
+            </button>
+          </PayDialog>
         </div>
       </div>
     );
@@ -1304,15 +1301,12 @@ function PaymentBar({ order }: { order: Order }) {
         </span>
       </div>
       <div className="flex items-center justify-center bg-warning/10 px-4 py-2.5 sm:hidden">
-        <Dialog>
-          <DialogTrigger asChild>
-            <button className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95">
-              <CreditCard className="h-4 w-4" />
-              Доплатить {formatPrice(order.payAmount ?? 0)}
-            </button>
-          </DialogTrigger>
-          <PayDialogContent order={order} />
-        </Dialog>
+        <PayDialog order={order}>
+          <button className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95">
+            <CreditCard className="h-4 w-4" />
+            Доплатить {formatPrice(order.payAmount ?? 0)}
+          </button>
+        </PayDialog>
       </div>
       {/* Desktop / tablet */}
       <div className="hidden sm:flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border/70 bg-warning/10 px-5 py-2">
@@ -1330,15 +1324,12 @@ function PaymentBar({ order }: { order: Order }) {
             Итого по заказу:{" "}
             <TotalWithTooltip order={order} className="text-base font-bold text-foreground" />
           </span>
-          <Dialog>
-            <DialogTrigger asChild>
-              <button className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
-                <CreditCard className="h-4 w-4" />
-                Доплатить {formatPrice(order.payAmount ?? 0)}
-              </button>
-            </DialogTrigger>
-            <PayDialogContent order={order} />
-          </Dialog>
+          <PayDialog order={order}>
+            <button className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
+              <CreditCard className="h-4 w-4" />
+              Доплатить {formatPrice(order.payAmount ?? 0)}
+            </button>
+          </PayDialog>
         </div>
       </div>
     </>
@@ -2224,15 +2215,12 @@ function OrderCard({
                   <Copy className="h-3.5 w-3.5" />
                 </button>
               </div>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <button className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
-                    <CreditCard className="h-4 w-4" />
-                    Оплатить {formatPrice(order.payAmount ?? orderTotal(order))}
-                  </button>
-                </DialogTrigger>
-                <PayDialogContent order={order} />
-              </Dialog>
+              <PayDialog order={order}>
+                <button className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
+                  <CreditCard className="h-4 w-4" />
+                  Оплатить {formatPrice(order.payAmount ?? orderTotal(order))}
+                </button>
+              </PayDialog>
             </div>
           )}
           {order.cdek && order.trackNumber && !isFullyOutOfStock && (
@@ -2315,15 +2303,12 @@ function OrderCard({
                 </span>
               </div>
               <div className="flex items-center justify-center bg-destructive/10 px-5 py-3 sm:hidden">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <button className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
-                      <CreditCard className="h-4 w-4" />
-                      Оплатить {formatPrice(order.payAmount ?? 0)}
-                    </button>
-                  </DialogTrigger>
-                  <PayDialogContent order={order} />
-                </Dialog>
+                <PayDialog order={order}>
+                  <button className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90">
+                    <CreditCard className="h-4 w-4" />
+                    Оплатить {formatPrice(order.payAmount ?? 0)}
+                  </button>
+                </PayDialog>
               </div>
             </>
           )}
@@ -2790,23 +2775,69 @@ function PaySuccessContent({
 }
 
 
-function PayDialogContent({ order }: { order: Order }) {
+function PayDialog({
+  order,
+  children,
+}: {
+  order: Order;
+  children: React.ReactNode;
+}) {
+  const [payOpen, setPayOpen] = useState(false);
+  const [successOpen, setSuccessOpen] = useState(false);
+  const attemptedRef = useRef(false);
+  const amount = order.payAmount ?? orderTotal(order);
+  return (
+    <>
+      <Dialog
+        open={payOpen}
+        onOpenChange={(o) => {
+          setPayOpen(o);
+          if (!o && attemptedRef.current) {
+            attemptedRef.current = false;
+            setSuccessOpen(true);
+          }
+        }}
+      >
+        <DialogTrigger asChild>{children}</DialogTrigger>
+        <PayDialogContent
+          order={order}
+          onAttempt={() => {
+            attemptedRef.current = true;
+          }}
+        />
+      </Dialog>
+      <Dialog open={successOpen} onOpenChange={setSuccessOpen}>
+        <PaySuccessContent orderNumber={order.number} amount={amount} />
+      </Dialog>
+    </>
+  );
+}
+
+
+function PayDialogContent({
+  order,
+  onAttempt,
+}: {
+  order: Order;
+  onAttempt?: () => void;
+}) {
   const isSurcharge = order.payment === "surcharge";
   const amount = order.payAmount ?? orderTotal(order);
   const commission = Math.round(amount * 0.2 * 100) / 100;
-  const [step, setStep] = useState<"select" | "sbp" | "transfer" | "success">("select");
+  const [step, setStep] = useState<"select" | "sbp" | "transfer">("select");
   const [method, setMethod] = useState<"sbp" | "transfer">("sbp");
   const [bankQuery, setBankQuery] = useState("");
   const [asBusiness, setAsBusiness] = useState(false);
   const [pickupTitle, ...rest] = order.pickup.split(",");
   const pickupSub = rest.join(",").trim() || order.pickup;
 
-  const goPay = () => setStep(method);
   const goBack = () => setStep("select");
+  const goToStep = (next: "sbp" | "transfer") => {
+    onAttempt?.();
+    setStep(next);
+  };
 
-  if (step === "success") {
-    return <PaySuccessContent orderNumber={order.number} amount={amount} />;
-  }
+
 
 
   if (step === "sbp") {
@@ -2845,17 +2876,11 @@ function PayDialogContent({ order }: { order: Order }) {
               Для оплаты зайдите в мобильное приложение банка и отсканируйте QR-код
             </div>
           </div>
-          <div className="flex flex-col items-center justify-center gap-4">
+          <div className="flex items-center justify-center">
             <QrPlaceholder size={200} />
-            <button
-              type="button"
-              onClick={() => setStep("success")}
-              className="w-full rounded-full bg-primary py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-95"
-            >
-              Я оплатил(а)
-            </button>
           </div>
         </div>
+
 
         {/* Mobile: recipient + amount + bank list */}
         <div className="sm:hidden">
@@ -2909,13 +2934,15 @@ function PayDialogContent({ order }: { order: Order }) {
                 ))}
               </ul>
             </div>
-            <button
-              type="button"
-              onClick={() => setStep("success")}
-              className="mt-2 w-full rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground hover:opacity-95"
-            >
-              Оплатить
-            </button>
+            <DialogClose asChild>
+              <button
+                type="button"
+                className="mt-2 w-full rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground hover:opacity-95"
+              >
+                Оплатить
+              </button>
+            </DialogClose>
+
           </div>
         </div>
       </DialogContent>
@@ -2962,17 +2989,12 @@ function PayDialogContent({ order }: { order: Order }) {
             />
             <span className="text-sm font-medium text-foreground">Покупаю как бизнес</span>
           </label>
-          <button
-            type="button"
-            onClick={() => setStep("success")}
-            className="w-full rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground hover:opacity-95"
-          >
-            Я оплатил(а)
-          </button>
         </div>
       </DialogContent>
     );
   }
+
+
 
   return (
     <DialogContent className="max-w-md p-0 gap-0 rounded-2xl overflow-hidden">
@@ -2997,7 +3019,7 @@ function PayDialogContent({ order }: { order: Order }) {
         <div className="text-sm font-semibold text-foreground mb-1">Выберите способ оплаты</div>
         <button
           type="button"
-          onClick={() => { setMethod("sbp"); setStep("sbp"); }}
+          onClick={() => { setMethod("sbp"); goToStep("sbp"); }}
           className={`w-full flex items-center gap-3 rounded-xl border p-4 text-left transition-colors ${method === "sbp" ? "border-primary ring-2 ring-primary/30 bg-primary/5" : "border-border hover:bg-muted/40"}`}
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary text-[10px] font-bold">
@@ -3010,7 +3032,7 @@ function PayDialogContent({ order }: { order: Order }) {
         </button>
         <button
           type="button"
-          onClick={() => { setMethod("transfer"); setStep("transfer"); }}
+          onClick={() => { setMethod("transfer"); goToStep("transfer"); }}
           className={`w-full flex items-center gap-3 rounded-xl border p-4 text-left transition-colors ${method === "transfer" ? "border-primary ring-2 ring-primary/30 bg-primary/5" : "border-border hover:bg-muted/40"}`}
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-foreground">
