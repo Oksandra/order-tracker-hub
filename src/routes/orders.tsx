@@ -2995,7 +2995,7 @@ function PayDialogContent({
         <div className="text-sm font-semibold text-foreground mb-1">Выберите способ оплаты</div>
         <button
           type="button"
-          onClick={() => { setMethod("sbp"); setStep("sbp"); }}
+          onClick={() => { setMethod("sbp"); goToStep("sbp"); }}
           className={`w-full flex items-center gap-3 rounded-xl border p-4 text-left transition-colors ${method === "sbp" ? "border-primary ring-2 ring-primary/30 bg-primary/5" : "border-border hover:bg-muted/40"}`}
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary text-[10px] font-bold">
