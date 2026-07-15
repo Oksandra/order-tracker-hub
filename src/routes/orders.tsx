@@ -2704,10 +2704,13 @@ function QrPlaceholder({ size = 180 }: { size?: number }) {
 function PaySuccessContent({
   orderNumber,
   amount,
+  variant = "sbp",
 }: {
   orderNumber: string;
   amount: number;
+  variant?: "sbp" | "transfer";
 }) {
+  const isTransfer = variant === "transfer";
   return (
     <DialogContent className="max-w-md sm:max-w-lg p-0 gap-0 rounded-2xl overflow-hidden">
       <DialogTitle className="sr-only">Спасибо за заказ</DialogTitle>
@@ -2723,14 +2726,22 @@ function PaySuccessContent({
         </div>
 
         <div className="relative flex flex-col items-center text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full border-[3px] border-success text-success">
-            <Check className="h-8 w-8" strokeWidth={3} />
-          </div>
+          {isTransfer ? (
+            <div className="flex h-16 w-16 items-center justify-center rounded-full border-[3px] border-primary text-primary">
+              <Clock className="h-8 w-8" strokeWidth={2.5} />
+            </div>
+          ) : (
+            <div className="flex h-16 w-16 items-center justify-center rounded-full border-[3px] border-success text-success">
+              <Check className="h-8 w-8" strokeWidth={3} />
+            </div>
+          )}
           <h2 className="mt-5 text-2xl sm:text-3xl font-bold text-foreground">
             Спасибо за заказ!
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Ваш заказ принят и уже обрабатывается
+            {isTransfer
+              ? "Ваш заказ принят и ожидает подтверждения оплаты"
+              : "Ваш заказ принят и уже обрабатывается"}
           </p>
 
           <div className="mt-6 w-full rounded-2xl border border-border/60 bg-muted/30 px-5 py-4">
@@ -2750,6 +2761,24 @@ function PaySuccessContent({
             </div>
           </div>
 
+          {isTransfer && (
+            <div className="mt-4 w-full rounded-2xl border border-primary/20 bg-primary/5 px-5 py-4 text-sm text-foreground">
+              <div className="text-center font-semibold text-primary">
+                Ожидание подтверждения оплаты
+              </div>
+              <div className="mt-3 flex items-start gap-3 text-left">
+                <CreditCard className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                <p className="text-muted-foreground">
+                  Вы выбрали оплату по реквизитам. Мы проверим поступление оплаты в ближайший рабочий день.
+                </p>
+              </div>
+              <p className="mt-3 text-center text-muted-foreground">
+                Статус заказа можно отслеживать на странице{" "}
+                <span className="font-semibold text-primary">Заказов</span>
+              </p>
+            </div>
+          )}
+
           <div className="mt-6 flex w-full flex-col gap-2 sm:flex-row sm:gap-3">
             <DialogClose asChild>
               <button
@@ -2764,7 +2793,7 @@ function PaySuccessContent({
                 type="button"
                 className="w-full rounded-full bg-muted py-3 text-sm font-semibold text-foreground hover:bg-muted/70"
               >
-                Продолжить покупки
+                {isTransfer ? "На главную" : "Продолжить покупки"}
               </button>
             </DialogClose>
           </div>
@@ -2773,6 +2802,7 @@ function PaySuccessContent({
     </DialogContent>
   );
 }
+
 
 
 function PayDialog({
